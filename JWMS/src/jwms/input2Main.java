@@ -40,4 +40,14 @@ public class input2Main {
             JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");
         }
     }
+
+    public void transmit2MainT() throws SQLException {
+        addDel mainT = new addDel();
+        mainT.setAmount(amount);
+        mainT.setColor(color);
+        mainT.setInfo(info);
+        mainT.setSize(size);
+        mainT.setStore(store);
+        mainT.increaseMethod();
+    }
 }
