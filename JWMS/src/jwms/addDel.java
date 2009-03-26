@@ -82,7 +82,7 @@ public class addDel {
         }
     }
     //应当放到模块入库之前进行判断
-    public void decreaseMethod() throws SQLException {
+    public boolean decreaseMethod() throws SQLException {
         boolean result = isInfoExist(info);
         dbOperation decreaseDb = new dbOperation();
         if (result) {
@@ -95,5 +95,7 @@ public class addDel {
             
             JOptionPane.showConfirmDialog(null, "您所销售的货品:"+info+"不存在！");
         }
+        return result;
+                
     }
 }

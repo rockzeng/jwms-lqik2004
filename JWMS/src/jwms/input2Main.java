@@ -27,27 +27,25 @@ public class input2Main {
     private String store;
     private int amount = 0;
 
-    public void transmit2InputT() {
-        try {
-            dbOperation t2Input = new dbOperation();
+    public void transmit() {
+        try {           
+            addDel mainT = new addDel();
+            dbOperation t2Input = new dbOperation();          
             t2Input.DBConnect();
             String sql;
-            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "''" + inPrice + "','" + outPrice + "')";
+            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "')";
             t2Input.DBSqlExe(sql);
-            t2Input.DBClosed();
+            t2Input.DBClosed();         
+            mainT.setAmount(amount);
+            mainT.setColor(color);
+            mainT.setInfo(info);
+            mainT.setSize(size);
+            mainT.setStore(store);
+            mainT.increaseMethod();
         } catch (SQLException ex) {
             Logger.getLogger(input2Main.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");
         }
     }
-
-    public void transmit2MainT() throws SQLException {
-        addDel mainT = new addDel();
-        mainT.setAmount(amount);
-        mainT.setColor(color);
-        mainT.setInfo(info);
-        mainT.setSize(size);
-        mainT.setStore(store);
-        mainT.increaseMethod();
-    }
 }
+
