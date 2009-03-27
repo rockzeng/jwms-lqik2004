@@ -5,17 +5,17 @@
 package jwms;
 
 import method.dbOperation;
-import method.addDel;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import method.addDel;
 
 /**
  *
  * @author Administrator
  */
-public class input2Main {
+public class equal2Main {
 
     private int year;
     private int month;
@@ -24,30 +24,32 @@ public class input2Main {
     private String info;
     private String color = "";
     private String size = "";
-    private double inPrice = 0;
-    private double outPrice = 0;
-    private String store;
+    private String inStore;//调入仓库 getin store
+    private String outStore;//调出仓库 getout store
     private int amount = 0;
+    private String others;
 
     public void transmit() {
-        try {           
+        try {
             addDel mainT = new addDel();
-            dbOperation t2Input = new dbOperation();          
-            t2Input.DBConnect();
+            dbOperation t2Equal = new dbOperation();
+            t2Equal.DBConnect();
             String sql;
-            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "')";
-            t2Input.DBSqlExe(sql);
-            t2Input.DBClosed();         
+            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + inStore + "','" + outStore + "','"+others+"')";
+            t2Equal.DBSqlExe(sql);
+            t2Equal.DBClosed();
+            //对库存的增减
             mainT.setAmount(amount);
             mainT.setColor(color);
             mainT.setInfo(info);
             mainT.setSize(size);
-            mainT.setStore(store);
+            mainT.setStore(inStore);
             mainT.increaseMethod();
+            mainT.setStore(outStore);
+            mainT.decreaseMethod();
         } catch (SQLException ex) {
-            Logger.getLogger(input2Main.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(equal2Main.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");
         }
     }
 }
-

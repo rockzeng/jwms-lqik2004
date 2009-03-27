@@ -1,4 +1,4 @@
-package jwms;
+package method;
 
 import java.sql.*;
 import java.sql.Statement;
