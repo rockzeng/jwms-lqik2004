@@ -1,8 +1,5 @@
 package method;
 
-
-
-
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -42,29 +39,41 @@ public class AutoCompleter
     public void keyReleased(KeyEvent e) {
         char ch = e.getKeyChar();
         /*if (ch == KeyEvent.CHAR_UNDEFINED || Character.isISOControl(ch)) {
-            return;}
-         else*/ if (ch == KeyEvent.VK_DELETE|| ch==KeyEvent.VK_BACK_SPACE) {
+        return;}
+        else*/ if (ch == KeyEvent.VK_DELETE || ch == KeyEvent.VK_BACK_SPACE) {
+            int caretPosition = editor.getCaretPosition();
+            String str = editor.getText();
+            /**
+             * 改进：当输入框上没有出现字符的时候，关闭自动补全框。
+             */
+            if (str.length() == 0) {
+                owner.setPopupVisible(false);
+            } else {
+                autoCompleteDel(str, caretPosition);
+            }
+        } else if (ch == KeyEvent.CHAR_UNDEFINED || Character.isISOControl(ch)) {
+            return;
+        } else {
             int caretPosition = editor.getCaretPosition();
             String str = editor.getText();
             if (str.length() == 0) {
                 return;
+            } else if (str.length() == 1) {
+            /**
+             * 如果当前的字符串长度为1，那么采取autoCompleteDel方法
+             * 也就是从整个items进行搜索
+             * 目的是为了解决在对一个文本框进行补全之后，不能对其他文本框补全的情况。
+             */
+                autoCompleteDel(str, caretPosition);
+            }else{
+                autoComplete(str, caretPosition);
             }
-            autoCompleteDel(str, caretPosition);
-        }else if (ch == KeyEvent.CHAR_UNDEFINED || Character.isISOControl(ch)) {
-            return;}
-         else{
-            int caretPosition = editor.getCaretPosition();
-            String str = editor.getText();
-            if (str.length() == 0) {
-                return;
-            }
-            autoComplete(str, caretPosition);
         }
     }
 
-        /**
-         *   自动完成。根据输入的内容，在列表中找到相似的项目.
-         */
+    /**
+     *   自动完成。根据输入的内容，在列表中找到相似的项目.
+     */
     protected void autoComplete(String strf, int caretPosition) {
         Object[] opts;
         opts = getMatchingOptions(strf.substring(0, caretPosition));
@@ -74,9 +83,7 @@ public class AutoCompleter
         }
         if (opts.length > 0) {
             String str = opts[0].toString();
-            if (caretPosition > editor.getText().length()) {
-                return;
-            }
+
             editor.setCaretPosition(caretPosition);
             editor.setText(editor.getText().trim().substring(0, caretPosition));
             if (owner != null) {
@@ -86,9 +93,12 @@ public class AutoCompleter
                     ex.printStackTrace();
                 }
             }
+        } else {
+            editor.setText(strf);
         }
     }
-     protected void autoCompleteDel(String strf, int caretPosition) {
+
+    protected void autoCompleteDel(String strf, int caretPosition) {
         Object[] opts;
         opts = getMatchingOptionsDel(strf.substring(0, caretPosition));
         if (owner != null) {
@@ -109,6 +119,8 @@ public class AutoCompleter
                     ex.printStackTrace();
                 }
             }
+        } else {          //在没有对应条目的时候之间现实输入字符。
+            editor.setText(strf);
         }
     }
 
@@ -120,11 +132,11 @@ public class AutoCompleter
      */
     protected Object[] getMatchingOptions(String str) {
         List v = new Vector();
-       // List v1 = new Vector();
+        // List v1 = new Vector();
 
         for (int k = 0; k < model.getSize(); k++) {
             Object itemObj = model.getElementAt(k);
-            
+
             if (itemObj != null) {
                 String item = itemObj.toString().toLowerCase();
                 if (item.startsWith(str.toLowerCase())) {
@@ -149,10 +161,11 @@ public class AutoCompleter
         }
         return v.toArray();
     }
+
     protected Object[] getMatchingOptionsDel(String str) {
         List v = new Vector();
-        for (int k = 0; k <items.length; k++) {
-           Object itemObj=items[k];
+        for (int k = 0; k < items.length; k++) {
+            Object itemObj = items[k];
             if (itemObj != null) {
                 String item = itemObj.toString().toLowerCase();
                 if (item.startsWith(str.toLowerCase())) {
@@ -190,8 +203,9 @@ public class AutoCompleter
             }
         }
     }
-     public static void setItems(Object[] x) {
+
+    public static void setItems(Object[] x) {
         items = x;
     }
-     private static Object[] items;
+    private static Object[] items;
 }
