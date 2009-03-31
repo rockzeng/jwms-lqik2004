@@ -57,11 +57,16 @@ class sellFrame extends JFrame {
         hbox0.add(ID);
         //设置日期栏
         JLabel label1 = new JLabel("日期：");
-        JTextField year = new JTextField(4);
+        JComboBox year = new JComboBox(Objyear);//增加了自动选择时间功能
+        year.setSelectedIndex(getDate.yearIndex());
         JLabel label2 = new JLabel("年");
-        JTextField month = new JTextField(2);
+        //JTextField month = new JTextField(2);
+        JComboBox month=new JComboBox(Objmonth);
+        month.setSelectedIndex(getDate.monthIndex());
         JLabel label3 = new JLabel("月");
-        JTextField day = new JTextField(2);
+        //JTextField day = new JTextField(2);
+        JComboBox day=new JComboBox(Objday);
+        day.setSelectedIndex(getDate.dayIndex());
         JLabel label4 = new JLabel("日");
         year.setMaximumSize(year.getPreferredSize());
         month.setMaximumSize(month.getPreferredSize());
@@ -235,6 +240,17 @@ class sellFrame extends JFrame {
     private Object[] store = {
         "丰南", "玉田", "丰润"
     };
+    private Object[] Objyear= {
+         "2009", "2010","2011","2012"
+    };
+     private Object[] Objmonth= {
+        "01", "02", "03","04","05","06","07","09","10","11","12"
+    };
+      private Object[] Objday={
+        "01", "02", "03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"
+    };
+      
+     
 }
 
 class PlanetTableModel extends AbstractTableModel {
