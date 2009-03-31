@@ -3,6 +3,8 @@ package jwms;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.Box;
 import javax.swing.DefaultCellEditor;
@@ -28,7 +30,7 @@ public class sellUI {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // TODO code application logic here
         sellFrame frame = new sellFrame();
         Toolkit tool = Toolkit.getDefaultToolkit();
@@ -43,13 +45,14 @@ public class sellUI {
 
 class sellFrame extends JFrame {
 
-    public sellFrame() {
+    public sellFrame() throws Exception {
         setTitle("销售退货单");
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         //设置ID
         JLabel labelID = new JLabel("编号：");
-        JTextField ID = new JTextField(11);//x20090330**  共11位
-        ID.setEditable(false);//不可修改
+        JTextField ID = new JTextField(12);//x20090330***  共12位
+        ID.setEditable(false);//不可修改        
+        ID.setText(new idMake().idMake("S"));   //设置编号，销售单以S开头
         ID.setMaximumSize(ID.getPreferredSize());   //使在箱式布局下不会默认取得最大值，保持预定义大小
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(Box.createHorizontalGlue());
@@ -61,11 +64,11 @@ class sellFrame extends JFrame {
         year.setSelectedIndex(getDate.yearIndex());
         JLabel label2 = new JLabel("年");
         //JTextField month = new JTextField(2);
-        JComboBox month=new JComboBox(Objmonth);
+        JComboBox month = new JComboBox(Objmonth);
         month.setSelectedIndex(getDate.monthIndex());
         JLabel label3 = new JLabel("月");
         //JTextField day = new JTextField(2);
-        JComboBox day=new JComboBox(Objday);
+        JComboBox day = new JComboBox(Objday);
         day.setSelectedIndex(getDate.dayIndex());
         JLabel label4 = new JLabel("日");
         year.setMaximumSize(year.getPreferredSize());
@@ -99,14 +102,14 @@ class sellFrame extends JFrame {
         //java.util.ArrayList list = new java.util.ArrayList(Arrays.asList(items));
         //Collections.sort(list);
         //JComboBox cmb = new JAutoCompleteComboBox(list.toArray());
-                 Object[] items = new Object[]{
-                         "zzz", "zba", "aab", "abc", "acb", "dfg", "aba", "hpp", "pp", "hlp"
-                     };
+        Object[] items = new Object[]{
+            "zzz", "zba", "aab", "abc", "acb", "dfg", "aba", "hpp", "pp", "hlp"
+        };
         //Arrays.sort(items);//对item进行排序
-                AutoCompleter.setItems(items);
+        AutoCompleter.setItems(items);
         //把单元格改造成JAutoCompleteComboBox
-                NameCombo = new JAutoCompleteComboBox(items);
-                NameCombo.addActionListener(NameCombo);
+        NameCombo = new JAutoCompleteComboBox(items);
+        NameCombo.addActionListener(NameCombo);
 
         TableColumnModel columnModel = table.getColumnModel();
         TableColumn NameColumn = columnModel.getColumn(1);
@@ -153,8 +156,20 @@ class sellFrame extends JFrame {
         vbox.add(hbox4);
         vbox.add(Box.createVerticalStrut(10));
         add(vbox, BorderLayout.CENTER);
-    //add(new JScrollPane(table), BorderLayout.CENTER);
+        //add(new JScrollPane(table), BorderLayout.CENTER);
+
+        //提交按钮设计
+        referButton.addActionListener(new ActionListener() {
+        /**
+         * 给按钮加入响应，用以“持久化”tag和judge两个文件，更新数据
+         */
+            public void actionPerformed(ActionEvent e) {
+                tagJudgeRW.writeFile("tag", idMake.tag);
+                tagJudgeRW.writeFile("judge", idMake.judge);
+            }
+        });
     }
+
     public static void addEditEvent(JTable tb) {
         //tb.addToolTipText("上下键及Tab键进入编辑状态，Esc取消编辑状态");
         tb.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -167,7 +182,7 @@ class sellFrame extends JFrame {
             }
         });
     }
-    
+
     private static void addKeyDowntoEditEvent(JTable tb, int key) {
         try {
             int rows = tb.getRowCount();
@@ -184,22 +199,21 @@ class sellFrame extends JFrame {
                 tb.getCellEditor(selectingrow, selectingcol).stopCellEditing();
             } catch (Exception ex) {
             }
-/*
+            /*
             switch (key) {
-
-              /*
-                case KeyEvent.VK_ENTER: {
-                    break;
-                }
-                case KeyEvent.VK_ESCAPE: {
-                    //stopEditing(tb);
-                    return;
-                }
-                default: {
-                    return;
-                }
+            /*
+            case KeyEvent.VK_ENTER: {
+            break;
             }
-*/
+            case KeyEvent.VK_ESCAPE: {
+            //stopEditing(tb);
+            return;
+            }
+            default: {
+            return;
+            }
+            }
+             */
             try {
                 if (selectingrow >= rows) {
                     selectingrow = 0;
@@ -225,8 +239,8 @@ class sellFrame extends JFrame {
                 tb.editCellAt(selectingrow, selectingcol);
                 ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
                 ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();
-              ((JAutoCompleteComboBox) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
-               //((JAutoCompleteComboBox) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
+                ((JAutoCompleteComboBox) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
+                //((JAutoCompleteComboBox) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
                 tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1) * tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
             } catch (Exception ex) {
             }
@@ -240,17 +254,15 @@ class sellFrame extends JFrame {
     private Object[] store = {
         "丰南", "玉田", "丰润"
     };
-    private Object[] Objyear= {
-         "2009", "2010","2011","2012"
+    private Object[] Objyear = {
+        "2009", "2010", "2011", "2012"
     };
-     private Object[] Objmonth= {
-        "01", "02", "03","04","05","06","07","09","10","11","12"
+    private Object[] Objmonth = {
+        "01", "02", "03", "04", "05", "06", "07", "09", "10", "11", "12"
     };
-      private Object[] Objday={
-        "01", "02", "03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"
+    private Object[] Objday = {
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
     };
-      
-     
 }
 
 class PlanetTableModel extends AbstractTableModel {
@@ -290,12 +302,12 @@ class PlanetTableModel extends AbstractTableModel {
     public static final int VALUES = 2;
     public static final int PRICE = 3;
     public static final int OTHERS = 4;
-    private Object[][] cells ={
-            {"","","","",""},
-            {"","","","",""},
-            {"","","","",""},
-            {"","","","",""},
-        };
+    private Object[][] cells = {
+        {"", "", "", "", ""},
+        {"", "", "", "", ""},
+        {"", "", "", "", ""},
+        {"", "", "", "", ""},
+            };
     private String[] columnNames = {"编号", "商品名称", "数量", "单价", "备注"};
 }
 
