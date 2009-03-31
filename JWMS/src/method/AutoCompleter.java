@@ -31,12 +31,15 @@ public class AutoCompleter
     }
 
     public void keyTyped(KeyEvent e) {
-    }
+        }
 
     public void keyPressed(KeyEvent e) {
     }
 
     public void keyReleased(KeyEvent e) {
+        editor.requestFocusInWindow();
+        editor.requestFocus();
+        editor.selectAll();
         char ch = e.getKeyChar();
         /*if (ch == KeyEvent.CHAR_UNDEFINED || Character.isISOControl(ch)) {
         return;}
@@ -49,8 +52,13 @@ public class AutoCompleter
             if (str.length() == 0) {
                 owner.setPopupVisible(false);
             } else {
+               
                 autoCompleteDel(str, caretPosition);
+                
             }
+        } else if (ch == KeyEvent.VK_1) {
+            
+            System.out.print(model.getSelectedItem().toString());
         } else if (ch == KeyEvent.CHAR_UNDEFINED || Character.isISOControl(ch)) {
             return;
         } else {
@@ -59,13 +67,13 @@ public class AutoCompleter
             if (str.length() == 0) {
                 return;
             } else if (str.length() == 1) {
-            /**
-             * 如果当前的字符串长度为1，那么采取autoCompleteDel方法
-             * 也就是从整个items进行搜索
-             * 目的是为了解决在对一个文本框进行补全之后，不能对其他文本框补全的情况。
-             */
+                /**
+                 * 如果当前的字符串长度为1，那么采取autoCompleteDel方法
+                 * 也就是从整个items进行搜索
+                 * 目的是为了解决在对一个文本框进行补全之后，不能对其他文本框补全的情况。
+                 */
                 autoCompleteDel(str, caretPosition);
-            }else{
+            } else {
                 autoComplete(str, caretPosition);
             }
         }

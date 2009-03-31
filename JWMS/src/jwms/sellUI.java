@@ -1,13 +1,11 @@
 package jwms;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.util.Arrays;
+import java.awt.event.KeyEvent;
 import javax.swing.Box;
 import javax.swing.DefaultCellEditor;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -88,6 +86,7 @@ class sellFrame extends JFrame {
         TableModel model = new PlanetTableModel();
         JTable table = new JTable(model);
         table.setRowSelectionAllowed(false);
+        addEditEvent(table);
         // set up renderers and editors
         //table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
         //table.setDefaultEditor(Color.class, new ColorTableCellEditor());
@@ -95,17 +94,18 @@ class sellFrame extends JFrame {
         //java.util.ArrayList list = new java.util.ArrayList(Arrays.asList(items));
         //Collections.sort(list);
         //JComboBox cmb = new JAutoCompleteComboBox(list.toArray());
-        Object[] items = new Object[]{
-            "zzz", "zba", "aab", "abc", "acb", "dfg", "aba", "hpp", "pp", "hlp"
-        };
-        Arrays.sort(items);//对item进行排序
-        AutoCompleter.setItems(items);
-
+                 Object[] items = new Object[]{
+                         "zzz", "zba", "aab", "abc", "acb", "dfg", "aba", "hpp", "pp", "hlp"
+                     };
+        //Arrays.sort(items);//对item进行排序
+                AutoCompleter.setItems(items);
         //把单元格改造成JAutoCompleteComboBox
-        JComboBox moonCombo = new JAutoCompleteComboBox(items);
+                NameCombo = new JAutoCompleteComboBox(items);
+                NameCombo.addActionListener(NameCombo);
+
         TableColumnModel columnModel = table.getColumnModel();
-        TableColumn moonColumn = columnModel.getColumn(2);
-        moonColumn.setCellEditor(new DefaultCellEditor(moonCombo));
+        TableColumn NameColumn = columnModel.getColumn(1);
+        NameColumn.setCellEditor(new DefaultCellEditor(NameCombo));
         //设置合计栏
         JLabel labelSumPrice = new JLabel("总价：");
         JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
@@ -150,6 +150,86 @@ class sellFrame extends JFrame {
         add(vbox, BorderLayout.CENTER);
     //add(new JScrollPane(table), BorderLayout.CENTER);
     }
+    public static void addEditEvent(JTable tb) {
+        //tb.addToolTipText("上下键及Tab键进入编辑状态，Esc取消编辑状态");
+        tb.addKeyListener(new java.awt.event.KeyAdapter() {
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                int key = e.getKeyCode();
+                JTable tb = (JTable) e.getSource();
+                addKeyDowntoEditEvent(tb, key);
+            }
+        });
+    }
+    
+    private static void addKeyDowntoEditEvent(JTable tb, int key) {
+        try {
+            int rows = tb.getRowCount();
+            int cols = tb.getColumnCount();
+
+            int selectingrow = tb.getSelectedRow();
+            int selectingcol = tb.getSelectedColumn();
+
+            if (selectingrow < 0 || selectingcol < 0) {
+                return;
+            }
+
+            try {
+                tb.getCellEditor(selectingrow, selectingcol).stopCellEditing();
+            } catch (Exception ex) {
+            }
+/*
+            switch (key) {
+
+              /*
+                case KeyEvent.VK_ENTER: {
+                    break;
+                }
+                case KeyEvent.VK_ESCAPE: {
+                    //stopEditing(tb);
+                    return;
+                }
+                default: {
+                    return;
+                }
+            }
+*/
+            try {
+                if (selectingrow >= rows) {
+                    selectingrow = 0;
+                    selectingcol++;
+                }
+                if (selectingcol >= cols) {
+                    selectingcol = 0;
+                }
+                if (selectingcol >= cols) {
+                    selectingcol = 0;
+                    selectingrow++;
+                }
+                if (selectingrow >= rows) {
+                    selectingrow = 0;
+                }
+
+                if (!tb.isCellEditable(selectingrow, selectingcol)) {
+                    return;
+                }
+
+                //                                 tb.setRowSelectionInterval(selectingrow,selectingrow);   
+                //                                 tb.setColumnSelectionInterval(selectingcol,selectingcol);   
+                tb.editCellAt(selectingrow, selectingcol);
+                ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
+                ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();
+              ((JAutoCompleteComboBox) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
+               //((JAutoCompleteComboBox) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
+                tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1) * tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
+            } catch (Exception ex) {
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    private JComboBox NameCombo;
     private static final int DEFAULT_WIDTH = 600;
     private static final int DEFAULT_HEIGHT = 400;
     private Object[] store = {
@@ -170,7 +250,7 @@ class PlanetTableModel extends AbstractTableModel {
     }
 
     public int getColumnCount() {
-        return cells[0].length;
+        return columnNames.length;
     }
 
     public int getRowCount() {
@@ -188,23 +268,18 @@ class PlanetTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int r, int c) {
-        return c == PLANET_COLUMN || c == MOONS_COLUMN || c == GASEOUS_COLUMN || c == COLOR_COLUMN;
+        return c == NAME || c == VALUES || c == PRICE || c == OTHERS;
     }
-    public static final int PLANET_COLUMN = 0;
-    public static final int MOONS_COLUMN = 2;
-    public static final int GASEOUS_COLUMN = 3;
-    public static final int COLOR_COLUMN = 4;
-    private Object[][] cells =
-            {
-        {"Mercury", 2440.0, "", false, Color.yellow, new ImageIcon("Mercury.gif")},
-        {"Venus", 6052.0, "", false, Color.yellow, new ImageIcon("Venus.gif")},
-        {"Earth", 6378.0, "", false, Color.blue, new ImageIcon("Earth.gif")},
-        {"Mars", 3397.0, "", false, Color.red, new ImageIcon("Mars.gif")},
-        {"Jupiter", 71492.0, "", true, Color.orange, new ImageIcon("Jupiter.gif")},
-        {"Saturn", 60268.0, "", true, Color.orange, new ImageIcon("Saturn.gif")},
-        {"Uranus", 25559.0, "", true, Color.blue, new ImageIcon("Uranus.gif")},
-        {"Neptune", 24766.0, "", true, Color.blue, new ImageIcon("Neptune.gif")},
-        {"Pluto", 1137.0, "", false, Color.black, new ImageIcon("Pluto.gif")}};
-    private String[] columnNames = {"Planet", "Radius", "Moons", "Gaseous", "Color", "Image"};
+    public static final int NAME = 1;
+    public static final int VALUES = 2;
+    public static final int PRICE = 3;
+    public static final int OTHERS = 4;
+    private Object[][] cells ={
+            {"","","","",""},
+            {"","","","",""},
+            {"","","","",""},
+            {"","","","",""},
+        };
+    private String[] columnNames = {"编号", "商品名称", "数量", "单价", "备注"};
 }
 
