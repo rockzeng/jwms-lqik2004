@@ -27,7 +27,14 @@ public class propertiesRW {
         returnFiled = fieldName.getProperty(x);
         return returnFiled;
     }
-
+/**
+ * 
+ * @param x     NAMEkey
+ * @param y     NAMEvalue
+ * @throws java.io.IOException
+ * 
+ * 在对properties进行写的时候，先要做LOAD,然后设置(setProperties),最后写入到文件（store）
+ */
     public static void proIDMakeWrite(String x, int y) throws IOException {
         String transY = String.valueOf(y);
         try {
