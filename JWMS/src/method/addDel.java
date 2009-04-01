@@ -65,6 +65,10 @@ public class addDel {
         return result;
     }
     //core method
+    /**
+     * 增加库存
+     * @throws java.sql.SQLException
+     */
     public void increaseMethod() throws SQLException {
         boolean result = isInfoExist(info);
         dbOperation increaseDb = new dbOperation();
@@ -83,6 +87,11 @@ public class addDel {
         }
     }
     //应当放到模块入库之前进行判断
+    /**
+     * 减少库存
+     * @return
+     * @throws java.sql.SQLException
+     */
     public boolean decreaseMethod() throws SQLException {
         boolean result = isInfoExist(info);
         dbOperation decreaseDb = new dbOperation();
@@ -92,10 +101,10 @@ public class addDel {
             String sql = "update maint set amount=amount-'" + amount + "' where info='" + info + "' and store='" + store + "'";
             decreaseDb.DBSqlExe(sql);
             decreaseDb.DBClosed();
-        }else{
+        }/*else{
             
             JOptionPane.showConfirmDialog(null, "您所销售的货品:"+info+"不存在！");
-        }
+        }*/
         return result;
                 
     }

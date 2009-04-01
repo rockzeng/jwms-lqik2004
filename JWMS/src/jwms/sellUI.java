@@ -36,11 +36,13 @@ public class sellUI {
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
         sellFrame frame = new sellFrame();
-        Toolkit tool = Toolkit.getDefaultToolkit();
+        /**Toolkit tool = Toolkit.getDefaultToolkit();
         Dimension screenSize = tool.getScreenSize();
         int locateHeight = (screenSize.height - frame.getHeight()) / 2;
         int locateWidth = (screenSize.width - frame.getWidth()) / 2;
         frame.setLocation(locateWidth, locateHeight);
+         */
+        frame.setLocationRelativeTo(null);//一句让窗口居中
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
@@ -48,12 +50,39 @@ public class sellUI {
 
 class sellFrame extends JFrame {
 
+    private Object[] store = {
+        "丰南", "玉田", "丰润"
+    };
+    private Object[] Objyear = {
+        "2009", "2010", "2011", "2012"
+    };
+    private Object[] Objmonth = {
+        "01", "02", "03", "04", "05", "06", "07", "09", "10", "11", "12"
+    };
+    private Object[] Objday = {
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
+    };
+    Object[] items = new Object[]{
+        "zzz", "zba", "aab", "abc", "acb", "dfg", "aba", "hpp", "pp", "hlp"
+    };
+    private static final int DEFAULT_WIDTH = 600;
+    private static final int DEFAULT_HEIGHT = 400;
+    private JComboBox NameCombo;
+    private JTextField ID = new JTextField(12);//x20090330***  共12位
+    private JComboBox year = new JComboBox(Objyear);//增加了自动选择时间功能
+    private JComboBox month = new JComboBox(Objmonth);
+    private JComboBox day = new JComboBox(Objday);
+    private JComboBox storeComboBox = new JAutoCompleteComboBox(store);
+    private TableModel model = new PlanetTableModel();
+    private JTable table = new JTable(model);
+    private JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
+    private JTextField sumValues = new JTextField(3);
+
     public sellFrame() throws Exception {
         setTitle("销售退货单");
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         //设置ID
         JLabel labelID = new JLabel("编号：");
-        JTextField ID = new JTextField(12);//x20090330***  共12位
         ID.setEditable(false);//不可修改        
         ID.setText(new idMake().idMake("S"));   //设置编号，销售单以S开头
         ID.setMaximumSize(ID.getPreferredSize());   //使在箱式布局下不会默认取得最大值，保持预定义大小
@@ -63,15 +92,12 @@ class sellFrame extends JFrame {
         hbox0.add(ID);
         //设置日期栏
         JLabel label1 = new JLabel("日期：");
-        JComboBox year = new JComboBox(Objyear);//增加了自动选择时间功能
         year.setSelectedIndex(getDate.yearIndex());
         JLabel label2 = new JLabel("年");
         //JTextField month = new JTextField(2);
-        JComboBox month = new JComboBox(Objmonth);
         month.setSelectedIndex(getDate.monthIndex());
         JLabel label3 = new JLabel("月");
         //JTextField day = new JTextField(2);
-        JComboBox day = new JComboBox(Objday);
         day.setSelectedIndex(getDate.dayIndex());
         JLabel label4 = new JLabel("日");
         year.setMaximumSize(year.getPreferredSize());
@@ -88,14 +114,18 @@ class sellFrame extends JFrame {
         hbox1.add(Box.createHorizontalGlue());
         //设置仓库栏
         JLabel labelStore = new JLabel("仓库：");
-        JComboBox storeComboBox = new JAutoCompleteComboBox(store);
+        //从properties中读取仓库设置
+        storeComboBox.setSelectedIndex(Integer.parseInt(propertiesRW.proIDMakeRead("storeSell")));
+        storeComboBox.setMaximumSize(storeComboBox.getPreferredSize());
+        storeComboBox.setEditable(false);   //仓库不可直接修改
+        JButton addStore=new JButton("添加仓库");
         Box hbox2 = Box.createHorizontalBox();
         hbox2.add(labelStore);
         hbox2.add(storeComboBox);
+        hbox2.add(Box.createHorizontalStrut(10));
+        hbox2.add(addStore);
         hbox2.add(Box.createHorizontalGlue());
         //加入列表栏
-        TableModel model = new PlanetTableModel();
-        JTable table = new JTable(model);
         table.setRowSelectionAllowed(false);
         addEditEvent(table);
         // set up renderers and editors
@@ -105,9 +135,6 @@ class sellFrame extends JFrame {
         //java.util.ArrayList list = new java.util.ArrayList(Arrays.asList(items));
         //Collections.sort(list);
         //JComboBox cmb = new JAutoCompleteComboBox(list.toArray());
-        Object[] items = new Object[]{
-            "zzz", "zba", "aab", "abc", "acb", "dfg", "aba", "hpp", "pp", "hlp"
-        };
         //Arrays.sort(items);//对item进行排序
         AutoCompleter.setItems(items);
         //把单元格改造成JAutoCompleteComboBox
@@ -117,13 +144,14 @@ class sellFrame extends JFrame {
         TableColumnModel columnModel = table.getColumnModel();
         TableColumn NameColumn = columnModel.getColumn(1);
         NameColumn.setCellEditor(new DefaultCellEditor(NameCombo));
+        //为“编号”列赋初值
+        for(int i=0;i<model.getRowCount();i++){ 
+        model.setValueAt(i+1, i,0);}
         //设置合计栏
         JLabel labelSumPrice = new JLabel("总价：");
-        JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
         sumPrice.setEditable(false);//不可修改
         sumPrice.setMaximumSize(ID.getPreferredSize());   //使在箱式布局下不会默认取得最大值，保持预定义大小
         JLabel labelSumValues = new JLabel("总数量：");
-        JTextField sumValues = new JTextField(3);
         sumValues.setEditable(false);//不可修改
         sumValues.setMaximumSize(ID.getPreferredSize());   //使在箱式布局下不会默认取得最大值，保持预定义大小
         Box hbox3 = Box.createHorizontalBox();
@@ -160,23 +188,64 @@ class sellFrame extends JFrame {
         vbox.add(Box.createVerticalStrut(10));
         add(vbox, BorderLayout.CENTER);
         //add(new JScrollPane(table), BorderLayout.CENTER);
+        //“添加仓库”按钮设计
+        addStore.addActionListener(new ActionListener() {
 
+            public void actionPerformed(ActionEvent e) {
+                storeComboBox.setEditable(true);//设置仓库JComboBox可编辑
+                storeComboBox.setSelectedIndex(-1);//把内容清空，提高用户体验
+            }
+        });
+    
+        //退出按钮设计
+        exit.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
         //提交按钮设计
         referButton.addActionListener(new ActionListener() {
-        /**
-         * 给按钮加入响应，用以“持久化”tag和judge两个文件，更新数据
-         */
+
+            /**
+             * 给按钮加入响应，用以“持久化”tag和judge两个文件，更新数据
+             */
             public void actionPerformed(ActionEvent e) {
                 try {
                     //tagJudgeRW.writeFile("tag", idMake.tag);  老方法，此文件在测试包中的oldPacket
                     //tagJudgeRW.writeFile("judge", idMake.judge);
                     propertiesRW.proIDMakeWrite("tag", idMake.tag);
                     propertiesRW.proIDMakeWrite("judge", idMake.judge);
+                    //把现在使用的仓库写入到properties文件，等下次打开时自动变成上次使用的仓库
+                    propertiesRW.proIDMakeWrite("storeSell",storeComboBox.getSelectedIndex());
                 } catch (IOException ex) {
                     Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            sell2Main sellBt=new sell2Main();//定义一个新的对象，用以传输数据；
+                sellBt.setID(ID.getText());
+                sellBt.setYear(year.getSelectedItem().toString());
+                sellBt.setMonth(month.getSelectedItem().toString());
+                sellBt.setDay(day.getSelectedItem().toString());
+                sellBt.setStore(storeComboBox.getSelectedItem().toString());
+                //未完成：如果是新加入的仓库，把新仓库加入到“仓库”数据库中；并且设置这个仓库为首选仓库修改properties文件
+                for(int i=0;i<model.getRowCount();i++){
+                    sellBt.setNum(model.getValueAt(i, 0).toString());
+                sellBt.setInfo(model.getValueAt(i, 1).toString());
+                sellBt.setAmount(model.getValueAt(i, 2).toString());
+                sellBt.setOutPrice(model.getValueAt(i, 3).toString());
+                sellBt.setOthers(model.getValueAt(i, 4).toString());
+                sellBt.test();
+                }
+                
+                
+
             }
         });
+    //获取信息
+    //1）info
+        
+    
+
     }
 
     public static void addEditEvent(JTable tb) {
@@ -257,21 +326,6 @@ class sellFrame extends JFrame {
             ex.printStackTrace();
         }
     }
-    private JComboBox NameCombo;
-    private static final int DEFAULT_WIDTH = 600;
-    private static final int DEFAULT_HEIGHT = 400;
-    private Object[] store = {
-        "丰南", "玉田", "丰润"
-    };
-    private Object[] Objyear = {
-        "2009", "2010", "2011", "2012"
-    };
-    private Object[] Objmonth = {
-        "01", "02", "03", "04", "05", "06", "07", "09", "10", "11", "12"
-    };
-    private Object[] Objday = {
-        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
-    };
 }
 
 class PlanetTableModel extends AbstractTableModel {
@@ -316,7 +370,7 @@ class PlanetTableModel extends AbstractTableModel {
         {"", "", "", "", ""},
         {"", "", "", "", ""},
         {"", "", "", "", ""},
-            };
+                        };
     private String[] columnNames = {"编号", "商品名称", "数量", "单价", "备注"};
 }
 
