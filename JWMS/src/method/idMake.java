@@ -32,7 +32,7 @@ public class idMake {
      * 这两个变量主要的作用就是为了达到1）在同一天的编号是顺序排列的，2）在不同天从0开始刷新
      * 没经过一个judge(),就会使得tag做出相应的更改，从而更新tagNew，从而达到目的
      */
-    public static int tag =Integer.parseInt(tagJudgeRW.readFile("tag"));
-    public static int judge = Integer.parseInt(tagJudgeRW.readFile("judge"));
+    public static int tag =Integer.parseInt(propertiesRW.proIDMakeRead("tag"));
+    public static int judge = Integer.parseInt(propertiesRW.proIDMakeRead("judge"));
             
 }

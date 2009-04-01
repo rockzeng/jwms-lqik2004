@@ -6,6 +6,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
@@ -164,8 +167,14 @@ class sellFrame extends JFrame {
          * 给按钮加入响应，用以“持久化”tag和judge两个文件，更新数据
          */
             public void actionPerformed(ActionEvent e) {
-                tagJudgeRW.writeFile("tag", idMake.tag);
-                tagJudgeRW.writeFile("judge", idMake.judge);
+                try {
+                    //tagJudgeRW.writeFile("tag", idMake.tag);  老方法，此文件在测试包中的oldPacket
+                    //tagJudgeRW.writeFile("judge", idMake.judge);
+                    propertiesRW.proIDMakeWrite("tag", idMake.tag);
+                    propertiesRW.proIDMakeWrite("judge", idMake.judge);
+                } catch (IOException ex) {
+                    Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
