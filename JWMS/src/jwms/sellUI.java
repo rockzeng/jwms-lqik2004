@@ -65,8 +65,8 @@ class sellFrame extends JFrame {
     Object[] items = new Object[]{
         "zzz", "zba", "aab", "abc", "acb", "dfg", "aba", "hpp", "pp", "hlp"
     };
-    private static final int DEFAULT_WIDTH = 600;
-    private static final int DEFAULT_HEIGHT = 400;
+    private static final int DEFAULT_WIDTH = 400;
+    private static final int DEFAULT_HEIGHT = 647;
     private JComboBox NameCombo;
     private JTextField ID = new JTextField(12);//x20090330***  共12位
     private JComboBox year = new JComboBox(Objyear);//增加了自动选择时间功能
@@ -90,6 +90,7 @@ class sellFrame extends JFrame {
         hbox0.add(Box.createHorizontalGlue());
         hbox0.add(labelID);
         hbox0.add(ID);
+        hbox0.add(Box.createHorizontalStrut(5));
         //设置日期栏
         JLabel label1 = new JLabel("日期：");
         year.setSelectedIndex(getDate.yearIndex());
@@ -104,6 +105,7 @@ class sellFrame extends JFrame {
         month.setMaximumSize(month.getPreferredSize());
         day.setMaximumSize(day.getPreferredSize());
         Box hbox1 = Box.createHorizontalBox();
+        hbox1.add(Box.createHorizontalStrut(5));
         hbox1.add(label1);
         hbox1.add(year);
         hbox1.add(label2);
@@ -120,12 +122,14 @@ class sellFrame extends JFrame {
         storeComboBox.setEditable(false);   //仓库不可直接修改
         JButton addStore=new JButton("添加仓库");
         Box hbox2 = Box.createHorizontalBox();
+        hbox2.add(Box.createHorizontalStrut(5));
         hbox2.add(labelStore);
         hbox2.add(storeComboBox);
         hbox2.add(Box.createHorizontalStrut(10));
         hbox2.add(addStore);
         hbox2.add(Box.createHorizontalGlue());
         //加入列表栏
+        
         table.setRowSelectionAllowed(false);
         addEditEvent(table);
         // set up renderers and editors
@@ -144,9 +148,18 @@ class sellFrame extends JFrame {
         TableColumnModel columnModel = table.getColumnModel();
         TableColumn NameColumn = columnModel.getColumn(1);
         NameColumn.setCellEditor(new DefaultCellEditor(NameCombo));
+        //table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);//自动调整方式，未开启
+        table.getColumnModel().getColumn(0).setPreferredWidth(1);//设置第一列列宽
+        table.getColumnModel().getColumn(2).setPreferredWidth(5);
+        table.getColumnModel().getColumn(3).setPreferredWidth(6);
         //为“编号”列赋初值
         for(int i=0;i<model.getRowCount();i++){ 
         model.setValueAt(i+1, i,0);}
+        JScrollPane tablePane=new JScrollPane(table);
+        Box hboxPane=Box.createHorizontalBox();
+        hboxPane.add(Box.createHorizontalStrut(5));
+        hboxPane.add(tablePane);
+        hboxPane.add(Box.createHorizontalStrut(5));
         //设置合计栏
         JLabel labelSumPrice = new JLabel("总价：");
         sumPrice.setEditable(false);//不可修改
@@ -161,6 +174,7 @@ class sellFrame extends JFrame {
         hbox3.add(Box.createHorizontalStrut(30));
         hbox3.add(labelSumPrice);
         hbox3.add(sumPrice);
+        hbox3.add(Box.createHorizontalStrut(5));
         //设置提交按钮
         JButton referButton = new JButton("提交");
         JButton exit = new JButton("关闭");
@@ -177,10 +191,10 @@ class sellFrame extends JFrame {
         vbox.add(hbox0);
         vbox.add(Box.createVerticalStrut(4));
         vbox.add(hbox1);
-        vbox.add(Box.createVerticalStrut(4));
+        vbox.add(Box.createVerticalStrut(6));
         vbox.add(hbox2);
-        vbox.add(Box.createVerticalStrut(4));
-        vbox.add(new JScrollPane(table));
+        vbox.add(Box.createVerticalStrut(8));
+        vbox.add(hboxPane);
         vbox.add(Box.createVerticalStrut(4));
         vbox.add(hbox3);
         vbox.add(Box.createVerticalStrut(15));
