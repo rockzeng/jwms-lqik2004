@@ -10,6 +10,10 @@ import java.util.logging.Logger;
  * @author Administrator
  */
 public class dbOperation {
+    private String SQL;
+    private Connection conn;
+    private Statement stmt;
+    private ResultSet rs = null;
 
     public void DBConnect() {
 
@@ -29,7 +33,7 @@ public class dbOperation {
 
     public void DBClosed() {
         try {
-            rs.close();
+            //rs.close();
             stmt.close();
             conn.close();
         } catch (SQLException ex) {
@@ -53,9 +57,5 @@ public class dbOperation {
     public ResultSet DBReturnRS() {
         return rs;
     }
-    private String SQL;
-    private Connection conn;
-    private Statement stmt;
-    private ResultSet rs;
 }
 

@@ -120,7 +120,7 @@ class sellFrame extends JFrame {
         storeComboBox.setSelectedIndex(Integer.parseInt(propertiesRW.proIDMakeRead("storeSell")));
         storeComboBox.setMaximumSize(storeComboBox.getPreferredSize());
         storeComboBox.setEditable(false);   //仓库不可直接修改
-        JButton addStore=new JButton("添加仓库");
+        JButton addStore = new JButton("添加仓库");
         Box hbox2 = Box.createHorizontalBox();
         hbox2.add(Box.createHorizontalStrut(5));
         hbox2.add(labelStore);
@@ -129,7 +129,7 @@ class sellFrame extends JFrame {
         hbox2.add(addStore);
         hbox2.add(Box.createHorizontalGlue());
         //加入列表栏
-        
+
         table.setRowSelectionAllowed(false);
         addEditEvent(table);
         // set up renderers and editors
@@ -153,10 +153,11 @@ class sellFrame extends JFrame {
         table.getColumnModel().getColumn(2).setPreferredWidth(5);
         table.getColumnModel().getColumn(3).setPreferredWidth(6);
         //为“编号”列赋初值
-        for(int i=0;i<model.getRowCount();i++){ 
-        model.setValueAt(i+1, i,0);}
-        JScrollPane tablePane=new JScrollPane(table);
-        Box hboxPane=Box.createHorizontalBox();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            model.setValueAt(i + 1, i, 0);
+        }
+        JScrollPane tablePane = new JScrollPane(table);
+        Box hboxPane = Box.createHorizontalBox();
         hboxPane.add(Box.createHorizontalStrut(5));
         hboxPane.add(tablePane);
         hboxPane.add(Box.createHorizontalStrut(5));
@@ -210,7 +211,7 @@ class sellFrame extends JFrame {
                 storeComboBox.setSelectedIndex(-1);//把内容清空，提高用户体验
             }
         });
-    
+
         //退出按钮设计
         exit.addActionListener(new ActionListener() {
 
@@ -231,34 +232,35 @@ class sellFrame extends JFrame {
                     propertiesRW.proIDMakeWrite("tag", idMake.tag);
                     propertiesRW.proIDMakeWrite("judge", idMake.judge);
                     //把现在使用的仓库写入到properties文件，等下次打开时自动变成上次使用的仓库
-                    propertiesRW.proIDMakeWrite("storeSell",storeComboBox.getSelectedIndex());
+                    propertiesRW.proIDMakeWrite("storeSell", storeComboBox.getSelectedIndex());
                 } catch (IOException ex) {
                     Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            sell2Main sellBt=new sell2Main();//定义一个新的对象，用以传输数据；
+                sell2Main sellBt = new sell2Main();//定义一个新的对象，用以传输数据；
                 sellBt.setID(ID.getText());
                 sellBt.setYear(year.getSelectedItem().toString());
                 sellBt.setMonth(month.getSelectedItem().toString());
                 sellBt.setDay(day.getSelectedItem().toString());
                 sellBt.setStore(storeComboBox.getSelectedItem().toString());
                 //未完成：如果是新加入的仓库，把新仓库加入到“仓库”数据库中；并且设置这个仓库为首选仓库修改properties文件
-                for(int i=0;i<model.getRowCount();i++){
+                for (int i = 0; i < model.getRowCount(); i++) {
                     sellBt.setNum(model.getValueAt(i, 0).toString());
-                sellBt.setInfo(model.getValueAt(i, 1).toString());
-                sellBt.setAmount(model.getValueAt(i, 2).toString());
-                sellBt.setOutPrice(model.getValueAt(i, 3).toString());
-                sellBt.setOthers(model.getValueAt(i, 4).toString());
-                sellBt.test();
+                    sellBt.setInfo(model.getValueAt(i, 1).toString());
+                    sellBt.setAmount(model.getValueAt(i, 2).toString());
+                    sellBt.setOutPrice(model.getValueAt(i, 3).toString());
+                    sellBt.setOthers(model.getValueAt(i, 4).toString());
+                    sellBt.test();
+                    sellBt.transmitSell();
                 }
-                
-                
+
+
 
             }
         });
     //获取信息
     //1）info
-        
-    
+
+
 
     }
 
@@ -384,7 +386,7 @@ class PlanetTableModel extends AbstractTableModel {
         {"", "", "", "", ""},
         {"", "", "", "", ""},
         {"", "", "", "", ""},
-                        };
+                                                };
     private String[] columnNames = {"编号", "商品名称", "数量", "单价", "备注"};
 }
 

@@ -13,21 +13,80 @@ import method.addDel;
 
 /**
  *
- * @author Administrator
+ * @author lqik2004
+ * 同价调拨单
+ * 
  */
 public class equal2Main {
 
-    private int year;
-    private int month;
-    private int day;
+    private String year;
+    private String month;
+    private String day;
     private String id;
     private String info;
     private String color = "";
     private String size = "";
     private String inStore;//调入仓库 getin store
     private String outStore;//调出仓库 getout store
-    private int amount = 0;
+    private String amount;
     private String others;
+//录入信息
+    public void test() {
+        System.out.println(year);
+        System.out.println(month);
+        System.out.println(day);
+        System.out.println(id);
+        System.out.println(inStore);
+        System.out.println(info);
+        System.out.println(outStore);
+        System.out.println(amount);
+        System.out.println(others);
+
+    }
+
+    /**
+     * 获得信息方法
+     * 12个
+     */
+    public void setYear(String text) {
+        year = text;
+    }
+
+    public void setMonth(String text) {
+        month = text;
+    }
+
+    public void setDay(String text) {
+        day = text;
+    }
+
+    public void setID(String text) {
+        id = text;
+    }
+
+    public void setInfo(String text) {
+        info = text;
+    }
+
+    public void setColor(String text) {
+        color = text;
+    }
+
+    public void setSize(String text) {
+        size = text;
+    }
+
+    public void setINStore(String text) {
+        inStore = text;
+    }
+
+    public void setOUTStore(String text) {
+        outStore = text;
+    }
+
+    public void setAmount(String text) {
+        amount = text;
+    }
 
     public void transmit() {
         try {
@@ -35,7 +94,7 @@ public class equal2Main {
             dbOperation t2Equal = new dbOperation();
             t2Equal.DBConnect();
             String sql;
-            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + inStore + "','" + outStore + "','"+others+"')";
+            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + inStore + "','" + outStore + "','" + others + "')";
             t2Equal.DBSqlExe(sql);
             t2Equal.DBClosed();
             //对库存的增减

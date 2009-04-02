@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package jwms;
 
 import method.dbOperation;
@@ -13,31 +9,91 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author Administrator
+ * @author lqik2004
+ * 录入基本信息
  */
 public class input2Main {
 
-    private int year;
-    private int month;
-    private int day;
+    private String year;
+    private String month;
+    private String day;
     private String id;
     private String info;
     private String color = "";
     private String size = "";
-    private double inPrice = 0;
-    private double outPrice = 0;
+    private String inPrice;
+    private String outPrice;
     private String store;
-    private int amount = 0;
+    private String amount;
+    
+    //输入信息
+     public void test() {
+        System.out.println(year);
+        System.out.println(month);
+        System.out.println(day);
+        System.out.println(id);
+        System.out.println(store);
+        System.out.println(info);       
+        System.out.println(amount);
+        System.out.println(outPrice);
+    }
 
+    /**
+     * 获得信息方法
+     * 12个
+     */
+    public void setYear(String text) {
+        year = text;
+    }
+
+    public void setMonth(String text) {
+        month = text;
+    }
+
+    public void setDay(String text) {
+        day = text;
+    }
+
+    public void setID(String text) {
+        id = text;
+    }
+
+    public void setInfo(String text) {
+        info = text;
+    }
+
+    public void setColor(String text) {
+        color = text;
+    }
+
+    public void setSize(String text) {
+        size = text;
+    }
+
+    public void setInPrice(String text) {
+        inPrice = text;
+    }
+
+    public void setOutPrice(String text) {
+        outPrice = text;
+    }
+
+    public void setStore(String text) {
+        store = text;
+    }
+
+    public void setAmount(String text) {
+        amount =text;
+    }
     public void transmit() {
-        try {           
+        try {
             addDel mainT = new addDel();
-            dbOperation t2Input = new dbOperation();          
+            dbOperation t2Input = new dbOperation();
             t2Input.DBConnect();
             String sql;
             sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "')";
             t2Input.DBSqlExe(sql);
-            t2Input.DBClosed();         
+            t2Input.DBClosed();
             mainT.setAmount(amount);
             mainT.setColor(color);
             mainT.setInfo(info);

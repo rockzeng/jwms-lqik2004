@@ -21,7 +21,7 @@ public class addDel {
     private double inPrice = 0;
     private double outPrice = 0;
     private String store;
-    private int amount = 0;
+    private String amount;
     //get some necessary information
     public void setInfo(String text) {
         info = text;
@@ -47,7 +47,7 @@ public class addDel {
         store = text;
     }
 
-    public void setAmount(int text) {
+    public void setAmount(String text) {
         amount = text;
     }
     //判断增加或者减少主数据库信息是否存在
@@ -57,7 +57,7 @@ public class addDel {
         dbOperation isInfoExistDb = new dbOperation();
         isInfoExistDb.DBConnect();
         String sql = "select * from maint where info='" + x + "'";
-        ResultSet rs = isInfoExistDb.DBSqlQuery(x);
+        ResultSet rs = isInfoExistDb.DBSqlQuery(sql);
         if (rs.next()) {
             result = true;
         }
