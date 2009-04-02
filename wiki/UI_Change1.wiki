@@ -1,0 +1,20 @@
+#labels UI,change
+=UI Change=
+
+2009.4.2
+
+[http://jwms-lqik2004.googlecode.com/files/4.PNG]
+
+改变了窗口的风格，由横排变成了竖排
+
+2009.4.1
+
+[http://jwms-lqik2004.googlecode.com/files/3.PNG]
+
+增加了_添加仓库_按钮
+
+2009.3.X
+
+[http://jwms-lqik2004.googlecode.com/files/2.PNG]
+
+[http://jwms-lqik2004.googlecode.com/files/1.PNG]
