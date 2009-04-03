@@ -135,7 +135,7 @@ public class sell2Main {
             mainT.setInfo(info);
             mainT.setSize(size);
             mainT.setStore(store);
-            mainT.setInPrice(outPrice);
+            mainT.setInPrice(outPrice);//退货的时候售价等于进货价
             mainT.increaseMethod();
             dbOperation t2Rturn = new dbOperation();
             t2Rturn.DBConnect();

@@ -109,6 +109,7 @@ public class input2Main {
             mainT.setSize(size);
             mainT.setStore(store);
             mainT.setInPrice(inPrice);
+            mainT.setOutPrice(outPrice);
             mainT.increaseMethod();
         } catch (SQLException ex) {
             Logger.getLogger(input2Main.class.getName()).log(Level.SEVERE, null, ex);

@@ -17,7 +17,7 @@ public class addDel {
     private String color = "";
     private String size = "";
     private String inPrice;
-    private double outPrice = 0;
+    private String outPrice;
     private String store;
     private String amount;
     //get some necessary information
@@ -38,7 +38,7 @@ public class addDel {
         inPrice = text;
     }
 
-    public void setOutPrice(double text) {
+    public void setOutPrice(String text) {
         outPrice = text;
     }
 
@@ -98,7 +98,7 @@ public class addDel {
         } else {
             increaseDb.DBConnect();
             //update maint set amount=amount+"amount" where info="info" and store="store"
-            String sql = "insert into maint(info,amount,store,inPrice) values('" + info + "','" + amount + "','" + store + "','" + inPrice + "')";
+            String sql = "insert into maint(info,amount,store,inPrice) values('" + info + "','" + amount + "','" + store + "','" + inPrice + "','" + outPrice + "')";
             increaseDb.DBSqlExe(sql);
             increaseDb.DBClosed();
         }

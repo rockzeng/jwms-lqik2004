@@ -387,10 +387,11 @@ class sellFrame extends JFrame {
                 String info = model.getValueAt(selectingrow, 1).toString();//获得INFO的取值
                 String values = model.getValueAt(selectingrow, 2).toString();
                 String inp = model.getValueAt(selectingrow, 3).toString();
-                String sql = "select distinct inPrice from maint where info='" + info + "'";
+                
                 if (selectingcol == 2) {
                     dbOperation findMain = new dbOperation();
                     findMain.DBConnect();
+                    String sql = "select distinct inPrice from maint where info='" + info + "'";
                     rs = findMain.DBSqlQuery(sql);
                     while (rs.next()) {
                         inp = rs.getString(1);

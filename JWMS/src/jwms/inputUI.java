@@ -70,7 +70,7 @@ class inputFrame extends JFrame {
     private JComboBox month = new JComboBox(Objmonth);
     private JComboBox day = new JComboBox(Objday);
     private JComboBox storeComboBox = new JComboBox();
-    private TableModel model = new PlanetTableModel();
+    private TableModel model = new inputPlanetTableModel();
     private JTable table = new JTable(model);
     private JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
     private JTextField sumValues = new JTextField(3);
@@ -386,14 +386,48 @@ class inputFrame extends JFrame {
                 ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();
                 tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1) * tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
                 /**
+                 * 自动从maint中获得入库价，出库价，并计算得到总金额
+                 */
+                ResultSet rs = null;
+                String info = model.getValueAt(selectingrow, 1).toString();
+                String values = model.getValueAt(selectingrow, 2).toString();//取得商品的数量
+                String in = model.getValueAt(selectingrow, 3).toString();//取得商品的入库价
+                String out = model.getValueAt(selectingrow, 4).toString();
+                if (selectingcol == 2) {
+                    dbOperation findMain = new dbOperation();
+                    findMain.DBConnect();
+                    String sql = "select distinct inPrice,outPrice from maint where info='" + info + "'";
+                    rs = findMain.DBSqlQuery(sql);
+                    while (rs.next()) {
+                        in = rs.getString(1);
+                        out=rs.getString(2);
+                        break;
+                    }
+                    findMain.DBClosed();
+                    model.setValueAt(in, selectingrow, 3);
+                    model.setValueAt(out, selectingrow, 4);
+                }
+               /* if (selectingcol == 3) {
+                    dbOperation findMain = new dbOperation();
+                    findMain.DBConnect();
+                    String sql = "select distinct outPrice from maint where info='" + info + "'";
+                    rs = findMain.DBSqlQuery(sql);
+                    while (rs.next()) {
+                        in = rs.getString(1);
+                        break;
+                    }
+                    findMain.DBClosed();
+                    model.setValueAt(in, selectingrow, 4);
+
+                }*/
+                /**
                  * 自动计算总金额
                  */
                 if (selectingcol == 4) {
-                    String values = model.getValueAt(selectingrow, selectingcol - 2).toString();//取得商品的数量
-                    String in = model.getValueAt(selectingrow, selectingcol - 1).toString();//取得商品的入库价
-                    float sum=Float.parseFloat(values)*Float.parseFloat(in);
-                    model.setValueAt(String.valueOf(sum), selectingrow, selectingcol+1);
-                   
+
+                    float sum = Float.parseFloat(values) * Float.parseFloat(in);
+                    model.setValueAt(String.valueOf(sum), selectingrow, selectingcol + 1);
+
                 }
             } catch (Exception ex) {
             }
@@ -403,7 +437,7 @@ class inputFrame extends JFrame {
     }
 }
 
-class PlanetTableModel extends AbstractTableModel {
+class inputPlanetTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int c) {
