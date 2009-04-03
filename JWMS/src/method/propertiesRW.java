@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
  *
  * @author lqik2004
  * 应用
+ * text
  */
 public class propertiesRW {
     public static String proIDMakeRead(String x){
