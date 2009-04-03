@@ -4,25 +4,24 @@
  */
 package method;
 
-import jwms.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.JOptionPane;
 
 /**
  *
- * @author Administrator
+ * @author lqik2004
  */
 public class addDel {
 
     private String info;
     private String color = "";
     private String size = "";
-    private double inPrice = 0;
+    private String inPrice;
     private double outPrice = 0;
     private String store;
     private String amount;
     //get some necessary information
+
     public void setInfo(String text) {
         info = text;
     }
@@ -35,11 +34,11 @@ public class addDel {
         size = text;
     }
 
-    public void setAvgInPrice(double text) {
+    public void setInPrice(String text) {
         inPrice = text;
     }
 
-    public void setAvgOutPrice(double text) {
+    public void setOutPrice(double text) {
         outPrice = text;
     }
 
@@ -51,9 +50,26 @@ public class addDel {
         amount = text;
     }
     //判断增加或者减少主数据库信息是否存在
-    private boolean isInfoExist(String info) throws SQLException {
+    //为了给“增加仓库”提供判断方法，增强了判断方法功能
+
+    public boolean isStoreExist(String store) throws SQLException {
+        boolean result = false;
+        String x = store;
+        dbOperation isInfoExistDb = new dbOperation();
+        isInfoExistDb.DBConnect();
+        String sql = "select * from storet where store='" + x + "'";
+        ResultSet rs = isInfoExistDb.DBSqlQuery(sql);
+        if (rs.next()) {
+            result = true;
+        }
+        isInfoExistDb.DBClosed();
+        return result;
+    }
+
+    public boolean isInfoExist(String info) throws SQLException {
         boolean result = false;
         String x = info;
+
         dbOperation isInfoExistDb = new dbOperation();
         isInfoExistDb.DBConnect();
         String sql = "select * from maint where info='" + x + "'";
@@ -65,6 +81,7 @@ public class addDel {
         return result;
     }
     //core method
+
     /**
      * 增加库存
      * @throws java.sql.SQLException
@@ -81,12 +98,13 @@ public class addDel {
         } else {
             increaseDb.DBConnect();
             //update maint set amount=amount+"amount" where info="info" and store="store"
-            String sql = "insert into maint(info,amount,store) values('" + info + "','" + amount + "','" + store + "')";
+            String sql = "insert into maint(info,amount,store,inPrice) values('" + info + "','" + amount + "','" + store + "','" + inPrice + "')";
             increaseDb.DBSqlExe(sql);
             increaseDb.DBClosed();
         }
     }
     //应当放到模块入库之前进行判断
+
     /**
      * 减少库存
      * @return
@@ -102,10 +120,10 @@ public class addDel {
             decreaseDb.DBSqlExe(sql);
             decreaseDb.DBClosed();
         }/*else{
-            
-            JOptionPane.showConfirmDialog(null, "您所销售的货品:"+info+"不存在！");
+
+        JOptionPane.showConfirmDialog(null, "您所销售的货品:"+info+"不存在！");
         }*/
         return result;
-                
+
     }
 }

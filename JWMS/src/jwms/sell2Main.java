@@ -118,7 +118,7 @@ public class sell2Main {
                 t2Sell.DBSqlExe(sql);
                 t2Sell.DBClosed();
             } else {
-                JOptionPane.showConfirmDialog(null, "您所销售的货品:" + info + "不存在！");
+                JOptionPane.showMessageDialog(null, "您所销售的货品:" + info + "不存在！");
             }
         } catch (SQLException ex) {
             Logger.getLogger(sell2Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -135,6 +135,7 @@ public class sell2Main {
             mainT.setInfo(info);
             mainT.setSize(size);
             mainT.setStore(store);
+            mainT.setInPrice(outPrice);
             mainT.increaseMethod();
             dbOperation t2Rturn = new dbOperation();
             t2Rturn.DBConnect();

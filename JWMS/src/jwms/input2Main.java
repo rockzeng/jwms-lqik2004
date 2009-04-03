@@ -25,6 +25,8 @@ public class input2Main {
     private String outPrice;
     private String store;
     private String amount;
+    private String sumPrice;
+    private String num;
     
     //输入信息
      public void test() {
@@ -85,13 +87,20 @@ public class input2Main {
     public void setAmount(String text) {
         amount =text;
     }
+    public void setSumPrice(String text){
+        sumPrice=text;
+    }
+    public void setNum(String text){
+        num=text;
+    }
     public void transmit() {
         try {
             addDel mainT = new addDel();
             dbOperation t2Input = new dbOperation();
             t2Input.DBConnect();
             String sql;
-            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "')";
+            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "','" + sumPrice + "','" + num + "')";
+            System.out.print(sql);
             t2Input.DBSqlExe(sql);
             t2Input.DBClosed();
             mainT.setAmount(amount);
@@ -99,6 +108,7 @@ public class input2Main {
             mainT.setInfo(info);
             mainT.setSize(size);
             mainT.setStore(store);
+            mainT.setInPrice(inPrice);
             mainT.increaseMethod();
         } catch (SQLException ex) {
             Logger.getLogger(input2Main.class.getName()).log(Level.SEVERE, null, ex);

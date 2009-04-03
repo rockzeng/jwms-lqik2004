@@ -4,8 +4,12 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -37,9 +41,6 @@ public class AutoCompleter
     }
 
     public void keyReleased(KeyEvent e) {
-        editor.requestFocusInWindow();
-        editor.requestFocus();
-        editor.selectAll();
         char ch = e.getKeyChar();
         /*if (ch == KeyEvent.CHAR_UNDEFINED || Character.isISOControl(ch)) {
         return;}
