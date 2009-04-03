@@ -387,6 +387,6 @@ class PlanetTableModel extends AbstractTableModel {
         {"", "", "", "", ""},
         {"", "", "", "", ""},
                                                 };
-    private String[] columnNames = {"编号", "商品名称", "数量", "单价", "备注"};
+    private String[] columnNames = {"编号", "商品名称", "数量", "金额", "备注"};
 }
 

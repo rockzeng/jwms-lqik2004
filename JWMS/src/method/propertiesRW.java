@@ -20,7 +20,7 @@ public class propertiesRW {
         
         Properties fieldName = new Properties();
         try {
-            fieldName.load(new FileInputStream("data\\properties.dat"));
+            fieldName.load(new FileInputStream("data\\properties.txt"));
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null,"IO操作错误,不能正确读取文件");
         }
@@ -39,9 +39,9 @@ public class propertiesRW {
         String transY = String.valueOf(y);
         try {
             Properties fieldName = new Properties();
-            fieldName.load(new FileInputStream("data\\properties.dat"));
+            fieldName.load(new FileInputStream("data\\properties.txt"));
             fieldName.setProperty(x, transY);
-            fieldName.store(new FileOutputStream("data\\properties.dat"), "");
+            fieldName.store(new FileOutputStream("data\\properties.txt"), "");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(propertiesRW.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null,"IO操作错误,不能正确写入文件");
