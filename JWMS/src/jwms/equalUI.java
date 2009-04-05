@@ -31,14 +31,14 @@ import method.*;
  *
  * @author lqik2004
  */
-public class sellUI {
+public class equalUI {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
-        sellFrame frame = new sellFrame();
+        equalFrame frame = new equalFrame();
         /**Toolkit tool = Toolkit.getDefaultToolkit();
         Dimension screenSize = tool.getScreenSize();
         int locateHeight = (screenSize.height - frame.getHeight()) / 2;
@@ -51,7 +51,7 @@ public class sellUI {
     }
 }
 
-class sellFrame extends JFrame {
+class equalFrame extends JFrame {
 
     private Object[] Objyear = {
         "2009", "2010", "2011", "2012"
@@ -62,8 +62,8 @@ class sellFrame extends JFrame {
     private Object[] Objday = {
         "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
     };
-    int sumvalues=0;
-    float sumprice=0;
+    private float sumprice = 0; //表单中的总价
+    private int sumvalues = 0;  //表单中的总数量
     Object[] items = null;
     private static final int DEFAULT_WIDTH = 400;
     private static final int DEFAULT_HEIGHT = 647;
@@ -72,22 +72,23 @@ class sellFrame extends JFrame {
     private JComboBox year = new JComboBox(Objyear);//增加了自动选择时间功能
     private JComboBox month = new JComboBox(Objmonth);
     private JComboBox day = new JComboBox(Objday);
-    private JComboBox storeComboBox = new JComboBox();
-    private TableModel model = new PlanetTableModel();
+    private JComboBox outStoreComboBox = new JComboBox();
+    private JComboBox inStoreComboBox = new JComboBox();
+    private TableModel model = new inputPlanetTableModel();
     private JTable table = new JTable(model);
     private JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
     private JTextField sumValues = new JTextField(3);
 
-    public sellFrame() throws Exception {
+    public equalFrame() throws Exception {
         //初始化数据库，读入信息
         storeLoad();//读入仓库信息
-        items = infoLoad();//读入info信息
-        setTitle("销售退货单");
+        items = infoLoad();
+        setTitle("同价调拨单");
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         //设置ID
         JLabel labelID = new JLabel("编号：");
-        ID.setEditable(false);//不可修改        
-        ID.setText(new idMake().idMake("S"));   //设置编号，销售单以S开头
+        ID.setEditable(false);//不可修改
+        ID.setText(new idMake().idMake("E"));   //设置编号，销售单以E开头
         ID.setMaximumSize(ID.getPreferredSize());   //使在箱式布局下不会默认取得最大值，保持预定义大小
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(Box.createHorizontalGlue());
@@ -118,18 +119,23 @@ class sellFrame extends JFrame {
         hbox1.add(label4);
         hbox1.add(Box.createHorizontalGlue());
         //设置仓库栏
-        JLabel labelStore = new JLabel("仓库：");
+        JLabel labelStoreOUT = new JLabel("发货仓库：");
         //从properties中读取仓库设置
-        storeComboBox.setSelectedIndex(Integer.parseInt(propertiesRW.proIDMakeRead("storeSell")));
-        storeComboBox.setMaximumSize(storeComboBox.getPreferredSize());
-        storeComboBox.setEditable(false);   //仓库不可直接修改
-        //JButton addStore = new JButton("添加仓库");
+        outStoreComboBox.setSelectedIndex(Integer.parseInt(propertiesRW.proIDMakeRead("outStoreEqual")));
+        outStoreComboBox.setMaximumSize(outStoreComboBox.getPreferredSize());
+        outStoreComboBox.setEditable(false);   //仓库不可直接修改
+        JLabel labelStoreIN = new JLabel("收货仓库：");
+        //从properties中读取仓库设置
+        inStoreComboBox.setSelectedIndex(Integer.parseInt(propertiesRW.proIDMakeRead("inStoreEqual")));
+        inStoreComboBox.setMaximumSize(outStoreComboBox.getPreferredSize());
+        inStoreComboBox.setEditable(false);   //仓库不可直接修改
         Box hbox2 = Box.createHorizontalBox();
         hbox2.add(Box.createHorizontalStrut(5));
-        hbox2.add(labelStore);
-        hbox2.add(storeComboBox);
-        //hbox2.add(Box.createHorizontalStrut(10));
-        //hbox2.add(addStore);
+        hbox2.add(labelStoreOUT);
+        hbox2.add(outStoreComboBox);
+        hbox2.add(Box.createHorizontalStrut(10));
+        hbox2.add(labelStoreIN);
+        hbox2.add(inStoreComboBox);
         hbox2.add(Box.createHorizontalGlue());
         //加入列表栏
 
@@ -146,15 +152,14 @@ class sellFrame extends JFrame {
         AutoCompleter.setItems(items);
         //把单元格改造成JAutoCompleteComboBox
         NameCombo = new JAutoCompleteComboBox(items);
-        NameCombo.addActionListener(NameCombo);
-
         TableColumnModel columnModel = table.getColumnModel();
         TableColumn NameColumn = columnModel.getColumn(1);
         NameColumn.setCellEditor(new DefaultCellEditor(NameCombo));
+
         //table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);//自动调整方式，未开启
         table.getColumnModel().getColumn(0).setPreferredWidth(30);//设置第一列列宽
+        table.getColumnModel().getColumn(1).setPreferredWidth(120);
         table.getColumnModel().getColumn(2).setPreferredWidth(50);
-        //table.getColumnModel().getColumn(3).setPreferredWidth(6);
         //为“编号”列赋初值
         for (int i = 0; i < model.getRowCount(); i++) {
             model.setValueAt(i + 1, i, 0);
@@ -200,20 +205,10 @@ class sellFrame extends JFrame {
         vbox.add(Box.createVerticalStrut(8));
         vbox.add(hboxPane);
         vbox.add(Box.createVerticalStrut(4));
-        vbox.add(hbox3);
-        vbox.add(Box.createVerticalStrut(15));
+        
         vbox.add(hbox4);
         vbox.add(Box.createVerticalStrut(10));
         add(vbox, BorderLayout.CENTER);
-        //add(new JScrollPane(table), BorderLayout.CENTER);
-        //“添加仓库”按钮设计
-        /** addStore.addActionListener(new ActionListener() {
-
-        public void actionPerformed(ActionEvent e) {
-        storeComboBox.setEditable(true);//设置仓库JComboBox可编辑
-        storeComboBox.setSelectedIndex(-1);//把内容清空，提高用户体验
-        }
-        });*/
 
         //退出按钮设计
         exit.addActionListener(new ActionListener() {
@@ -235,26 +230,26 @@ class sellFrame extends JFrame {
                     propertiesRW.proIDMakeWrite("tag", idMake.tag);
                     propertiesRW.proIDMakeWrite("judge", idMake.judge);
                     //把现在使用的仓库写入到properties文件，等下次打开时自动变成上次使用的仓库
-                    propertiesRW.proIDMakeWrite("storeSell", storeComboBox.getSelectedIndex());
+                    propertiesRW.proIDMakeWrite("outStoreEqual", outStoreComboBox.getSelectedIndex());
+                    propertiesRW.proIDMakeWrite("inStoreEqual", inStoreComboBox.getSelectedIndex());
                 } catch (IOException ex) {
                     Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                sell2Main sellBt = new sell2Main();//定义一个新的对象，用以传输数据；
-                sellBt.setID(ID.getText());
-                sellBt.setYear(year.getSelectedItem().toString());
-                sellBt.setMonth(month.getSelectedItem().toString());
-                sellBt.setDay(day.getSelectedItem().toString());
-                sellBt.setStore(storeComboBox.getSelectedItem().toString());
-                //未完成：如果是新加入的仓库，把新仓库加入到“仓库”数据库中；并且设置这个仓库为首选仓库修改properties文件
+                equal2Main inputBt = new equal2Main();//定义一个新的对象，用以传输数据；
+                inputBt.setID(ID.getText());
+                inputBt.setYear(year.getSelectedItem().toString());
+                inputBt.setMonth(month.getSelectedItem().toString());
+                inputBt.setDay(day.getSelectedItem().toString());
+                inputBt.setINStore(inStoreComboBox.getSelectedItem().toString());
+                inputBt.setOUTStore(outStoreComboBox.getSelectedItem().toString());
                 for (int i = 0; i < model.getRowCount(); i++) {
                     if (model.getValueAt(i, 1).toString() != "") {  //如果字符串没有，那么不进行继续写入数据库
-                        sellBt.setNum(model.getValueAt(i, 0).toString());
-                        sellBt.setInfo(model.getValueAt(i, 1).toString());
-                        sellBt.setAmount(model.getValueAt(i, 2).toString());
-                        sellBt.setOutPrice(model.getValueAt(i, 3).toString());
-                        sellBt.setOthers(model.getValueAt(i, 5).toString());
-                        sellBt.test();
-                        sellBt.transmitSell();
+                        inputBt.setNum(model.getValueAt(i, 0).toString());
+                        inputBt.setInfo(model.getValueAt(i, 1).toString());
+                        inputBt.setAmount(model.getValueAt(i, 2).toString());
+                        inputBt.setOthers(model.getValueAt(i, 3).toString());
+                        inputBt.test();
+                        inputBt.transmit();
                     }
                 }
 
@@ -262,34 +257,22 @@ class sellFrame extends JFrame {
 
             }
         });
-    //获取信息
-    //1）info
-
-
-
     }
 
-    /**
-     * 新增加了两个方法：storeLoad和infoLoad
-     * 实现了数据从数据库的读取
-     */
     private void storeLoad() {
         dbOperation storeLoad = new dbOperation();
         storeLoad.DBConnect();
         String sql = "select store from storet";
         ResultSet rs = null;
         try {
-            try {
-                rs = storeLoad.DBSqlQuery(sql);
-            } catch (SQLException ex) {
-                Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            rs = storeLoad.DBSqlQuery(sql);
             while (rs.next()) {
-                storeComboBox.addItem(rs.getString(1));
+                inStoreComboBox.addItem(rs.getString(1));
+                outStoreComboBox.addItem(rs.getString(1));
             }
             storeLoad.DBClosed();
         } catch (SQLException ex) {
-            Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(equalFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -313,15 +296,6 @@ class sellFrame extends JFrame {
     }
 
     public void addEditEvent(JTable tb) {
-        tb.addMouseListener(new java.awt.event.MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                JTable tb = (JTable) e.getSource();
-                addKeyDowntoEditEvent(tb);
-            }
-        });
         //tb.addToolTipText("上下键及Tab键进入编辑状态，Esc取消编辑状态");
         tb.addKeyListener(new java.awt.event.KeyAdapter() {
 
@@ -331,7 +305,15 @@ class sellFrame extends JFrame {
                 JTable tb = (JTable) e.getSource();
                 addKeyDowntoEditEvent(tb);
             }
+        });
+        tb.addMouseListener(new java.awt.event.MouseAdapter() {
 
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                JTable tb = (JTable) e.getSource();
+                addKeyDowntoEditEvent(tb);
+            }
         });
     }
 
@@ -367,75 +349,95 @@ class sellFrame extends JFrame {
             }
              */
             try {
+                /**
                 if (selectingrow >= rows) {
-                    selectingrow = 0;
-                    selectingcol++;
+                selectingrow = 0;
+                selectingcol++;
                 }
                 if (selectingcol >= cols) {
-                    selectingcol = 0;
+                selectingcol = 0;
                 }
                 if (selectingcol >= cols) {
-                    selectingcol = 0;
-                    selectingrow++;
+                selectingcol = 0;
+                selectingrow++;
                 }
                 if (selectingrow >= rows) {
-                    selectingrow = 0;
+                selectingrow = 0;
                 }
-
+                 */
                 if (!tb.isCellEditable(selectingrow, selectingcol)) {
                     return;
                 }
 
-                //                                 tb.setRowSelectionInterval(selectingrow,selectingrow);   
-                //                                 tb.setColumnSelectionInterval(selectingcol,selectingcol);   
+                //                                 tb.setRowSelectionInterval(selectingrow,selectingrow);
+                //                                 tb.setColumnSelectionInterval(selectingcol,selectingcol);
                 tb.editCellAt(selectingrow, selectingcol);
                 ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
                 ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();
                 tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1) * tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
                 /**
-                 * 自动从数据库中选出与商品名称相对的进货价
-                 * 先从数据库中读出单价，再把单价*数量得到总金额
+                 * 自动从maint中获得入库价，出库价，并计算得到总金额
                  */
                 ResultSet rs = null;
-                String info = model.getValueAt(selectingrow, 1).toString();//获得INFO的取值
-                String values = model.getValueAt(selectingrow, 2).toString();
-                String inp = model.getValueAt(selectingrow, 3).toString();
-                
+                String info = model.getValueAt(selectingrow, 1).toString();
+                String values = model.getValueAt(selectingrow, 2).toString();//取得商品的数量
+                String in = model.getValueAt(selectingrow, 3).toString();//取得商品的入库价
+                String out = model.getValueAt(selectingrow, 4).toString();
+
                 if (selectingcol == 2) {
                     dbOperation findMain = new dbOperation();
                     findMain.DBConnect();
-                    String sql = "select distinct inPrice from maint where info='" + info + "'";
+                    String sql = "select distinct inPrice,outPrice from maint where info='" + info + "'";
                     rs = findMain.DBSqlQuery(sql);
                     while (rs.next()) {
-                        inp = rs.getString(1);
+                        in = rs.getString(1);
+                        out = rs.getString(2);
                         break;
                     }
                     findMain.DBClosed();
-                    model.setValueAt(inp, selectingrow, 3);
+                    model.setValueAt(in, selectingrow, 3);
+                    model.setValueAt(out, selectingrow, 4);
                 }
-                //System.out.print(inp);
                 /**
                  * 对“总数”的设计
                  */
                 if (selectingcol == 3) {
-                    int value = Integer.parseInt(values);
-                    float finp = Float.parseFloat(inp) * value;
-                    //System.out.print(finp);
-                    inp = String.valueOf(finp);
-                    model.setValueAt(inp, selectingrow, 4);
-                     sumvalues=sumvalues+Integer.parseInt(model.getValueAt(selectingrow, 2).toString());
-                     sumValues.setText(String.valueOf(sumvalues));
+                    sumvalues = sumvalues + Integer.parseInt(model.getValueAt(selectingrow, 2).toString());
                 }
+                sumValues.setText(String.valueOf(sumvalues));
+                /* if (selectingcol == 3) {
+                dbOperation findMain = new dbOperation();
+                findMain.DBConnect();
+                String sql = "select distinct outPrice from maint where info='" + info + "'";
+                rs = findMain.DBSqlQuery(sql);
+                while (rs.next()) {
+                in = rs.getString(1);
+                break;
+                }
+                findMain.DBClosed();
+                model.setValueAt(in, selectingrow, 4);
 
+                }*/
+                /**
+                 * 自动计算总金额
+                 */
+                if (selectingcol == 4) {
+
+                    float sum = Float.parseFloat(values) * Float.parseFloat(in);
+                    model.setValueAt(String.valueOf(sum), selectingrow, selectingcol + 1);
+
+                }
                 /**
                  * 对“总价”的设计，为了防止如果录入完毕的时候光标锁定在最后一列单价不能
                  * 取值的问题，特别加上if判断语句
                  */
-                String sump=model.getValueAt(selectingrow, 4).toString();//取得第五列数据
-                if( selectingcol==5){
-                     sumprice=sumprice+Float.parseFloat(sump);
-                     sumPrice.setText(String.valueOf(sumprice));
+                String sump = model.getValueAt(selectingrow, 5).toString();//取得第五列数据
+                if (sump == null && selectingcol == 5) {
+                    sumprice = sumprice + Float.parseFloat(values) * Float.parseFloat(in);
+                } else if (sump != null && selectingcol != 4) {
+                    sumprice = sumprice + Float.parseFloat(sump);
                 }
+                sumPrice.setText(String.valueOf(sumprice));
 
 
             } catch (Exception ex) {
@@ -446,7 +448,7 @@ class sellFrame extends JFrame {
     }
 }
 
-class PlanetTableModel extends AbstractTableModel {
+class inputPlanetTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int c) {
@@ -477,18 +479,17 @@ class PlanetTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int r, int c) {
-        return c == NAME || c == VALUES || c == PRICE || c == OTHERS || c == SUM;
+        return c == NAME || c == VALUES || c == OTHERS;
     }
     public static final int NAME = 1;
     public static final int VALUES = 2;
-    public static final int PRICE = 3;
-    public static final int SUM = 4;
-    public static final int OTHERS = 5;
+    public static final int OTHERS = 3;
+    
     private Object[][] cells = {
-        {"", "", "", "", "", ""},
-        {"", "", "", "", "", ""},
-        {"", "", "", "", "", ""},
-        {"", "", "", "", "", ""},};
-    private String[] columnNames = {"编号", "商品名称", "数量", "单价", "金额", "备注"};
+        {"", "", "", ""},
+        {"", "", "", ""},
+        {"", "", "", ""},
+        {"", "", "", ""},};
+    private String[] columnNames = {"编号", "商品名称", "数量", "其他"};
 }
 

@@ -27,6 +27,7 @@ public class input2Main {
     private String amount;
     private String sumPrice;
     private String num;
+    private String inputORreturn;
     
     //输入信息
      public void test() {
@@ -93,13 +94,16 @@ public class input2Main {
     public void setNum(String text){
         num=text;
     }
-    public void transmit() {
+    public void setInputORreturn(String text){
+        inputORreturn=text;
+    }
+    public void transmitInput() {
         try {
             addDel mainT = new addDel();
             dbOperation t2Input = new dbOperation();
             t2Input.DBConnect();
             String sql;
-            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "','" + sumPrice + "','" + num + "')";
+            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "','" + sumPrice + "','" + num + "','" + inputORreturn + "')";
             System.out.print(sql);
             t2Input.DBSqlExe(sql);
             t2Input.DBClosed();
@@ -111,6 +115,29 @@ public class input2Main {
             mainT.setInPrice(inPrice);
             mainT.setOutPrice(outPrice);
             mainT.increaseMethod();
+        } catch (SQLException ex) {
+            Logger.getLogger(input2Main.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");
+        }
+    }
+     public void transmitReturn() {
+        try {
+            addDel mainT = new addDel();
+            dbOperation t2Input = new dbOperation();
+            t2Input.DBConnect();
+            String sql;
+            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "','" + sumPrice + "','" + num + "','" + inputORreturn + "')";
+            System.out.print(sql);
+            t2Input.DBSqlExe(sql);
+            t2Input.DBClosed();
+            mainT.setAmount(amount);
+            mainT.setColor(color);
+            mainT.setInfo(info);
+            mainT.setSize(size);
+            mainT.setStore(store);
+            mainT.setInPrice(inPrice);
+            mainT.setOutPrice(outPrice);
+            mainT.decreaseMethod();
         } catch (SQLException ex) {
             Logger.getLogger(input2Main.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");

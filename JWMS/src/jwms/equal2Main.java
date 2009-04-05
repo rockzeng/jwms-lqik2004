@@ -30,6 +30,7 @@ public class equal2Main {
     private String outStore;//调出仓库 getout store
     private String amount;
     private String others;
+    private String num;
 //录入信息
     public void test() {
         System.out.println(year);
@@ -88,13 +89,19 @@ public class equal2Main {
         amount = text;
     }
 
+    public void setNum(String text){
+        num=text;
+    }
+    public void setOthers(String text){
+        others=text;
+    }
     public void transmit() {
         try {
             addDel mainT = new addDel();
             dbOperation t2Equal = new dbOperation();
             t2Equal.DBConnect();
             String sql;
-            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + inStore + "','" + outStore + "','" + others + "')";
+            sql = "insert into equalt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + inStore + "','" + outStore + "','" + others + "','" + num + "')";
             t2Equal.DBSqlExe(sql);
             t2Equal.DBClosed();
             //对库存的增减
