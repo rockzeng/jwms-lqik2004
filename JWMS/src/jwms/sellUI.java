@@ -62,6 +62,7 @@ class sellFrame extends JFrame {
     private Object[] Objday = {
         "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
     };
+    private int tagrow=0;
     int sumvalues=0;
     float sumprice=0;
     Object[] items = null;
@@ -285,7 +286,7 @@ class sellFrame extends JFrame {
                 Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
             while (rs.next()) {
-                storeComboBox.addItem(rs.getString(1));
+                storeComboBox.addItem(rs.getString(1).trim());
             }
             storeLoad.DBClosed();
         } catch (SQLException ex) {
@@ -302,7 +303,7 @@ class sellFrame extends JFrame {
         try {
             rs = infoLoad.DBSqlQuery(sql);
             while (rs.next()) {
-                v.add(rs.getString("info"));
+                v.add(rs.getString("info").trim());
             }
 
         } catch (SQLException ex) {
@@ -392,52 +393,84 @@ class sellFrame extends JFrame {
                 ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
                 ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();
                 tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1) * tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
-                /**
-                 * 自动从数据库中选出与商品名称相对的进货价
-                 * 先从数据库中读出单价，再把单价*数量得到总金额
-                 */
-                ResultSet rs = null;
-                String info = model.getValueAt(selectingrow, 1).toString();//获得INFO的取值
-                String values = model.getValueAt(selectingrow, 2).toString();
-                String inp = model.getValueAt(selectingrow, 3).toString();
-                
-                if (selectingcol == 2) {
-                    dbOperation findMain = new dbOperation();
-                    findMain.DBConnect();
-                    String sql = "select distinct inPrice from maint where info='" + info + "'";
-                    rs = findMain.DBSqlQuery(sql);
-                    while (rs.next()) {
-                        inp = rs.getString(1);
+               ResultSet rs = null;
+                if (selectingrow != tagrow) { //为了处理对不同列进行的修改，特别加入判断语句，并且记录上一次保存的行数
+                    /**
+                     * 对Tagrow的库存价进行查找
+                     */
+                    if (model.getValueAt(tagrow, 2).toString() == "") {
+                        String in = null;
+                        String out = null;
+                        dbOperation findMain = new dbOperation();
+                        findMain.DBConnect();
+                        String sql = "select distinct outPrice from maint where info='" + model.getValueAt(tagrow, 1).toString() + "'";
+                        rs = findMain.DBSqlQuery(sql);
+                        while (rs.next()) {
+                            out = rs.getString(1);
+                            break;
+                        }
+                        findMain.DBClosed();
+                        model.setValueAt(out, tagrow, 3);
+                        table.repaint();
+                    }
+                        /**
+                         * 对tagrow 的总价进行计算
+                         */
+                        if (model.getValueAt(tagrow, 2).toString() != "" && model.getValueAt(tagrow, 3).toString() != "") {
+                            float value = Float.parseFloat(model.getValueAt(tagrow, 2).toString().trim());
+                            float price = Float.parseFloat(model.getValueAt(tagrow, 3).toString().trim());
+                            float sp = value * price;
+                            model.setValueAt(String.valueOf(sp), tagrow, 4);
+                            table.repaint();//刷新table;
+                        }
+                        tagrow = selectingrow;
+                    }
+                    /**
+                     * 对Tagrow的库存价进行查找
+                     */
+                    if (model.getValueAt(selectingrow, 1).toString() != "" && model.getValueAt(selectingrow, 2).toString() == "") {
+                        String in = null;
+                        String out = null;
+                        dbOperation findMain = new dbOperation();
+                        findMain.DBConnect();
+                        String sql = "select distinct outPrice from maint where info='" + model.getValueAt(selectingrow, 1).toString() + "'";
+                        rs = findMain.DBSqlQuery(sql);
+                        while (rs.next()) {
+                            out = rs.getString(1);
+                            break;
+                        }
+                        findMain.DBClosed();
+                        model.setValueAt(out, selectingrow, 3);
+                        table.repaint();
+                    }
+                    /**
+                     * 对tagrow 的总价进行计算
+                     */
+                    if (model.getValueAt(selectingrow, 2).toString() != "" && model.getValueAt(selectingrow, 3).toString() != "") {
+                        float value = Float.parseFloat(model.getValueAt(selectingrow, 2).toString().trim());
+                        float price = Float.parseFloat(model.getValueAt(selectingrow, 3).toString().trim());
+                        float sp = value * price;
+                        model.setValueAt(String.valueOf(sp), selectingrow, 4);
+                        table.repaint();
+                    }
+                sumvalues=0;//清空总数量值
+                for(int i=0;i<=model.getRowCount();i++){
+                    String value=model.getValueAt(i, 2).toString().trim();
+                    if(value==""){
                         break;
                     }
-                    findMain.DBClosed();
-                    model.setValueAt(inp, selectingrow, 3);
+                    sumvalues=sumvalues+Integer.parseInt(value);
+                    sumValues.setText(String.valueOf(sumvalues));
                 }
-                //System.out.print(inp);
-                /**
-                 * 对“总数”的设计
-                 */
-                if (selectingcol == 3) {
-                    int value = Integer.parseInt(values);
-                    float finp = Float.parseFloat(inp) * value;
-                    //System.out.print(finp);
-                    inp = String.valueOf(finp);
-                    model.setValueAt(inp, selectingrow, 4);
-                     sumvalues=sumvalues+Integer.parseInt(model.getValueAt(selectingrow, 2).toString());
-                     sumValues.setText(String.valueOf(sumvalues));
+                sumprice=0;//清空总价
+                for(int i=0;i<=model.getRowCount();i++){
+                    String value=model.getValueAt(i, 4).toString().trim();
+                    if(value==""){
+                        break;
+                    }
+                    sumprice=sumprice+Float.parseFloat(value);
+                    sumPrice.setText(String.valueOf(sumprice));
                 }
-
-                /**
-                 * 对“总价”的设计，为了防止如果录入完毕的时候光标锁定在最后一列单价不能
-                 * 取值的问题，特别加上if判断语句
-                 */
-                String sump=model.getValueAt(selectingrow, 4).toString();//取得第五列数据
-                if( selectingcol==5){
-                     sumprice=sumprice+Float.parseFloat(sump);
-                     sumPrice.setText(String.valueOf(sumprice));
-                }
-
-
             } catch (Exception ex) {
             }
         } catch (Exception ex) {

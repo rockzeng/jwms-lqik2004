@@ -62,6 +62,7 @@ class equalFrame extends JFrame {
     private Object[] Objday = {
         "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
     };
+    private int tagrow=0;
     private float sumprice = 0; //表单中的总价
     private int sumvalues = 0;  //表单中的总数量
     Object[] items = null;
@@ -267,8 +268,8 @@ class equalFrame extends JFrame {
         try {
             rs = storeLoad.DBSqlQuery(sql);
             while (rs.next()) {
-                inStoreComboBox.addItem(rs.getString(1));
-                outStoreComboBox.addItem(rs.getString(1));
+                inStoreComboBox.addItem(rs.getString(1).trim());
+                outStoreComboBox.addItem(rs.getString(1).trim());
             }
             storeLoad.DBClosed();
         } catch (SQLException ex) {
@@ -285,7 +286,7 @@ class equalFrame extends JFrame {
         try {
             rs = infoLoad.DBSqlQuery(sql);
             while (rs.next()) {
-                v.add(rs.getString("info"));
+                v.add(rs.getString("info").trim());
             }
 
         } catch (SQLException ex) {
@@ -375,71 +376,6 @@ class equalFrame extends JFrame {
                 ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
                 ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();
                 tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1) * tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
-                /**
-                 * 自动从maint中获得入库价，出库价，并计算得到总金额
-                 */
-                ResultSet rs = null;
-                String info = model.getValueAt(selectingrow, 1).toString();
-                String values = model.getValueAt(selectingrow, 2).toString();//取得商品的数量
-                String in = model.getValueAt(selectingrow, 3).toString();//取得商品的入库价
-                String out = model.getValueAt(selectingrow, 4).toString();
-
-                if (selectingcol == 2) {
-                    dbOperation findMain = new dbOperation();
-                    findMain.DBConnect();
-                    String sql = "select distinct inPrice,outPrice from maint where info='" + info + "'";
-                    rs = findMain.DBSqlQuery(sql);
-                    while (rs.next()) {
-                        in = rs.getString(1);
-                        out = rs.getString(2);
-                        break;
-                    }
-                    findMain.DBClosed();
-                    model.setValueAt(in, selectingrow, 3);
-                    model.setValueAt(out, selectingrow, 4);
-                }
-                /**
-                 * 对“总数”的设计
-                 */
-                if (selectingcol == 3) {
-                    sumvalues = sumvalues + Integer.parseInt(model.getValueAt(selectingrow, 2).toString());
-                }
-                sumValues.setText(String.valueOf(sumvalues));
-                /* if (selectingcol == 3) {
-                dbOperation findMain = new dbOperation();
-                findMain.DBConnect();
-                String sql = "select distinct outPrice from maint where info='" + info + "'";
-                rs = findMain.DBSqlQuery(sql);
-                while (rs.next()) {
-                in = rs.getString(1);
-                break;
-                }
-                findMain.DBClosed();
-                model.setValueAt(in, selectingrow, 4);
-
-                }*/
-                /**
-                 * 自动计算总金额
-                 */
-                if (selectingcol == 4) {
-
-                    float sum = Float.parseFloat(values) * Float.parseFloat(in);
-                    model.setValueAt(String.valueOf(sum), selectingrow, selectingcol + 1);
-
-                }
-                /**
-                 * 对“总价”的设计，为了防止如果录入完毕的时候光标锁定在最后一列单价不能
-                 * 取值的问题，特别加上if判断语句
-                 */
-                String sump = model.getValueAt(selectingrow, 5).toString();//取得第五列数据
-                if (sump == null && selectingcol == 5) {
-                    sumprice = sumprice + Float.parseFloat(values) * Float.parseFloat(in);
-                } else if (sump != null && selectingcol != 4) {
-                    sumprice = sumprice + Float.parseFloat(sump);
-                }
-                sumPrice.setText(String.valueOf(sumprice));
-
-
             } catch (Exception ex) {
             }
         } catch (Exception ex) {
