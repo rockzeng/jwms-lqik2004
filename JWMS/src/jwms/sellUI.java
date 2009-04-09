@@ -520,6 +520,23 @@ class sellFrame extends JFrame {
 
 class PlanetTableModel extends AbstractTableModel {
 
+    public static final int NAME = 1;
+    public static final int VALUES = 2;
+    public static final int PRICE = 3;
+    public static final int SUM = 4;
+    public static final int OTHERS = 5;
+    private static Object[][] cells = new Object[70][6];
+    private String[] columnNames = {"编号", "商品名称", "数量", "单价", "金额", "备注"};
+
+    @SuppressWarnings("empty-statement")
+    public PlanetTableModel() {
+        for (int i = 0; i < 70; i++) {
+            for (int k = 0; k < 6; k++) {
+                cells[i][k] = "";
+            }
+        }
+    }
+
     @Override
     public String getColumnName(int c) {
         return columnNames[c];
@@ -551,16 +568,5 @@ class PlanetTableModel extends AbstractTableModel {
     public boolean isCellEditable(int r, int c) {
         return c == NAME || c == VALUES || c == PRICE || c == OTHERS || c == SUM;
     }
-    public static final int NAME = 1;
-    public static final int VALUES = 2;
-    public static final int PRICE = 3;
-    public static final int SUM = 4;
-    public static final int OTHERS = 5;
-    private Object[][] cells = {
-        {"", "", "", "", "", ""},
-        {"", "", "", "", "", ""},
-        {"", "", "", "", "", ""},
-        {"", "", "", "", "", ""},};
-    private String[] columnNames = {"编号", "商品名称", "数量", "单价", "金额", "备注"};
 }
 

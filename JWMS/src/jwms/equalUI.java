@@ -396,6 +396,14 @@ class equalFrame extends JFrame {
 
 class equalPlanetTableModel extends AbstractTableModel {
 
+    public equalPlanetTableModel() {
+        for (int i = 0; i < 30; i++) {
+            for (int k = 0; k < 4; k++) {
+                cells[i][k] = "";
+            }
+        }
+    }
+
     @Override
     public String getColumnName(int c) {
         return columnNames[c];
@@ -430,11 +438,7 @@ class equalPlanetTableModel extends AbstractTableModel {
     public static final int NAME = 1;
     public static final int VALUES = 2;
     public static final int OTHERS = 3;
-    private Object[][] cells = {
-        {"", "", "", ""},
-        {"", "", "", ""},
-        {"", "", "", ""},
-        {"", "", "", ""},};
+    private Object[][] cells = new Object[30][4];
     private String[] columnNames = {"编号", "商品名称", "数量", "其他"};
 }
 

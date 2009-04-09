@@ -519,6 +519,12 @@ class loseFrame extends JFrame {
 
 class losePlanetTableModel extends AbstractTableModel {
 
+     public losePlanetTableModel() {
+        for(int i=0;i<70;i++)
+            for(int k=0;k<6;k++){
+            cells[i][k]="";
+        }
+    }
     @Override
     public String getColumnName(int c) {
         return columnNames[c];
@@ -555,11 +561,7 @@ class losePlanetTableModel extends AbstractTableModel {
     public static final int PRICE = 3;
     public static final int SUM = 4;
     public static final int OTHERS = 5;
-    private Object[][] cells = {
-        {"", "", "", "", "", ""},
-        {"", "", "", "", "", ""},
-        {"", "", "", "", "", ""},
-        {"", "", "", "", "", ""},};
+    private Object[][] cells = new Object[70][6];
     private String[] columnNames = {"编号", "商品名称", "数量", "单价", "金额", "备注"};
 }
 
