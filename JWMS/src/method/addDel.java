@@ -6,6 +6,7 @@ package method;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -66,13 +67,13 @@ public class addDel {
         return result;
     }
 
-    public boolean isInfoExist(String info) throws SQLException {
+    public boolean isInfoExist(String info, String store) throws SQLException {
         boolean result = false;
         String x = info;
-
+        String y = store;
         dbOperation isInfoExistDb = new dbOperation();
         isInfoExistDb.DBConnect();
-        String sql = "select * from maint where info='" + x + "'";
+        String sql = "select * from maint where store='" + y + "' and info='" + x + "'";
         ResultSet rs = isInfoExistDb.DBSqlQuery(sql);
         if (rs.next()) {
             result = true;
@@ -87,7 +88,7 @@ public class addDel {
      * @throws java.sql.SQLException
      */
     public void increaseMethod() throws SQLException {
-        boolean result = isInfoExist(info);
+        boolean result = isInfoExist(info, store);
         dbOperation increaseDb = new dbOperation();
         if (result) {
             increaseDb.DBConnect();
@@ -98,7 +99,7 @@ public class addDel {
         } else {
             increaseDb.DBConnect();
             //update maint set amount=amount+"amount" where info="info" and store="store"
-            String sql = "insert into maint(info,amount,store,inPrice) values('" + info + "','" + amount + "','" + store + "','" + inPrice + "','" + outPrice + "')";
+            String sql = "insert into maint(info,amount,store,inPrice,outPrice) values('" + info + "','" + amount + "','" + store + "','" + inPrice + "','" + outPrice + "')";
             increaseDb.DBSqlExe(sql);
             increaseDb.DBClosed();
         }
@@ -111,19 +112,28 @@ public class addDel {
      * @throws java.sql.SQLException
      */
     public boolean decreaseMethod() throws SQLException {
-        boolean result = isInfoExist(info);
+        boolean result = isInfoExist(info, store);
+        ResultSet rs = null;
         dbOperation decreaseDb = new dbOperation();
+        decreaseDb.DBConnect();
+        String sql = "select amount from maint where info='" + info + "' and store='" + store + "'";
+        rs = decreaseDb.DBSqlQuery(sql);
+        if (rs.next()) {
+            if (Integer.parseInt(rs.getString(1)) - Integer.parseInt(amount) < 0) {
+                result = false;
+            }
+        } else {
+            result = false;
+        }
+        decreaseDb.DBClosed();
         if (result) {
             decreaseDb.DBConnect();
             //update maint set amount=amount+"amount" where info="info" and store="store"
-            String sql = "update maint set amount=amount-'" + amount + "' where info='" + info + "' and store='" + store + "'";
+            sql = "update maint set amount=amount-'" + amount + "' where info='" + info + "' and store='" + store + "'";
             decreaseDb.DBSqlExe(sql);
             decreaseDb.DBClosed();
-        }/*else{
+        }
 
-        JOptionPane.showConfirmDialog(null, "您所销售的货品:"+info+"不存在！");
-        }*/
         return result;
-
     }
 }

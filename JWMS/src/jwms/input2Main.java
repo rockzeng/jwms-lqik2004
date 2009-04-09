@@ -27,7 +27,7 @@ public class input2Main {
     private String amount;
     private String sumPrice;
     private String num;
-    private String inputORreturn;
+    private short inputORreturn;
     
     //输入信息
      public void test() {
@@ -94,7 +94,7 @@ public class input2Main {
     public void setNum(String text){
         num=text;
     }
-    public void setInputORreturn(String text){
+    public void setInputORreturn(short text){
         inputORreturn=text;
     }
     public void transmitInput() {
@@ -122,14 +122,8 @@ public class input2Main {
     }
      public void transmitReturn() {
         try {
+            boolean result;
             addDel mainT = new addDel();
-            dbOperation t2Input = new dbOperation();
-            t2Input.DBConnect();
-            String sql;
-            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "','" + sumPrice + "','" + num + "','" + inputORreturn + "')";
-            System.out.print(sql);
-            t2Input.DBSqlExe(sql);
-            t2Input.DBClosed();
             mainT.setAmount(amount);
             mainT.setColor(color);
             mainT.setInfo(info);
@@ -137,7 +131,18 @@ public class input2Main {
             mainT.setStore(store);
             mainT.setInPrice(inPrice);
             mainT.setOutPrice(outPrice);
-            mainT.decreaseMethod();
+            result=mainT.decreaseMethod();
+            if (result) {
+            dbOperation t2Input = new dbOperation();
+            t2Input.DBConnect();
+            String sql;
+            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "','" + sumPrice + "','" + num + "','" + inputORreturn + "')";
+            System.out.print(sql);
+            t2Input.DBSqlExe(sql);
+            t2Input.DBClosed();
+            }else{
+                  JOptionPane.showMessageDialog(null, "货品:" + info + "不存在或库存值为负数");
+            }
         } catch (SQLException ex) {
             Logger.getLogger(input2Main.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");

@@ -1,5 +1,6 @@
 package jwms;
 
+import java.sql.ResultSet;
 import method.dbOperation;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -24,8 +25,10 @@ public class lose2Main {
     private String store;
     private String inPrice;
     private String amount;
-    private short loseORgain = 0;//用来判断是报损还是报益
-    private String others;
+    private short loseORgain;//用来判断是报损还是报益
+    private String others="";
+    private String num;
+    private String outPrice;
 //TEST 测试类
     public void test() {
         System.out.println(year);
@@ -88,7 +91,12 @@ public class lose2Main {
     public void setOthers(String text) {
         others = text;
     }
-
+    public void setNum(String text){
+        num=text;
+    }
+    public void setLoseORgain(short text){
+        loseORgain=text;
+    }
     //报损方法
     public void transmit2Lose() {
         boolean result;
@@ -104,9 +112,11 @@ public class lose2Main {
                 dbOperation t2Lose = new dbOperation();
                 t2Lose.DBConnect();
                 String sql;
-                sql = "insert into loset values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + loseORgain + "'," + others + "')";
+                sql = "insert into loset values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + loseORgain + "','" + others + "','" + num + "')";
                 t2Lose.DBSqlExe(sql);
                 t2Lose.DBClosed();
+            }else{
+                JOptionPane.showMessageDialog(null, "报损商品：'"+info+"'库存为零，请检查输入");
             }
         } catch (SQLException ex) {
             Logger.getLogger(lose2Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -116,6 +126,27 @@ public class lose2Main {
 
     //报益方法
     public void transmit2Gain() {
+        ResultSet rs=null;
+        dbOperation findMain = new dbOperation();
+        findMain.DBConnect();
+        String sqll = "select distinct outPrice from maint where info='" +info + "'";
+        try {
+            rs = findMain.DBSqlQuery(sqll);
+        } catch (SQLException ex) {
+            Logger.getLogger(sell2Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            while (rs.next()) {
+                outPrice = rs.getString(1);
+                break;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(sell2Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        findMain.DBClosed();
+        if(outPrice==null){
+            outPrice=inPrice;
+        }
         try {
             addDel mainT = new addDel();
             mainT.setAmount(amount);
@@ -123,11 +154,14 @@ public class lose2Main {
             mainT.setInfo(info);
             mainT.setSize(size);
             mainT.setStore(store);
+            mainT.setInPrice(inPrice);
+            mainT.setOutPrice(outPrice);
             mainT.increaseMethod();
             dbOperation t2Gain = new dbOperation();
             t2Gain.DBConnect();
             String sql;
-            sql = "insert into loset values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + loseORgain + "'," + others + "')";
+            sql = "insert into loset values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + loseORgain + "','" + others + "','" + num + "')";
+            System.out.println(sql);
             t2Gain.DBSqlExe(sql);
             t2Gain.DBClosed();
 

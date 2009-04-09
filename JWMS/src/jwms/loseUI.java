@@ -19,7 +19,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -34,14 +33,14 @@ import method.*;
  *
  * @author lqik2004
  */
-public class sellUI {
+public class loseUI {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
-        sellFrame frame = new sellFrame();
+        loseFrame frame = new loseFrame();
         /**Toolkit tool = Toolkit.getDefaultToolkit();
         Dimension screenSize = tool.getScreenSize();
         int locateHeight = (screenSize.height - frame.getHeight()) / 2;
@@ -54,7 +53,7 @@ public class sellUI {
     }
 }
 
-class sellFrame extends JFrame {
+class loseFrame extends JFrame {
 
     private Object[] Objyear = {
         "2009", "2010", "2011", "2012"
@@ -65,7 +64,6 @@ class sellFrame extends JFrame {
     private Object[] Objday = {
         "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
     };
-    private short sellORreturn;
     private int tagrow = 0;
     int sumvalues = 0;
     float sumprice = 0;
@@ -78,41 +76,42 @@ class sellFrame extends JFrame {
     private JComboBox month = new JComboBox(Objmonth);
     private JComboBox day = new JComboBox(Objday);
     private JComboBox storeComboBox = new JComboBox();
-    private TableModel model = new PlanetTableModel();
+    private TableModel model = new losePlanetTableModel();
     private JTable table = new JTable(model);
     private JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
     private JTextField sumValues = new JTextField(3);
+    private short loseORgain;
 
-    public sellFrame() throws Exception {
+    public loseFrame() throws Exception {
         //初始化数据库，读入信息
         storeLoad();//读入仓库信息
         items = infoLoad();//读入info信息
-        setTitle("销售退货单");
+        setTitle("报损报益单");
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         //设置单选按钮
         ButtonGroup group = new ButtonGroup();//设置按钮组，保证只能单选
-        JRadioButton sell = new JRadioButton("销售", true);
+        JRadioButton sell = new JRadioButton("报损", true);
         sell.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                sellORreturn = 0;
-                System.out.println(sellORreturn);
+                loseORgain = 0;
+                System.out.println(loseORgain);
             }
         });
-        JRadioButton Return = new JRadioButton("退货", false);
+        JRadioButton Return = new JRadioButton("报益", false);
         Return.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                sellORreturn = 1;
-                System.out.println(sellORreturn);
+                loseORgain = 1;
+                System.out.println(loseORgain);
             }
         });
         group.add(sell);
         group.add(Return);
         //设置ID
         JLabel labelID = new JLabel("编号：");
-        ID.setEditable(false);//不可修改        
-        ID.setText(new idMake().idMake("S"));   //设置编号，销售单以S开头
+        ID.setEditable(false);//不可修改
+        ID.setText(new idMake().idMake("L"));   //设置编号，销售单以S开头
         ID.setMaximumSize(ID.getPreferredSize());   //使在箱式布局下不会默认取得最大值，保持预定义大小
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(sell);
@@ -147,7 +146,7 @@ class sellFrame extends JFrame {
         //设置仓库栏
         JLabel labelStore = new JLabel("仓库：");
         //从properties中读取仓库设置
-        storeComboBox.setSelectedIndex(Integer.parseInt(propertiesRW.proIDMakeRead("storeSell")));
+        storeComboBox.setSelectedIndex(Integer.parseInt(propertiesRW.proIDMakeRead("storeLose")));
         storeComboBox.setMaximumSize(storeComboBox.getPreferredSize());
         storeComboBox.setEditable(false);   //仓库不可直接修改
         //JButton addStore = new JButton("添加仓库");
@@ -264,29 +263,29 @@ class sellFrame extends JFrame {
                     //把现在使用的仓库写入到properties文件，等下次打开时自动变成上次使用的仓库
                     propertiesRW.proIDMakeWrite("storeSell", storeComboBox.getSelectedIndex());
                 } catch (IOException ex) {
-                    Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(loseFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                sell2Main sellBt = new sell2Main();//定义一个新的对象，用以传输数据；
-                sellBt.setID(ID.getText());
-                sellBt.setYear(year.getSelectedItem().toString());
-                sellBt.setMonth(month.getSelectedItem().toString());
-                sellBt.setDay(day.getSelectedItem().toString());
-                sellBt.setStore(storeComboBox.getSelectedItem().toString());
+                lose2Main loseBt = new lose2Main();//定义一个新的对象，用以传输数据；
+                loseBt.setID(ID.getText());
+                loseBt.setYear(year.getSelectedItem().toString());
+                loseBt.setMonth(month.getSelectedItem().toString());
+                loseBt.setDay(day.getSelectedItem().toString());
+                loseBt.setStore(storeComboBox.getSelectedItem().toString());
                 //未完成：如果是新加入的仓库，把新仓库加入到“仓库”数据库中；并且设置这个仓库为首选仓库修改properties文件
                 for (int i = 0; i < model.getRowCount(); i++) {
                     if (model.getValueAt(i, 1).toString() != "") {  //如果字符串没有，那么不进行继续写入数据库
-                        sellBt.setNum(model.getValueAt(i, 0).toString());
-                        sellBt.setInfo(model.getValueAt(i, 1).toString());
-                        sellBt.setAmount(model.getValueAt(i, 2).toString());
-                        sellBt.setOutPrice(model.getValueAt(i, 3).toString());
-                        sellBt.setOthers(model.getValueAt(i, 5).toString());
-                        sellBt.setSellORreturn(sellORreturn);
-                        sellBt.test();
-                        if (sellORreturn == 0) {
-                            sellBt.transmitSell();
-                        } else {
-                            sellBt.transmitReturn();
-                        }
+                        loseBt.setNum(model.getValueAt(i, 0).toString());
+                        loseBt.setInfo(model.getValueAt(i, 1).toString());
+                        loseBt.setAmount(model.getValueAt(i, 2).toString());
+                        loseBt.setInPrice(model.getValueAt(i, 3).toString());
+                        loseBt.setOthers(model.getValueAt(i, 5).toString());
+                        loseBt.test();
+                       loseBt.setLoseORgain(loseORgain);
+                       if(loseORgain==0){
+                           loseBt.transmit2Lose();
+                       }else{
+                           loseBt.transmit2Gain();
+                       }
                     }
                 }
 
@@ -314,14 +313,14 @@ class sellFrame extends JFrame {
             try {
                 rs = storeLoad.DBSqlQuery(sql);
             } catch (SQLException ex) {
-                Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(loseFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
             while (rs.next()) {
                 storeComboBox.addItem(rs.getString(1).trim());
             }
             storeLoad.DBClosed();
         } catch (SQLException ex) {
-            Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(loseFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -417,8 +416,8 @@ class sellFrame extends JFrame {
                     return;
                 }
 
-                //                                 tb.setRowSelectionInterval(selectingrow,selectingrow);   
-                //                                 tb.setColumnSelectionInterval(selectingcol,selectingcol);   
+                //                                 tb.setRowSelectionInterval(selectingrow,selectingrow);
+                //                                 tb.setColumnSelectionInterval(selectingcol,selectingcol);
                 tb.editCellAt(selectingrow, selectingcol);
                 ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
                 ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();
@@ -463,14 +462,14 @@ class sellFrame extends JFrame {
                     String out = null;
                     dbOperation findMain = new dbOperation();
                     findMain.DBConnect();
-                    String sql = "select distinct outPrice from maint where info='" + model.getValueAt(selectingrow, 1).toString() + "'";
+                    String sql = "select distinct inPrice from maint where info='" + model.getValueAt(selectingrow, 1).toString() + "'";
                     rs = findMain.DBSqlQuery(sql);
                     while (rs.next()) {
-                        out = rs.getString(1);
+                        in = rs.getString(1);
                         break;
                     }
                     findMain.DBClosed();
-                    model.setValueAt(out, selectingrow, 3);
+                    model.setValueAt(in, selectingrow, 3);
                     table.repaint();
                 }
                 /**
@@ -509,7 +508,7 @@ class sellFrame extends JFrame {
     }
 }
 
-class PlanetTableModel extends AbstractTableModel {
+class losePlanetTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int c) {

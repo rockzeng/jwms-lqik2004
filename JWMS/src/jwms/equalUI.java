@@ -75,7 +75,7 @@ class equalFrame extends JFrame {
     private JComboBox day = new JComboBox(Objday);
     private JComboBox outStoreComboBox = new JComboBox();
     private JComboBox inStoreComboBox = new JComboBox();
-    private TableModel model = new inputPlanetTableModel();
+    private TableModel model = new equalPlanetTableModel();
     private JTable table = new JTable(model);
     private JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
     private JTextField sumValues = new JTextField(3);
@@ -236,21 +236,21 @@ class equalFrame extends JFrame {
                 } catch (IOException ex) {
                     Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                equal2Main inputBt = new equal2Main();//定义一个新的对象，用以传输数据；
-                inputBt.setID(ID.getText());
-                inputBt.setYear(year.getSelectedItem().toString());
-                inputBt.setMonth(month.getSelectedItem().toString());
-                inputBt.setDay(day.getSelectedItem().toString());
-                inputBt.setINStore(inStoreComboBox.getSelectedItem().toString());
-                inputBt.setOUTStore(outStoreComboBox.getSelectedItem().toString());
+                equal2Main equalBt = new equal2Main();//定义一个新的对象，用以传输数据；
+                equalBt.setID(ID.getText());
+                equalBt.setYear(year.getSelectedItem().toString());
+                equalBt.setMonth(month.getSelectedItem().toString());
+                equalBt.setDay(day.getSelectedItem().toString());
+                equalBt.setINStore(inStoreComboBox.getSelectedItem().toString());
+                equalBt.setOUTStore(outStoreComboBox.getSelectedItem().toString());
                 for (int i = 0; i < model.getRowCount(); i++) {
                     if (model.getValueAt(i, 1).toString() != "") {  //如果字符串没有，那么不进行继续写入数据库
-                        inputBt.setNum(model.getValueAt(i, 0).toString());
-                        inputBt.setInfo(model.getValueAt(i, 1).toString());
-                        inputBt.setAmount(model.getValueAt(i, 2).toString());
-                        inputBt.setOthers(model.getValueAt(i, 3).toString());
-                        inputBt.test();
-                        inputBt.transmit();
+                        equalBt.setNum(model.getValueAt(i, 0).toString());
+                        equalBt.setInfo(model.getValueAt(i, 1).toString());
+                        equalBt.setAmount(model.getValueAt(i, 2).toString());
+                        equalBt.setOthers(model.getValueAt(i, 3).toString());
+                        equalBt.test();
+                        equalBt.transmit();
                     }
                 }
 
@@ -384,7 +384,7 @@ class equalFrame extends JFrame {
     }
 }
 
-class inputPlanetTableModel extends AbstractTableModel {
+class equalPlanetTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int c) {

@@ -1,5 +1,6 @@
 package jwms;
 
+import java.sql.ResultSet;
 import method.dbOperation;
 import method.addDel;
 import java.sql.SQLException;
@@ -25,10 +26,11 @@ public class sell2Main {
     private String outPrice;
     private String store;
     private String amount;
-    private short sellORreturn = 0; //判断是进货还是退货；
-    private String others;
+    private short sellORreturn; //判断是进货还是退货；
+    private String others="";
     private int num;
     //TEST
+
     public void test() {
         System.out.println(year);
         System.out.println(month);
@@ -88,15 +90,19 @@ public class sell2Main {
     }
 
     public void setAmount(String text) {
-        amount =text;
+        amount = text;
     }
 
     public void setOthers(String text) {
         others = text;
     }
-    
-    public void setNum(String text){
-        num=Integer.parseInt(text);
+
+    public void setNum(String text) {
+        num = Integer.parseInt(text);
+    }
+
+    public void setSellORreturn(short text) {
+        sellORreturn = text;
     }
 
     public void transmitSell() {
@@ -118,7 +124,7 @@ public class sell2Main {
                 t2Sell.DBSqlExe(sql);
                 t2Sell.DBClosed();
             } else {
-                JOptionPane.showMessageDialog(null, "您所销售的货品:" + info + "不存在！");
+                JOptionPane.showMessageDialog(null, "货品:" + info + "不存在或库存值为负数");
             }
         } catch (SQLException ex) {
             Logger.getLogger(sell2Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -127,15 +133,39 @@ public class sell2Main {
     }
 
     public void transmitReturn() {
+        //取得进货价格
+        ResultSet rs=null;
+        dbOperation findMain = new dbOperation();
+        findMain.DBConnect();
+        String sqll = "select distinct inPrice from maint where info='" +info + "'";
+        try {
+            rs = findMain.DBSqlQuery(sqll);
+        } catch (SQLException ex) {
+            Logger.getLogger(sell2Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            while (rs.next()) {
+                inPrice = rs.getString(1);
+                break;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(sell2Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        findMain.DBClosed();
+        if(inPrice==null){
+            inPrice=outPrice;
+        }
 
         try {
+
             addDel mainT = new addDel();
             mainT.setAmount(amount);
             mainT.setColor(color);
             mainT.setInfo(info);
             mainT.setSize(size);
             mainT.setStore(store);
-            mainT.setInPrice(outPrice);//退货的时候售价等于进货价
+            mainT.setInPrice(inPrice);
+            mainT.setOutPrice(outPrice);
             mainT.increaseMethod();
             dbOperation t2Rturn = new dbOperation();
             t2Rturn.DBConnect();
@@ -149,5 +179,5 @@ public class sell2Main {
             JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");
         }
     }
-    }
+}
 
