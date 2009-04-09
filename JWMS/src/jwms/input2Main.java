@@ -28,15 +28,15 @@ public class input2Main {
     private String sumPrice;
     private String num;
     private short inputORreturn;
-    
+
     //输入信息
-     public void test() {
+    public void test() {
         System.out.println(year);
         System.out.println(month);
         System.out.println(day);
         System.out.println(id);
         System.out.println(store);
-        System.out.println(info);       
+        System.out.println(info);
         System.out.println(amount);
         System.out.println(outPrice);
     }
@@ -86,17 +86,21 @@ public class input2Main {
     }
 
     public void setAmount(String text) {
-        amount =text;
+        amount = text;
     }
-    public void setSumPrice(String text){
-        sumPrice=text;
+
+    public void setSumPrice(String text) {
+        sumPrice = text;
     }
-    public void setNum(String text){
-        num=text;
+
+    public void setNum(String text) {
+        num = text;
     }
-    public void setInputORreturn(short text){
-        inputORreturn=text;
+
+    public void setInputORreturn(short text) {
+        inputORreturn = text;
     }
+
     public void transmitInput() {
         try {
             addDel mainT = new addDel();
@@ -118,9 +122,11 @@ public class input2Main {
         } catch (SQLException ex) {
             Logger.getLogger(input2Main.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");
+            inputFrame.setExTag(1);
         }
     }
-     public void transmitReturn() {
+
+    public void transmitReturn() {
         try {
             boolean result;
             addDel mainT = new addDel();
@@ -131,21 +137,24 @@ public class input2Main {
             mainT.setStore(store);
             mainT.setInPrice(inPrice);
             mainT.setOutPrice(outPrice);
-            result=mainT.decreaseMethod();
+            result = mainT.decreaseMethod();
             if (result) {
-            dbOperation t2Input = new dbOperation();
-            t2Input.DBConnect();
-            String sql;
-            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "','" + sumPrice + "','" + num + "','" + inputORreturn + "')";
-            System.out.print(sql);
-            t2Input.DBSqlExe(sql);
-            t2Input.DBClosed();
-            }else{
-                  JOptionPane.showMessageDialog(null, "货品:" + info + "不存在或库存值为负数");
+                dbOperation t2Input = new dbOperation();
+                t2Input.DBConnect();
+                String sql;
+                sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "','" + sumPrice + "','" + num + "','" + inputORreturn + "')";
+                System.out.print(sql);
+                t2Input.DBSqlExe(sql);
+                t2Input.DBClosed();
+            } else {
+                JOptionPane.showMessageDialog(null, "货品:" + info + "不存在或库存值为负数");
+                inputFrame.setExTag(1);
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(input2Main.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");
+            inputFrame.setExTag(1);
         }
     }
 }

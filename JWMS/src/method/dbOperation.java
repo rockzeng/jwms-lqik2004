@@ -10,6 +10,7 @@ import java.util.logging.Logger;
  * @author Administrator
  */
 public class dbOperation {
+
     private String SQL;
     private Connection conn;
     private Statement stmt;

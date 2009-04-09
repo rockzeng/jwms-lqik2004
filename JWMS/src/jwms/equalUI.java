@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -62,7 +63,7 @@ class equalFrame extends JFrame {
     private Object[] Objday = {
         "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
     };
-    private int tagrow=0;
+    private int tagrow = 0;
     private float sumprice = 0; //表单中的总价
     private int sumvalues = 0;  //表单中的总数量
     Object[] items = null;
@@ -79,6 +80,11 @@ class equalFrame extends JFrame {
     private JTable table = new JTable(model);
     private JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
     private JTextField sumValues = new JTextField(3);
+    private static int exceptionTag = 0;  //异常标记
+
+    public static void setExTag(int tag) {
+        exceptionTag = tag;
+    }
 
     public equalFrame() throws Exception {
         //初始化数据库，读入信息
@@ -206,7 +212,7 @@ class equalFrame extends JFrame {
         vbox.add(Box.createVerticalStrut(8));
         vbox.add(hboxPane);
         vbox.add(Box.createVerticalStrut(4));
-        
+
         vbox.add(hbox4);
         vbox.add(Box.createVerticalStrut(10));
         add(vbox, BorderLayout.CENTER);
@@ -225,37 +231,41 @@ class equalFrame extends JFrame {
              * 给按钮加入响应，用以“持久化”tag和judge两个文件，更新数据
              */
             public void actionPerformed(ActionEvent e) {
-                try {
-                    //tagJudgeRW.writeFile("tag", idMake.tag);  老方法，此文件在测试包中的oldPacket
-                    //tagJudgeRW.writeFile("judge", idMake.judge);
-                    propertiesRW.proIDMakeWrite("tag", idMake.tag);
-                    propertiesRW.proIDMakeWrite("judge", idMake.judge);
-                    //把现在使用的仓库写入到properties文件，等下次打开时自动变成上次使用的仓库
-                    propertiesRW.proIDMakeWrite("outStoreEqual", outStoreComboBox.getSelectedIndex());
-                    propertiesRW.proIDMakeWrite("inStoreEqual", inStoreComboBox.getSelectedIndex());
-                } catch (IOException ex) {
-                    Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                equal2Main equalBt = new equal2Main();//定义一个新的对象，用以传输数据；
-                equalBt.setID(ID.getText());
-                equalBt.setYear(year.getSelectedItem().toString());
-                equalBt.setMonth(month.getSelectedItem().toString());
-                equalBt.setDay(day.getSelectedItem().toString());
-                equalBt.setINStore(inStoreComboBox.getSelectedItem().toString());
-                equalBt.setOUTStore(outStoreComboBox.getSelectedItem().toString());
-                for (int i = 0; i < model.getRowCount(); i++) {
-                    if (model.getValueAt(i, 1).toString() != "") {  //如果字符串没有，那么不进行继续写入数据库
-                        equalBt.setNum(model.getValueAt(i, 0).toString());
-                        equalBt.setInfo(model.getValueAt(i, 1).toString());
-                        equalBt.setAmount(model.getValueAt(i, 2).toString());
-                        equalBt.setOthers(model.getValueAt(i, 3).toString());
-                        equalBt.test();
-                        equalBt.transmit();
+                int ifcontinue = JOptionPane.showConfirmDialog(null, "请确认单据过账", "单据确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (ifcontinue == JOptionPane.YES_OPTION) {
+                    equal2Main equalBt = new equal2Main();//定义一个新的对象，用以传输数据；
+                    equalBt.setID(ID.getText());
+                    equalBt.setYear(year.getSelectedItem().toString());
+                    equalBt.setMonth(month.getSelectedItem().toString());
+                    equalBt.setDay(day.getSelectedItem().toString());
+                    equalBt.setINStore(inStoreComboBox.getSelectedItem().toString());
+                    equalBt.setOUTStore(outStoreComboBox.getSelectedItem().toString());
+                    for (int i = 0; i < model.getRowCount(); i++) {
+                        if (model.getValueAt(i, 1).toString() != "") {  //如果字符串没有，那么不进行继续写入数据库
+                            equalBt.setNum(model.getValueAt(i, 0).toString());
+                            equalBt.setInfo(model.getValueAt(i, 1).toString());
+                            equalBt.setAmount(model.getValueAt(i, 2).toString());
+                            equalBt.setOthers(model.getValueAt(i, 3).toString());
+                            equalBt.test();
+                            equalBt.transmit();
+                        }
                     }
+                    try {
+                        //tagJudgeRW.writeFile("tag", idMake.tag);  老方法，此文件在测试包中的oldPacket
+                        //tagJudgeRW.writeFile("judge", idMake.judge);
+                        propertiesRW.proIDMakeWrite("tag", idMake.tag);
+                        propertiesRW.proIDMakeWrite("judge", idMake.judge);
+                        //把现在使用的仓库写入到properties文件，等下次打开时自动变成上次使用的仓库
+                        propertiesRW.proIDMakeWrite("outStoreEqual", outStoreComboBox.getSelectedIndex());
+                        propertiesRW.proIDMakeWrite("inStoreEqual", inStoreComboBox.getSelectedIndex());
+                    } catch (IOException ex) {
+                        Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    if (exceptionTag == 0) {
+                        dispose();
+                    }
+
                 }
-
-
-
             }
         });
     }
@@ -420,7 +430,6 @@ class equalPlanetTableModel extends AbstractTableModel {
     public static final int NAME = 1;
     public static final int VALUES = 2;
     public static final int OTHERS = 3;
-    
     private Object[][] cells = {
         {"", "", "", ""},
         {"", "", "", ""},

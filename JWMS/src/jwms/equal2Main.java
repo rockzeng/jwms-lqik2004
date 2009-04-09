@@ -30,7 +30,7 @@ public class equal2Main {
     private String inStore;//调入仓库 getin store
     private String outStore;//调出仓库 getout store
     private String amount;
-    private String others="";
+    private String others = "";
     private String num;
     private String inPrice;
     private String outPrice;
@@ -129,7 +129,7 @@ public class equal2Main {
                     try {
                         while (rs.next()) {
                             inPrice = rs.getString(1);
-                            outPrice=rs.getString(2);
+                            outPrice = rs.getString(2);
                             break;
                         }
                     } catch (SQLException ex) {
@@ -146,12 +146,14 @@ public class equal2Main {
                 sql = "insert into equalt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + inStore + "','" + outStore + "','" + others + "','" + num + "')";
                 t2Equal.DBSqlExe(sql);
                 t2Equal.DBClosed();
-            }else{
-                JOptionPane.showMessageDialog(null, "所调拨的商品：'"+info+"'库存为零或不存在！");
+            } else {
+                JOptionPane.showMessageDialog(null, "所调拨的商品：'" + info + "'库存为零或不存在！");
+                equalFrame.setExTag(1);
             }
         } catch (SQLException ex) {
             Logger.getLogger(equal2Main.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");
+            equalFrame.setExTag(1);
         }
     }
 }

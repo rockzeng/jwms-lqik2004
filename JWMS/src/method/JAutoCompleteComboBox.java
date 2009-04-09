@@ -1,13 +1,10 @@
 package method;
 
-
-
 import java.util.List;
 import java.util.Vector;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
-
 
 /**
  * 
@@ -64,9 +61,6 @@ public class JAutoCompleteComboBox
         }
         return false;
     }
-
-   
-
     /*
      * 测试方法
      */

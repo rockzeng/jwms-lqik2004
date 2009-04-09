@@ -27,7 +27,7 @@ public class sell2Main {
     private String store;
     private String amount;
     private short sellORreturn; //判断是进货还是退货；
-    private String others="";
+    private String others = "";
     private int num;
     //TEST
 
@@ -125,19 +125,21 @@ public class sell2Main {
                 t2Sell.DBClosed();
             } else {
                 JOptionPane.showMessageDialog(null, "货品:" + info + "不存在或库存值为负数");
+                sellFrame.setExTag(1);
             }
         } catch (SQLException ex) {
             Logger.getLogger(sell2Main.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");
+            sellFrame.setExTag(1);
         }
     }
 
     public void transmitReturn() {
         //取得进货价格
-        ResultSet rs=null;
+        ResultSet rs = null;
         dbOperation findMain = new dbOperation();
         findMain.DBConnect();
-        String sqll = "select distinct inPrice from maint where info='" +info + "'";
+        String sqll = "select distinct inPrice from maint where info='" + info + "'";
         try {
             rs = findMain.DBSqlQuery(sqll);
         } catch (SQLException ex) {
@@ -152,8 +154,8 @@ public class sell2Main {
             Logger.getLogger(sell2Main.class.getName()).log(Level.SEVERE, null, ex);
         }
         findMain.DBClosed();
-        if(inPrice==null){
-            inPrice=outPrice;
+        if (inPrice == null) {
+            inPrice = outPrice;
         }
 
         try {
@@ -177,6 +179,7 @@ public class sell2Main {
         } catch (SQLException ex) {
             Logger.getLogger(sell2Main.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");
+            sellFrame.setExTag(1);
         }
     }
 }

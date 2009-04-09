@@ -26,10 +26,11 @@ public class lose2Main {
     private String inPrice;
     private String amount;
     private short loseORgain;//用来判断是报损还是报益
-    private String others="";
+    private String others = "";
     private String num;
     private String outPrice;
 //TEST 测试类
+
     public void test() {
         System.out.println(year);
         System.out.println(month);
@@ -91,13 +92,16 @@ public class lose2Main {
     public void setOthers(String text) {
         others = text;
     }
-    public void setNum(String text){
-        num=text;
+
+    public void setNum(String text) {
+        num = text;
     }
-    public void setLoseORgain(short text){
-        loseORgain=text;
+
+    public void setLoseORgain(short text) {
+        loseORgain = text;
     }
     //报损方法
+
     public void transmit2Lose() {
         boolean result;
         try {
@@ -115,21 +119,23 @@ public class lose2Main {
                 sql = "insert into loset values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + loseORgain + "','" + others + "','" + num + "')";
                 t2Lose.DBSqlExe(sql);
                 t2Lose.DBClosed();
-            }else{
-                JOptionPane.showMessageDialog(null, "报损商品：'"+info+"'库存为零，请检查输入");
+            } else {
+                JOptionPane.showMessageDialog(null, "报损商品：'" + info + "'库存数低于报损数，请检查输入");
+                loseFrame.setExTag(1);
             }
         } catch (SQLException ex) {
             Logger.getLogger(lose2Main.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");
+            loseFrame.setExTag(1);
         }
     }
 
     //报益方法
     public void transmit2Gain() {
-        ResultSet rs=null;
+        ResultSet rs = null;
         dbOperation findMain = new dbOperation();
         findMain.DBConnect();
-        String sqll = "select distinct outPrice from maint where info='" +info + "'";
+        String sqll = "select distinct outPrice from maint where info='" + info + "'";
         try {
             rs = findMain.DBSqlQuery(sqll);
         } catch (SQLException ex) {
@@ -144,8 +150,8 @@ public class lose2Main {
             Logger.getLogger(sell2Main.class.getName()).log(Level.SEVERE, null, ex);
         }
         findMain.DBClosed();
-        if(outPrice==null){
-            outPrice=inPrice;
+        if (outPrice == null) {
+            outPrice = inPrice;
         }
         try {
             addDel mainT = new addDel();
@@ -168,6 +174,7 @@ public class lose2Main {
         } catch (SQLException ex) {
             Logger.getLogger(lose2Main.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");
+            loseFrame.setExTag(1);
         }
     }
 }

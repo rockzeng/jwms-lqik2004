@@ -19,7 +19,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -82,6 +82,11 @@ class sellFrame extends JFrame {
     private JTable table = new JTable(model);
     private JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
     private JTextField sumValues = new JTextField(3);
+    private static int exceptionTag = 0;  //异常标记
+
+    public static void setExTag(int tag) {
+        exceptionTag = tag;
+    }
 
     public sellFrame() throws Exception {
         //初始化数据库，读入信息
@@ -256,42 +261,46 @@ class sellFrame extends JFrame {
              * 给按钮加入响应，用以“持久化”tag和judge两个文件，更新数据
              */
             public void actionPerformed(ActionEvent e) {
-                try {
-                    //tagJudgeRW.writeFile("tag", idMake.tag);  老方法，此文件在测试包中的oldPacket
-                    //tagJudgeRW.writeFile("judge", idMake.judge);
-                    propertiesRW.proIDMakeWrite("tag", idMake.tag);
-                    propertiesRW.proIDMakeWrite("judge", idMake.judge);
-                    //把现在使用的仓库写入到properties文件，等下次打开时自动变成上次使用的仓库
-                    propertiesRW.proIDMakeWrite("storeSell", storeComboBox.getSelectedIndex());
-                } catch (IOException ex) {
-                    Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                sell2Main sellBt = new sell2Main();//定义一个新的对象，用以传输数据；
-                sellBt.setID(ID.getText());
-                sellBt.setYear(year.getSelectedItem().toString());
-                sellBt.setMonth(month.getSelectedItem().toString());
-                sellBt.setDay(day.getSelectedItem().toString());
-                sellBt.setStore(storeComboBox.getSelectedItem().toString());
-                //未完成：如果是新加入的仓库，把新仓库加入到“仓库”数据库中；并且设置这个仓库为首选仓库修改properties文件
-                for (int i = 0; i < model.getRowCount(); i++) {
-                    if (model.getValueAt(i, 1).toString() != "") {  //如果字符串没有，那么不进行继续写入数据库
-                        sellBt.setNum(model.getValueAt(i, 0).toString());
-                        sellBt.setInfo(model.getValueAt(i, 1).toString());
-                        sellBt.setAmount(model.getValueAt(i, 2).toString());
-                        sellBt.setOutPrice(model.getValueAt(i, 3).toString());
-                        sellBt.setOthers(model.getValueAt(i, 5).toString());
-                        sellBt.setSellORreturn(sellORreturn);
-                        sellBt.test();
-                        if (sellORreturn == 0) {
-                            sellBt.transmitSell();
-                        } else {
-                            sellBt.transmitReturn();
+
+                int ifcontinue = JOptionPane.showConfirmDialog(null, "请确认单据过账", "单据确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (ifcontinue == JOptionPane.YES_OPTION) {
+                    sell2Main sellBt = new sell2Main();//定义一个新的对象，用以传输数据；
+                    sellBt.setID(ID.getText());
+                    sellBt.setYear(year.getSelectedItem().toString());
+                    sellBt.setMonth(month.getSelectedItem().toString());
+                    sellBt.setDay(day.getSelectedItem().toString());
+                    sellBt.setStore(storeComboBox.getSelectedItem().toString());
+                    //未完成：如果是新加入的仓库，把新仓库加入到“仓库”数据库中；并且设置这个仓库为首选仓库修改properties文件
+                    for (int i = 0; i < model.getRowCount(); i++) {
+                        if (model.getValueAt(i, 1).toString() != "") {  //如果字符串没有，那么不进行继续写入数据库
+                            sellBt.setNum(model.getValueAt(i, 0).toString());
+                            sellBt.setInfo(model.getValueAt(i, 1).toString());
+                            sellBt.setAmount(model.getValueAt(i, 2).toString());
+                            sellBt.setOutPrice(model.getValueAt(i, 3).toString());
+                            sellBt.setOthers(model.getValueAt(i, 5).toString());
+                            sellBt.setSellORreturn(sellORreturn);
+                            sellBt.test();
+                            if (sellORreturn == 0) {
+                                sellBt.transmitSell();
+                            } else {
+                                sellBt.transmitReturn();
+                            }
                         }
                     }
+                    try {
+                        //tagJudgeRW.writeFile("tag", idMake.tag);  老方法，此文件在测试包中的oldPacket
+                        //tagJudgeRW.writeFile("judge", idMake.judge);
+                        propertiesRW.proIDMakeWrite("tag", idMake.tag);
+                        propertiesRW.proIDMakeWrite("judge", idMake.judge);
+                        //把现在使用的仓库写入到properties文件，等下次打开时自动变成上次使用的仓库
+                        propertiesRW.proIDMakeWrite("storeSell", storeComboBox.getSelectedIndex());
+                    } catch (IOException ex) {
+                        Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    if (exceptionTag == 0) {
+                        dispose();
+                    }
                 }
-
-
-
             }
         });
     //获取信息

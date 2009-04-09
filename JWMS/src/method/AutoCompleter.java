@@ -4,12 +4,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -35,7 +31,7 @@ public class AutoCompleter
     }
 
     public void keyTyped(KeyEvent e) {
-        }
+    }
 
     public void keyPressed(KeyEvent e) {
     }
@@ -53,12 +49,12 @@ public class AutoCompleter
             if (str.length() == 0) {
                 owner.setPopupVisible(false);
             } else {
-               
+
                 autoCompleteDel(str, caretPosition);
-                
+
             }
         } else if (ch == KeyEvent.VK_1) {
-            
+
             System.out.print(model.getSelectedItem().toString());
         } else if (ch == KeyEvent.CHAR_UNDEFINED || Character.isISOControl(ch)) {
             return;
