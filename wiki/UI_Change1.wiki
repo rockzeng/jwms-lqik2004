@@ -1,6 +1,12 @@
 #labels UI,change
 =UI Change=
 
+2009.4.9
+
+[http://jwms-lqik2004.googlecode.com/files/5.PNG]
+
+增添了单选按钮，丰富了功能
+
 2009.4.2
 
 [http://jwms-lqik2004.googlecode.com/files/4.PNG]
