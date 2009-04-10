@@ -1,6 +1,12 @@
 #labels UI,change
 =UI Change=
 
+2009.4.10
+
+[http://jwms-lqik2004.googlecode.com/files/stream.PNG]
+
+创建了经营历程窗口
+
 2009.4.9
 
 [http://jwms-lqik2004.googlecode.com/files/5.PNG]
