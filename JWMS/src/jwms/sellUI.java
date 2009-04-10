@@ -271,7 +271,7 @@ class sellFrame extends JFrame {
                     sellBt.setDay(day.getSelectedItem().toString());
                     sellBt.setStore(storeComboBox.getSelectedItem().toString());
                     //未完成：如果是新加入的仓库，把新仓库加入到“仓库”数据库中；并且设置这个仓库为首选仓库修改properties文件
-                    for (int i = 0; i < model.getRowCount(); i++) {
+                    for (int i = 0; i < model.getRowCount(); i++) {     //防止出现中间出现断行丢失数据的问题
                         if (model.getValueAt(i, 1).toString() != "") {  //如果字符串没有，那么不进行继续写入数据库
                             sellBt.setNum(model.getValueAt(i, 0).toString());
                             sellBt.setInfo(model.getValueAt(i, 1).toString());
