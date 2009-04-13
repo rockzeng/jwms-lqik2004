@@ -11,6 +11,8 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,7 +64,7 @@ class workingFrame extends JFrame {
         "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
     };
     private Object[] type = {"全部类型", "销售单", "进货单", "同价调拨单", "报损单", "报益单", "销售退货单", "进货退货单", "更多组合"};
-    private int WIDTH = 800;
+    private int WIDTH = 750;
     private int HEIGHT = 600;
     private JComboBox bYear = new JComboBox(Objyear);
     private JComboBox bMonth = new JComboBox(Objmonth);
@@ -75,10 +77,16 @@ class workingFrame extends JFrame {
     private choicePopFrame storePop = new choicePopFrame();//设置仓库弹出窗口
     private choicePopFrameType typePop = new choicePopFrameType();//设置查看种类弹出窗口
     private static List liststore = new Vector();
+    private static List listtypeDB = new Vector();
     private static List listtype = new Vector();
     private static JLabel storeSelect = new JLabel();
     private static JLabel typeSelect = new JLabel();
+    DefaultTableModel model1 = new model();
+    JTable table1 = new JTable(model1);
+    DefaultTableModel model2 = new model();
+    JTable table2 = new JTable(model2);
 
+    @SuppressWarnings("empty-statement")
     public workingFrame() {
         try {
             storeLoad(); //读取仓库信息
@@ -108,6 +116,7 @@ class workingFrame extends JFrame {
         eYear.setMaximumSize(eYear.getPreferredSize());
         eMonth.setMaximumSize(eMonth.getPreferredSize());
         eDay.setMaximumSize(eDay.getPreferredSize());
+        JButton confirm = new JButton("查询");
 
         Box hbox1 = Box.createHorizontalBox();
         hbox1.add(Box.createHorizontalStrut(5));
@@ -128,6 +137,8 @@ class workingFrame extends JFrame {
         hbox1.add(label6);
         hbox1.add(eDay);
         hbox1.add(label7);
+        hbox1.add(Box.createHorizontalStrut(30));
+        hbox1.add(confirm);
         hbox1.add(Box.createHorizontalGlue());
         //加入仓库选择
         JLabel labelStore = new JLabel("仓库：");
@@ -159,7 +170,40 @@ class workingFrame extends JFrame {
         hbox3.add(typeSelect);
         hbox3.add(Box.createHorizontalGlue());
         //加入表单
+        Object[] colName1 = new Object[3];
+        colName1[0] = "日期";
+        colName1[1] = "ID";
+        colName1[2] = "单据类型";
+        model1.setColumnCount(3);
+        model1.setRowCount(50);
+        TableColumnModel tc = table1.getColumnModel();
+        tc.getColumn(0).setPreferredWidth(20);
+        tc.getColumn(0).setPreferredWidth(25);
+        tc.getColumn(0).setPreferredWidth(15);
+        model1.setColumnIdentifiers(colName1);//定义列名
+        JScrollPane panel1 = new JScrollPane(table1);
+        panel1.setPreferredSize(new Dimension(300, 400));
 
+        Object[] colName2 = new Object[3];
+        colName2[0] = "日期";
+        colName2[1] = "ID";
+        colName2[2] = "单据类型";
+        model2.setColumnCount(3);
+        model2.setRowCount(50);
+        TableColumnModel tc2 = table2.getColumnModel();
+        tc2.getColumn(0).setPreferredWidth(20);
+        tc2.getColumn(0).setPreferredWidth(25);
+        tc2.getColumn(0).setPreferredWidth(15);
+        model2.setColumnIdentifiers(colName1);//定义列名
+        JScrollPane panel2 = new JScrollPane(table2);
+        panel2.setPreferredSize(new Dimension(450, 400));
+        Box hbox4 = Box.createHorizontalBox();
+        hbox4.add(Box.createHorizontalStrut(5));
+        hbox4.add(panel1);
+        hbox4.add(Box.createHorizontalStrut(30));
+        hbox4.add(panel2);
+        //hbox4.add(Box.createHorizontalStrut(400));
+        hbox4.add(Box.createHorizontalGlue());
         //垂直布局
         Box vbox = Box.createVerticalBox();
         vbox.add(Box.createVerticalStrut(5));
@@ -168,6 +212,8 @@ class workingFrame extends JFrame {
         vbox.add(hbox2);
         vbox.add(Box.createVerticalStrut(10));
         vbox.add(hbox3);
+        vbox.add(Box.createVerticalStrut(10));
+        vbox.add(hbox4);
         vbox.add(Box.createVerticalGlue());
         //显示箱式布局
         add(vbox, BorderLayout.NORTH);
@@ -197,6 +243,138 @@ class workingFrame extends JFrame {
                     typePop.setVisible(true);
                 } else {//实现弹出窗口的自动关闭和打开
                     typePop.dispose();
+                }
+            }
+        });
+        table1.addMouseListener(new MouseAdapter() {
+
+            public void mouseClicked(MouseEvent e) {
+                String keyWord;
+                String keyStore;
+                String sql = null;
+                ResultSet rs=null;
+                if (e.getButton() == MouseEvent.BUTTON1) {// 单击鼠标左键
+                    if (e.getClickCount() == 2) {
+                        keyWord=table1.getModel().getValueAt(table1.getSelectedRow(), 1).toString().trim();
+                        if(keyWord.startsWith("S")){
+                            keyStore="sellt";
+                            sql="select info,amount,outprice from "+keyStore+" where id='"+keyWord+"'";
+                            System.out.print(sql);
+                        }else if(keyWord.startsWith("E")){
+                            keyStore="equalt";
+                        }else if(keyWord.startsWith("L")){
+                            keyStore="loset";
+                        }else if(keyWord.startsWith("I")){
+                            keyStore="inputt";
+                        }
+                        dbOperation st=new dbOperation();
+                        st.DBConnect();
+                        try {
+                            int i=0;
+                            rs = st.DBSqlQuery(sql);
+                            while(rs.next()){
+                                table2.setValueAt(rs.getString(1), i, 0);
+                                table2.setValueAt(rs.getString(2), i, 1);
+                                table2.setValueAt(rs.getString(3), i, 2);
+                                i++;
+                            }
+                        } catch (SQLException ex) {
+                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        st.DBClosed();
+                        /*
+                        int colummCount = table1.getModel().getColumnCount();// 列数 
+                        for (int i = 0; i < colummCount; i++) {
+                            System.out.print(table1.getModel().getValueAt(table1.getSelectedRow(), i).toString() + " ");
+                        }
+                        System.out.println();
+                         * */
+                    }
+                }
+            }
+        });
+        confirm.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                dbOperation init = new dbOperation();
+                init.DBConnect();
+                String sqlinit;
+                sqlinit = "delete from StreamCache";
+                try {
+                    init.DBSqlExe(sqlinit);
+                } catch (SQLException ex) {
+                    Logger.getLogger(dbOperation.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                init.DBClosed();
+                ResultSet rs = null;
+                String sql;
+                String store;
+                String byear = bYear.getSelectedItem().toString().trim();
+                String bmonth = bMonth.getSelectedItem().toString().trim();
+                String bday = bDay.getSelectedItem().toString().trim();
+                String eyear = eYear.getSelectedItem().toString().trim();
+                String emonth = eMonth.getSelectedItem().toString().trim();
+                String eday = eDay.getSelectedItem().toString().trim();
+
+
+                if (typeComboBox.getSelectedItem().toString().trim() == "更多组合") {
+                    for (int i = 0; i < listtypeDB.size(); i++) {
+                        if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
+                            store = liststore.get(0).toString().trim();
+                            for (int k = 1; k < liststore.size(); k++) {
+                                store = store + "' or store= '" + liststore.get(k).toString().trim();
+                            }
+                            for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
+                                for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
+                                    for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
+                                        if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                            break;
+                                        } else {
+                                            String syear = getDate.fixYear(String.valueOf(year));
+                                            String smonth = getDate.fixMonth(String.valueOf(month));
+                                            String sday = getDate.fixDay(String.valueOf(day));
+                                            sql = "select date,id from " + listtypeDB.get(i) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                            System.out.print(sql);
+                                            dbOperation stable = new dbOperation();
+                                            stable.DBConnect();
+                                            try {
+                                                rs = stable.DBSqlQuery(sql);
+                                                if (rs.next()) {
+                                                    String date = rs.getString(1).substring(0, 8);
+                                                    dbOperation tem = new dbOperation();
+                                                    tem.DBConnect();
+                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
+                                                    System.out.print(s);
+                                                    tem.DBSqlExe(s);
+                                                    tem.DBClosed();
+                                                }
+                                                stable.DBClosed();
+                                            } catch (SQLException ex) {
+                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    int k = 0;
+                    ResultSet RS = null;
+                    dbOperation c = new dbOperation();
+                    c.DBConnect();
+                    sql = "select date,id,type from StreamCache order by date ASC";
+                    try {
+                        RS = c.DBSqlQuery(sql);
+                        while (RS.next()) {
+                            table1.setValueAt(RS.getString(1).substring(0, 8), k, 0);
+                            table1.setValueAt(RS.getString("id"), k, 1);
+                            table1.setValueAt(RS.getString("type"), k, 2);
+                            k++;
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    c.DBClosed();
                 }
             }
         });
@@ -236,6 +414,14 @@ class workingFrame extends JFrame {
 
     public static void setTypeSelected(String x) {
         typeSelect.setText(x);
+    }
+
+    public static void setListTypeDB(String x) {
+        listtypeDB.add(x);
+    }
+
+    public static void setListType(String x) {
+        listtype.add(x);
     }
 }
 
@@ -308,6 +494,14 @@ class choicePopFrame extends JFrame {
     }
 }
 
+class model extends DefaultTableModel {
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
+    }
+}
+
 class choicePopFrameType extends JFrame {
 
     public JComboBox cb;
@@ -341,8 +535,24 @@ class choicePopFrameType extends JFrame {
                 String temStoreSelect = "";
                 for (int i = 0; i < table.getRowCount(); i++) {
                     if (model.getValueAt(i, 0) != null) {
-                        workingFrame.setListStore(model.getValueAt(i, 0).toString());
+                        if (model.getValueAt(i, 0).toString() == "销售单") {
+                            workingFrame.setListTypeDB("sellt where sellORreturn=0 and");
+                        } else if (model.getValueAt(i, 0).toString() == "销售退货单") {
+                            workingFrame.setListTypeDB("sellt where sellORreturn=1 and");
+                        } else if (model.getValueAt(i, 0).toString() == "进货退货单") {
+                            workingFrame.setListTypeDB("inputt where inputORreturn=1 and");
+                        } else if (model.getValueAt(i, 0).toString() == "进货单") {
+                            workingFrame.setListTypeDB("inputt where inputORreturn=0 and");
+                        } else if (model.getValueAt(i, 0).toString() == "报损单") {
+                            workingFrame.setListTypeDB("loset where ioseORgain=0 and");
+                        } else if (model.getValueAt(i, 0).toString() == "报益单") {
+                            workingFrame.setListTypeDB("loset where ioseORgain=1 and");
+                        } else if (model.getValueAt(i, 0).toString() == "同价调拨单单") {
+                            workingFrame.setListTypeDB("equalt where ");
+                        }
+                        workingFrame.setListType(model.getValueAt(i, 0).toString().trim());
                         temStoreSelect = temStoreSelect + model.getValueAt(i, 0).toString().trim() + "  ";
+
                     }
                 }
                 System.out.print(temStoreSelect);

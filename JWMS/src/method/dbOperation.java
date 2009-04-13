@@ -16,6 +16,10 @@ public class dbOperation {
     private Statement stmt;
     private ResultSet rs = null;
 
+    public static void DBcleared(String x){
+        
+    }
+
     public void DBConnect() {
 
         try {

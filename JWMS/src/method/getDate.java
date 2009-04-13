@@ -36,6 +36,28 @@ public class getDate {
         return sd;
     }
 
+    public static String fixYear(String t) {
+        String sy = String.valueOf(t);//switch int to string
+        String[] lib = {"200", "20", "2", ""};  //自动补零算法
+        sy = lib[sy.length() - 1] + sy;
+        return sy;
+    }
+
+    static public String fixMonth(String m) {
+
+        String sm = String.valueOf(m);
+        String[] lib = {"0", ""};
+        sm = lib[sm.length() - 1] + sm;
+        return sm;
+    }
+
+    static public String fixDay(String d) {
+        String sd = String.valueOf(d);
+        String[] lib = {"0", ""};
+        sd = lib[sd.length() - 1] + sd;
+        return sd;
+    }
+
     static public int yearIndex() {
         int year = getDateYear;
         int index = year - 2009;
