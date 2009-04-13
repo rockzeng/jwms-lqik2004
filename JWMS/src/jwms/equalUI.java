@@ -233,10 +233,15 @@ class equalFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int ifcontinue = JOptionPane.showConfirmDialog(null, "请确认单据过账", "单据确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ifcontinue == JOptionPane.YES_OPTION) {
+                    inputIDMake idmk = new inputIDMake();
                     equal2Main equalBt = new equal2Main();//定义一个新的对象，用以传输数据；
                     equalBt.setID(ID.getText());
+                    idmk.getYear(year.getSelectedItem().toString());
                     equalBt.setYear(year.getSelectedItem().toString());
                     equalBt.setMonth(month.getSelectedItem().toString());
+                    idmk.getMonth(month.getSelectedItem().toString());
+                    idmk.getDay(day.getSelectedItem().toString());
+                    equalBt.setDate(idmk.inputMake());
                     equalBt.setDay(day.getSelectedItem().toString());
                     equalBt.setINStore(inStoreComboBox.getSelectedItem().toString());
                     equalBt.setOUTStore(outStoreComboBox.getSelectedItem().toString());

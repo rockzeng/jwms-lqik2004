@@ -34,6 +34,7 @@ public class equal2Main {
     private String num;
     private String inPrice;
     private String outPrice;
+    private String date;
 //录入信息
 
     public void test() {
@@ -100,6 +101,9 @@ public class equal2Main {
     public void setOthers(String text) {
         others = text;
     }
+    public void setDate(String text){
+        date=text;
+    }
 
     public void transmit() {
         try {
@@ -143,7 +147,7 @@ public class equal2Main {
                 dbOperation t2Equal = new dbOperation();
                 t2Equal.DBConnect();
                 String sql;
-                sql = "insert into equalt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + inStore + "','" + outStore + "','" + others + "','" + num + "')";
+                sql = "insert into equalt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + inStore + "','" + outStore + "','" + others + "','" + num + "','" + date + "')";
                 t2Equal.DBSqlExe(sql);
                 t2Equal.DBClosed();
             } else {

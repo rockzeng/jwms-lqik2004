@@ -29,6 +29,7 @@ public class sell2Main {
     private short sellORreturn; //判断是进货还是退货；
     private String others = "";
     private int num;
+    private String date;
     //TEST
 
     public void test() {
@@ -104,6 +105,9 @@ public class sell2Main {
     public void setSellORreturn(short text) {
         sellORreturn = text;
     }
+    public void setDate(String text){
+        date=text;
+    }
 
     public void transmitSell() {
         boolean result;
@@ -119,7 +123,7 @@ public class sell2Main {
                 dbOperation t2Sell = new dbOperation();
                 t2Sell.DBConnect();
                 String sql;
-                sql = "insert into sellt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + outPrice + "','" + sellORreturn + "','" + others + "','" + num + "')";
+                sql = "insert into sellt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + outPrice + "','" + sellORreturn + "','" + others + "','" + num + "','" + date + "')";
                 System.out.println(sql);
                 t2Sell.DBSqlExe(sql);
                 t2Sell.DBClosed();
@@ -172,7 +176,7 @@ public class sell2Main {
             dbOperation t2Rturn = new dbOperation();
             t2Rturn.DBConnect();
             String sql;
-            sql = "insert into sellt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + outPrice + "','" + sellORreturn + "','" + others + "','" + num + "')";
+            sql = "insert into sellt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + outPrice + "','" + sellORreturn + "','" + others + "','" + num + "','" + date + "')";
             t2Rturn.DBSqlExe(sql);
             t2Rturn.DBClosed();
 

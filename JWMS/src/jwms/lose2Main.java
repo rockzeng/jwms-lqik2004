@@ -28,6 +28,7 @@ public class lose2Main {
     private short loseORgain;//用来判断是报损还是报益
     private String others = "";
     private String num;
+    private String date;
     private String outPrice;
 //TEST 测试类
 
@@ -100,6 +101,9 @@ public class lose2Main {
     public void setLoseORgain(short text) {
         loseORgain = text;
     }
+    public void setDate(String text){
+        date=text;
+    }
     //报损方法
 
     public void transmit2Lose() {
@@ -116,7 +120,7 @@ public class lose2Main {
                 dbOperation t2Lose = new dbOperation();
                 t2Lose.DBConnect();
                 String sql;
-                sql = "insert into loset values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + loseORgain + "','" + others + "','" + num + "')";
+                sql = "insert into loset values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + loseORgain + "','" + others + "','" + num + "','" + date + "')";
                 t2Lose.DBSqlExe(sql);
                 t2Lose.DBClosed();
             } else {
@@ -166,7 +170,7 @@ public class lose2Main {
             dbOperation t2Gain = new dbOperation();
             t2Gain.DBConnect();
             String sql;
-            sql = "insert into loset values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + loseORgain + "','" + others + "','" + num + "')";
+            sql = "insert into loset values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + loseORgain + "','" + others + "','" + num + "','" + date + "')";
             System.out.println(sql);
             t2Gain.DBSqlExe(sql);
             t2Gain.DBClosed();

@@ -264,10 +264,15 @@ class loseFrame extends JFrame {
                 int ifcontinue = JOptionPane.showConfirmDialog(null, "请确认单据过账", "单据确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ifcontinue == JOptionPane.YES_OPTION) {
                     lose2Main loseBt = new lose2Main();//定义一个新的对象，用以传输数据；
+                    inputIDMake idmk = new inputIDMake();
                     loseBt.setID(ID.getText());
                     loseBt.setYear(year.getSelectedItem().toString());
+                    idmk.getYear(year.getSelectedItem().toString());
                     loseBt.setMonth(month.getSelectedItem().toString());
+                    idmk.getMonth(month.getSelectedItem().toString());
                     loseBt.setDay(day.getSelectedItem().toString());
+                    idmk.getDay(day.getSelectedItem().toString());
+                    loseBt.setDate(idmk.inputMake());
                     loseBt.setStore(storeComboBox.getSelectedItem().toString());
                     //未完成：如果是新加入的仓库，把新仓库加入到“仓库”数据库中；并且设置这个仓库为首选仓库修改properties文件
                     for (int i = 0; i < model.getRowCount(); i++) {

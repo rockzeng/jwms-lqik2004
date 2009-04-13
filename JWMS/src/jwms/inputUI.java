@@ -260,10 +260,15 @@ class inputFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int ifcontinue = JOptionPane.showConfirmDialog(null, "请确认单据过账", "单据确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ifcontinue == JOptionPane.YES_OPTION) {
+                    inputIDMake idmk = new inputIDMake();
                     input2Main inputBt = new input2Main();//定义一个新的对象，用以传输数据；
                     inputBt.setID(ID.getText());
+                    idmk.getYear(year.getSelectedItem().toString());
                     inputBt.setYear(year.getSelectedItem().toString());
+                    idmk.getMonth(month.getSelectedItem().toString());
                     inputBt.setMonth(month.getSelectedItem().toString());
+                    idmk.getDay(day.getSelectedItem().toString());
+                    inputBt.setDate(idmk.inputMake());
                     inputBt.setDay(day.getSelectedItem().toString());
                     inputBt.setStore(storeComboBox.getSelectedItem().toString());
                     //未完成：如果是新加入的仓库，把新仓库加入到“仓库”数据库中；并且设置这个仓库为首选仓库修改properties文件

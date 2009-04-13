@@ -35,3 +35,4 @@ public class idMake {
     public static int tag = Integer.parseInt(propertiesRW.proIDMakeRead("tag"));
     public static int judge = Integer.parseInt(propertiesRW.proIDMakeRead("judge"));
 }
+

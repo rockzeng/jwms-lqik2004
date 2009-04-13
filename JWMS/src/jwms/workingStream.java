@@ -158,6 +158,8 @@ class workingFrame extends JFrame {
         hbox3.add(stateType);
         hbox3.add(typeSelect);
         hbox3.add(Box.createHorizontalGlue());
+        //加入表单
+
         //垂直布局
         Box vbox = Box.createVerticalBox();
         vbox.add(Box.createVerticalStrut(5));

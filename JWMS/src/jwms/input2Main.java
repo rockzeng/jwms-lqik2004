@@ -28,6 +28,7 @@ public class input2Main {
     private String sumPrice;
     private String num;
     private short inputORreturn;
+    private String date;
 
     //输入信息
     public void test() {
@@ -100,6 +101,9 @@ public class input2Main {
     public void setInputORreturn(short text) {
         inputORreturn = text;
     }
+    public void setDate(String text){
+        date=text;
+    }
 
     public void transmitInput() {
         try {
@@ -107,7 +111,7 @@ public class input2Main {
             dbOperation t2Input = new dbOperation();
             t2Input.DBConnect();
             String sql;
-            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "','" + sumPrice + "','" + num + "','" + inputORreturn + "')";
+            sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "','" + sumPrice + "','" + num + "','" + inputORreturn + "','" + date + "')";
             System.out.print(sql);
             t2Input.DBSqlExe(sql);
             t2Input.DBClosed();
@@ -142,7 +146,7 @@ public class input2Main {
                 dbOperation t2Input = new dbOperation();
                 t2Input.DBConnect();
                 String sql;
-                sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "','" + sumPrice + "','" + num + "','" + inputORreturn + "')";
+                sql = "insert into inputt values('" + id + "','" + year + "','" + month + "','" + day + "','" + info + "','" + amount + "','" + color + "','" + size + "','" + store + "','" + inPrice + "','" + outPrice + "','" + sumPrice + "','" + num + "','" + inputORreturn + "','" + date + "')";
                 System.out.print(sql);
                 t2Input.DBSqlExe(sql);
                 t2Input.DBClosed();
