@@ -1,5 +1,11 @@
 #labels UI,change
 =UI Change=
+2009.4.14
+
+[http://jwms-lqik2004.googlecode.com/files/6.PNG]
+
+更新了“经营历程”，完善了功能
+
 
 2009.4.10
 
