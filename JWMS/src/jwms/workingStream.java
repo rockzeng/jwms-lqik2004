@@ -85,6 +85,9 @@ class workingFrame extends JFrame {
     JTable table1 = new JTable(model1);
     DefaultTableModel model2 = new model();
     JTable table2 = new JTable(model2);
+    JLabel storeX = new JLabel();
+    JLabel sumpriceX = new JLabel();
+    JLabel sumvaluesX = new JLabel();
 
     @SuppressWarnings("empty-statement")
     public workingFrame() {
@@ -201,7 +204,26 @@ class workingFrame extends JFrame {
         hbox4.add(Box.createHorizontalStrut(5));
         hbox4.add(panel1);
         hbox4.add(Box.createHorizontalStrut(30));
-        hbox4.add(panel2);
+        Box vhbox4 = Box.createVerticalBox();
+        hbox4.add(vhbox4);
+        JLabel store = new JLabel("仓库：");
+
+        JLabel sumprice = new JLabel("合计金额：");
+
+        JLabel sumvalues = new JLabel("合计数量：");
+
+        Box h4 = Box.createHorizontalBox();
+        h4.add(store);
+        h4.add(storeX);
+        h4.add(Box.createHorizontalGlue());
+        h4.add(sumvalues);
+        h4.add(sumvaluesX);
+        h4.add(Box.createHorizontalStrut(20));
+        h4.add(sumprice);
+        h4.add(sumpriceX);
+        vhbox4.add(h4);
+        vhbox4.add(panel2);
+
         //hbox4.add(Box.createHorizontalStrut(400));
         hbox4.add(Box.createHorizontalGlue());
         //垂直布局
@@ -252,27 +274,171 @@ class workingFrame extends JFrame {
                 String keyWord;
                 String keyStore;
                 String sql = null;
-                ResultSet rs=null;
+                ResultSet rs = null;
                 if (e.getButton() == MouseEvent.BUTTON1) {// 单击鼠标左键
                     if (e.getClickCount() == 2) {
-                        keyWord=table1.getModel().getValueAt(table1.getSelectedRow(), 1).toString().trim();
-                        if(keyWord.startsWith("S")){
-                            keyStore="sellt";
-                            sql="select info,amount,outprice from "+keyStore+" where id='"+keyWord+"'";
+                        keyWord = table1.getModel().getValueAt(table1.getSelectedRow(), 1).toString().trim();
+                        if (keyWord.startsWith("S")) {
+                            Object[] colName = new Object[6];
+                            colName[0] = "编号";
+                            colName[1] = "商品名称";
+                            colName[2] = "数量";
+                            colName[3] = "单价";
+                            colName[4] = "金额";
+                            colName[5] = "备注";
+                            model2.setColumnCount(6);
+                            model2.setColumnIdentifiers(colName);
+                            keyStore = "sellt";
+                            sql = "select num,info,amount,outprice,others,store from " + keyStore + " where id='" + keyWord + "'";
                             System.out.print(sql);
-                        }else if(keyWord.startsWith("E")){
-                            keyStore="equalt";
-                        }else if(keyWord.startsWith("L")){
-                            keyStore="loset";
-                        }else if(keyWord.startsWith("I")){
-                            keyStore="inputt";
+                            dbOperation st = new dbOperation();
+                            st.DBConnect();
+                            try {
+                                int i = 0;
+                                rs = st.DBSqlQuery(sql);
+                                int sum1 = 0;//合计数量
+                                float sum2 = 0;//合计金额
+                                while (rs.next()) {
+                                    table2.setValueAt(rs.getString(1), i, 0);
+                                    table2.setValueAt(rs.getString(2), i, 1);
+                                    table2.setValueAt(rs.getString(3), i, 2);
+                                    float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
+                                    table2.setValueAt(rs.getString(4), i, 3);
+                                    table2.setValueAt(sum, i, 4);
+                                    table2.setValueAt(rs.getString(5), i, 5);
+                                    storeX.setText(rs.getString(6).trim());
+                                    sum1 = sum1 + Integer.parseInt(table2.getValueAt(i, 2).toString().trim());
+                                    sum2 = sum2 + sum;
+                                    i++;
+                                }
+                                sumvaluesX.setText(String.valueOf(sum1));
+                                sumpriceX.setText(String.valueOf(sum2));
+                            } catch (SQLException ex) {
+                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            st.DBClosed();
+                        } else if (keyWord.startsWith("E")) {
+                            Object[] colName = new Object[4];
+                            colName[0] = "编号";
+                            colName[1] = "商品名称";
+                            colName[2] = "数量";
+                            colName[3] = "备注";
+                            model2.setColumnCount(4);
+                            model2.setColumnIdentifiers(colName);
+                            keyStore = "equalt";
+                            sql = "select num,info,amount,others,inStore,outStore from " + keyStore + " where id='" + keyWord + "'";
+                            System.out.print(sql);
+                            dbOperation st = new dbOperation();
+                            st.DBConnect();
+                            try {
+                                int i = 0;
+                                rs = st.DBSqlQuery(sql);
+                                int sum1 = 0;//合计数量
+                                float sum2 = 0;//合计金额
+                                while (rs.next()) {
+                                    table2.setValueAt(rs.getString(1), i, 0);
+                                    table2.setValueAt(rs.getString(2), i, 1);
+                                    table2.setValueAt(rs.getString(3), i, 2);
+                                    table2.setValueAt(rs.getString(4), i, 3);
+                                    storeX.setText("'" + rs.getString(5) + "' 收  '" + rs.getString(6) + "' 发");
+                                    sum1 = sum1 + Integer.parseInt(table2.getValueAt(i, 2).toString().trim());
+                                    i++;
+                                }
+                                sumvaluesX.setText(String.valueOf(sum1));
+                                sumpriceX.setText(String.valueOf(sum2));
+                            } catch (SQLException ex) {
+                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            st.DBClosed();
+
+
+                        } else if (keyWord.startsWith("L")) {
+                            keyStore = "loset";
+                            Object[] colName = new Object[6];
+                            colName[0] = "编号";
+                            colName[1] = "商品名称";
+                            colName[2] = "数量";
+                            colName[3] = "单价";
+                            colName[4] = "金额";
+                            colName[5] = "备注";
+                            model2.setColumnCount(6);
+                            model2.setColumnIdentifiers(colName);
+
+                            sql = "select num,info,amount,inprice,others,store from " + keyStore + " where id='" + keyWord + "'";
+                            System.out.print(sql);
+                            dbOperation st = new dbOperation();
+                            st.DBConnect();
+                            try {
+                                int i = 0;
+                                rs = st.DBSqlQuery(sql);
+                                int sum1 = 0;//合计数量
+                                float sum2 = 0;//合计金额
+                                while (rs.next()) {
+                                    table2.setValueAt(rs.getString(1), i, 0);
+                                    table2.setValueAt(rs.getString(2), i, 1);
+                                    table2.setValueAt(rs.getString(3), i, 2);
+                                    float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
+                                    table2.setValueAt(rs.getString(4), i, 3);
+                                    table2.setValueAt(sum, i, 4);
+                                    table2.setValueAt(rs.getString(5), i, 5);
+                                    storeX.setText(rs.getString(6).trim());
+                                    sum1 = sum1 + Integer.parseInt(table2.getValueAt(i, 2).toString().trim());
+                                    sum2 = sum2 + sum;
+                                    i++;
+                                }
+                                sumvaluesX.setText(String.valueOf(sum1));
+                                sumpriceX.setText(String.valueOf(sum2));
+                            } catch (SQLException ex) {
+                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            st.DBClosed();
+                        } else if (keyWord.startsWith("I")) {
+                            keyStore = "inputt";
+                            Object[] colName = new Object[6];
+                            colName[0] = "编号";
+                            colName[1] = "商品名称";
+                            colName[2] = "数量";
+                            colName[3] = "入库单价";
+                            colName[4] = "零售价";
+                            colName[5] = "合计金额";
+                            model2.setColumnCount(6);
+                            model2.setColumnIdentifiers(colName);
+
+                            sql = "select num,info,amount,inprice,outPrice,sumprice,store from " + keyStore + " where id='" + keyWord + "'";
+                            System.out.print(sql);
+                            dbOperation st = new dbOperation();
+                            st.DBConnect();
+                            try {
+                                int i = 0;
+                                rs = st.DBSqlQuery(sql);
+                                int sum1 = 0;//合计数量
+                                float sum2 = 0;//合计金额
+                                while (rs.next()) {
+                                    table2.setValueAt(rs.getString(1), i, 0);
+                                    table2.setValueAt(rs.getString(2), i, 1);
+                                    table2.setValueAt(rs.getString(3), i, 2);
+                                    float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
+                                    table2.setValueAt(rs.getString(4), i, 3);
+                                    table2.setValueAt(rs.getString(5), i, 4);
+                                    table2.setValueAt(sum, i, 5);
+                                    storeX.setText(rs.getString(7).trim());
+                                    sum1 = sum1 + Integer.parseInt(table2.getValueAt(i, 2).toString().trim());
+                                    sum2 = sum2 + sum;
+                                    i++;
+                                }
+                                sumvaluesX.setText(String.valueOf(sum1));
+                                sumpriceX.setText(String.valueOf(sum2));
+                            } catch (SQLException ex) {
+                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            st.DBClosed();
                         }
-                        dbOperation st=new dbOperation();
+                        dbOperation st = new dbOperation();
                         st.DBConnect();
                         try {
-                            int i=0;
+                            int i = 0;
                             rs = st.DBSqlQuery(sql);
-                            while(rs.next()){
+                            while (rs.next()) {
                                 table2.setValueAt(rs.getString(1), i, 0);
                                 table2.setValueAt(rs.getString(2), i, 1);
                                 table2.setValueAt(rs.getString(3), i, 2);
@@ -282,13 +448,13 @@ class workingFrame extends JFrame {
                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         st.DBClosed();
-                        /*
-                        int colummCount = table1.getModel().getColumnCount();// 列数 
-                        for (int i = 0; i < colummCount; i++) {
-                            System.out.print(table1.getModel().getValueAt(table1.getSelectedRow(), i).toString() + " ");
-                        }
-                        System.out.println();
-                         * */
+                    /*
+                    int colummCount = table1.getModel().getColumnCount();// 列数
+                    for (int i = 0; i < colummCount; i++) {
+                    System.out.print(table1.getModel().getValueAt(table1.getSelectedRow(), i).toString() + " ");
+                    }
+                    System.out.println();
+                     * */
                     }
                 }
             }
@@ -333,13 +499,80 @@ class workingFrame extends JFrame {
                                             String syear = getDate.fixYear(String.valueOf(year));
                                             String smonth = getDate.fixMonth(String.valueOf(month));
                                             String sday = getDate.fixDay(String.valueOf(day));
-                                            sql = "select date,id from " + listtypeDB.get(i) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                            sql = "select distinct date,id from " + listtypeDB.get(i) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                             System.out.print(sql);
                                             dbOperation stable = new dbOperation();
                                             stable.DBConnect();
                                             try {
                                                 rs = stable.DBSqlQuery(sql);
-                                                if (rs.next()) {
+                                                while (rs.next()) {
+                                                    String date = rs.getString(1).substring(0, 8);
+                                                    dbOperation tem = new dbOperation();
+                                                    tem.DBConnect();
+                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
+                                                    System.out.print(s);
+                                                    tem.DBSqlExe(s);
+                                                    tem.DBClosed();
+                                                }
+                                                stable.DBClosed();
+                                            } catch (SQLException ex) {
+                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
+                            for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
+                                for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
+                                    for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
+                                        if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                            break;
+                                        } else {
+                                            String syear = getDate.fixYear(String.valueOf(year));
+                                            String smonth = getDate.fixMonth(String.valueOf(month));
+                                            String sday = getDate.fixDay(String.valueOf(day));
+                                            sql = "select distinct date,id from " + listtypeDB.get(i) + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                            System.out.print(sql);
+                                            dbOperation stable = new dbOperation();
+                                            stable.DBConnect();
+                                            try {
+                                                rs = stable.DBSqlQuery(sql);
+                                                while (rs.next()) {
+                                                    String date = rs.getString(1).substring(0, 8);
+                                                    dbOperation tem = new dbOperation();
+                                                    tem.DBConnect();
+                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
+                                                    System.out.print(s);
+                                                    tem.DBSqlExe(s);
+                                                    tem.DBClosed();
+                                                }
+                                                stable.DBClosed();
+                                            } catch (SQLException ex) {
+                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            store = storeComboBox.getSelectedItem().toString().trim();
+                            for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
+                                for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
+                                    for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
+                                        if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                            break;
+                                        } else {
+                                            String syear = getDate.fixYear(String.valueOf(year));
+                                            String smonth = getDate.fixMonth(String.valueOf(month));
+                                            String sday = getDate.fixDay(String.valueOf(day));
+                                            sql = "select distinct date,id from " + listtypeDB.get(i) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                            System.out.print(sql);
+                                            dbOperation stable = new dbOperation();
+                                            stable.DBConnect();
+                                            try {
+                                                rs = stable.DBSqlQuery(sql);
+                                                while (rs.next()) {
                                                     String date = rs.getString(1).substring(0, 8);
                                                     dbOperation tem = new dbOperation();
                                                     tem.DBConnect();
