@@ -31,7 +31,7 @@ import method.propertiesRW;
  */
 public class workingStream {
 
-    static workingFrame frame = new workingFrame();
+    static searchFrame frame = new searchFrame();
 
     /**
      * @param args the command line arguments
