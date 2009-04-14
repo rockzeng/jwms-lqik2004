@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package jwms;
 
 import java.awt.BorderLayout;
@@ -251,6 +247,7 @@ class workingFrame extends JFrame {
                     storePop.setVisible(true);
                 } else {//实现弹出窗口的自动关闭和打开
                     storePop.dispose();
+                    setStoreSelected(storeComboBox.getSelectedItem().toString().trim());
                 }
             }
         });
@@ -265,6 +262,7 @@ class workingFrame extends JFrame {
                     typePop.setVisible(true);
                 } else {//实现弹出窗口的自动关闭和打开
                     typePop.dispose();
+                    setTypeSelected(typeComboBox.getSelectedItem().toString().trim());
                 }
             }
         });
@@ -277,6 +275,12 @@ class workingFrame extends JFrame {
                 ResultSet rs = null;
                 if (e.getButton() == MouseEvent.BUTTON1) {// 单击鼠标左键
                     if (e.getClickCount() == 2) {
+                        for (int j = table2.getRowCount() - 1; j >= 0; j--) {
+                            for (int i = table2.getColumnCount() - 1; i >= 0; i--) {
+                                table2.setValueAt("", j, i);
+                            }
+                        }
+                        table2.repaint();
                         keyWord = table1.getModel().getValueAt(table1.getSelectedRow(), 1).toString().trim();
                         if (keyWord.startsWith("S")) {
                             Object[] colName = new Object[6];
@@ -462,12 +466,12 @@ class workingFrame extends JFrame {
         confirm.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                for (int j = table2.getRowCount() - 1; j >= 0; j--) {
-                    for (int i = table2.getColumnCount() - 1; i >= 0; i--) {
-                        table2.setValueAt("", j, i);
+                for (int j = table1.getRowCount() - 1; j >= 0; j--) {
+                    for (int i = table1.getColumnCount() - 1; i >= 0; i--) {
+                        table1.setValueAt("", j, i);
                     }
                 }
-                table2.repaint();
+                table1.repaint();
                 dbOperation init = new dbOperation();
                 init.DBConnect();
                 String sqlinit;
@@ -754,149 +758,147 @@ class workingFrame extends JFrame {
                         Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     c.DBClosed();
-                }else{
+                } else {
                     String type = null;
                     if (typeComboBox.getSelectedItem().toString().trim() == "销售单") {
-                            type="sellt where sellORreturn=0 and";
-                        } else if (typeComboBox.getSelectedItem().toString().trim() == "销售退货单") {
-                            type="sellt where sellORreturn=1 and";
-                        } else if (typeComboBox.getSelectedItem().toString().trim() == "进货退货单") {
-                            type="inputt where inputORreturn=1 and";
-                        } else if (typeComboBox.getSelectedItem().toString().trim() == "进货单") {
-                           type="inputt where inputORreturn=0 and";
-                        } else if (typeComboBox.getSelectedItem().toString().trim()== "报损单") {
-                            type="loset where loseORgain=0 and";
-                        } else if (typeComboBox.getSelectedItem().toString().trim() == "报益单") {
-                            type="loset where loseORgain=1 and";
-                        } else if (typeComboBox.getSelectedItem().toString().trim() == "同价调拨单") {
-                            type="equalt where ";
+                        type = "sellt where sellORreturn=0 and";
+                    } else if (typeComboBox.getSelectedItem().toString().trim() == "销售退货单") {
+                        type = "sellt where sellORreturn=1 and";
+                    } else if (typeComboBox.getSelectedItem().toString().trim() == "进货退货单") {
+                        type = "inputt where inputORreturn=1 and";
+                    } else if (typeComboBox.getSelectedItem().toString().trim() == "进货单") {
+                        type = "inputt where inputORreturn=0 and";
+                    } else if (typeComboBox.getSelectedItem().toString().trim() == "报损单") {
+                        type = "loset where loseORgain=0 and";
+                    } else if (typeComboBox.getSelectedItem().toString().trim() == "报益单") {
+                        type = "loset where loseORgain=1 and";
+                    } else if (typeComboBox.getSelectedItem().toString().trim() == "同价调拨单") {
+                        type = "equalt where ";
+                    }
+                    if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
+                        store = liststore.get(0).toString().trim();
+                        for (int k = 1; k < liststore.size(); k++) {
+                            store = store + "' or store= '" + liststore.get(k).toString().trim();
                         }
-                        if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
-                            store = liststore.get(0).toString().trim();
-                            for (int k = 1; k < liststore.size(); k++) {
-                                store = store + "' or store= '" + liststore.get(k).toString().trim();
-                            }
-                            for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
-                                    for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
-                                        if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                            break;
-                                        } else {
-                                            String syear = getDate.fixYear(String.valueOf(year));
-                                            String smonth = getDate.fixMonth(String.valueOf(month));
-                                            String sday = getDate.fixDay(String.valueOf(day));
-                                            sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                            System.out.print(sql);
-                                            dbOperation stable = new dbOperation();
-                                            stable.DBConnect();
-                                            try {
-                                                rs = stable.DBSqlQuery(sql);
-                                                while (rs.next()) {
-                                                    String date = rs.getString(1).substring(0, 8);
-                                                    dbOperation tem = new dbOperation();
-                                                    tem.DBConnect();
-                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
-                                                    System.out.print(s);
-                                                    tem.DBSqlExe(s);
-                                                    tem.DBClosed();
-                                                }
-                                                stable.DBClosed();
-                                            } catch (SQLException ex) {
-                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
+                            for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
+                                for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
+                                    if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                        break;
+                                    } else {
+                                        String syear = getDate.fixYear(String.valueOf(year));
+                                        String smonth = getDate.fixMonth(String.valueOf(month));
+                                        String sday = getDate.fixDay(String.valueOf(day));
+                                        sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                        System.out.print(sql);
+                                        dbOperation stable = new dbOperation();
+                                        stable.DBConnect();
+                                        try {
+                                            rs = stable.DBSqlQuery(sql);
+                                            while (rs.next()) {
+                                                String date = rs.getString(1).substring(0, 8);
+                                                dbOperation tem = new dbOperation();
+                                                tem.DBConnect();
+                                                String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
+                                                System.out.print(s);
+                                                tem.DBSqlExe(s);
+                                                tem.DBClosed();
                                             }
+                                            stable.DBClosed();
+                                        } catch (SQLException ex) {
+                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                         }
                                     }
                                 }
                             }
-                        } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
-                            for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
-                                    for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
-                                        if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                            break;
-                                        } else {
-                                            String syear = getDate.fixYear(String.valueOf(year));
-                                            String smonth = getDate.fixMonth(String.valueOf(month));
-                                            String sday = getDate.fixDay(String.valueOf(day));
-                                            sql = "select distinct date,id from " + type + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                            System.out.print(sql);
-                                            dbOperation stable = new dbOperation();
-                                            stable.DBConnect();
-                                            try {
-                                                rs = stable.DBSqlQuery(sql);
-                                                while (rs.next()) {
-                                                    String date = rs.getString(1).substring(0, 8);
-                                                    dbOperation tem = new dbOperation();
-                                                    tem.DBConnect();
-                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
-                                                    System.out.print(s);
-                                                    tem.DBSqlExe(s);
-                                                    tem.DBClosed();
-                                                }
-                                                stable.DBClosed();
-                                            } catch (SQLException ex) {
-                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
+                        for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
+                            for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
+                                for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
+                                    if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                        break;
+                                    } else {
+                                        String syear = getDate.fixYear(String.valueOf(year));
+                                        String smonth = getDate.fixMonth(String.valueOf(month));
+                                        String sday = getDate.fixDay(String.valueOf(day));
+                                        sql = "select distinct date,id from " + type + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                        System.out.print(sql);
+                                        dbOperation stable = new dbOperation();
+                                        stable.DBConnect();
+                                        try {
+                                            rs = stable.DBSqlQuery(sql);
+                                            while (rs.next()) {
+                                                String date = rs.getString(1).substring(0, 8);
+                                                dbOperation tem = new dbOperation();
+                                                tem.DBConnect();
+                                                String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
+                                                System.out.print(s);
+                                                tem.DBSqlExe(s);
+                                                tem.DBClosed();
                                             }
+                                            stable.DBClosed();
+                                        } catch (SQLException ex) {
+                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                         }
                                     }
                                 }
                             }
-                        } else {
-                            store = storeComboBox.getSelectedItem().toString().trim();
-                            for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
-                                    for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
-                                        if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                            break;
-                                        } else {
-                                            String syear = getDate.fixYear(String.valueOf(year));
-                                            String smonth = getDate.fixMonth(String.valueOf(month));
-                                            String sday = getDate.fixDay(String.valueOf(day));
-                                            sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                            System.out.print(sql);
-                                            dbOperation stable = new dbOperation();
-                                            stable.DBConnect();
-                                            try {
-                                                rs = stable.DBSqlQuery(sql);
-                                                while (rs.next()) {
-                                                    String date = rs.getString(1).substring(0, 8);
-                                                    dbOperation tem = new dbOperation();
-                                                    tem.DBConnect();
-                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
-                                                    System.out.print(s);
-                                                    tem.DBSqlExe(s);
-                                                    tem.DBClosed();
-                                                }
-                                                stable.DBClosed();
-                                            } catch (SQLException ex) {
-                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    } else {
+                        store = storeComboBox.getSelectedItem().toString().trim();
+                        for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
+                            for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
+                                for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
+                                    if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                        break;
+                                    } else {
+                                        String syear = getDate.fixYear(String.valueOf(year));
+                                        String smonth = getDate.fixMonth(String.valueOf(month));
+                                        String sday = getDate.fixDay(String.valueOf(day));
+                                        sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                        System.out.print(sql);
+                                        dbOperation stable = new dbOperation();
+                                        stable.DBConnect();
+                                        try {
+                                            rs = stable.DBSqlQuery(sql);
+                                            while (rs.next()) {
+                                                String date = rs.getString(1).substring(0, 8);
+                                                dbOperation tem = new dbOperation();
+                                                tem.DBConnect();
+                                                String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
+                                                System.out.print(s);
+                                                tem.DBSqlExe(s);
+                                                tem.DBClosed();
                                             }
+                                            stable.DBClosed();
+                                        } catch (SQLException ex) {
+                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                    int k = 0;
-                    ResultSet RS = null;
-                    dbOperation c = new dbOperation();
-                    c.DBConnect();
-                    sql = "select date,id,type from StreamCache order by date ASC";
-                    try {
-                        RS = c.DBSqlQuery(sql);
-                        while (RS.next()) {
-                            table1.setValueAt(RS.getString(1).substring(0, 8), k, 0);
-                            table1.setValueAt(RS.getString("id"), k, 1);
-                            table1.setValueAt(RS.getString("type"), k, 2);
-                            k++;
-                        }
-                    } catch (SQLException ex) {
-                        Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    c.DBClosed();
                 }
-            
-
+                int k = 0;
+                ResultSet RS = null;
+                dbOperation c = new dbOperation();
+                c.DBConnect();
+                sql = "select date,id,type from StreamCache order by date ASC";
+                try {
+                    RS = c.DBSqlQuery(sql);
+                    while (RS.next()) {
+                        table1.setValueAt(RS.getString(1).substring(0, 8), k, 0);
+                        table1.setValueAt(RS.getString("id"), k, 1);
+                        table1.setValueAt(RS.getString("type"), k, 2);
+                        k++;
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                c.DBClosed();
+            }
         });
     }
 
