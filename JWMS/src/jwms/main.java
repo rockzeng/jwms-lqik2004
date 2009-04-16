@@ -7,7 +7,6 @@ package jwms;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Panel;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -18,6 +17,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -110,7 +110,10 @@ class mainFrame extends JFrame {
         exit.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                int ifcontinue = JOptionPane.showConfirmDialog(null, "请确认所有的录入窗口已经关闭，如果继续本程序将退出，所有未过账的单据不会保存！", "退出确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (ifcontinue == JOptionPane.YES_OPTION) {
                 System.exit(0);
+                }
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         });

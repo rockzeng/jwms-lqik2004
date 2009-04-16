@@ -544,10 +544,6 @@ class inputPlanetTableModel extends AbstractTableModel {
         return columnNames[c];
     }
 
-    @Override
-    public Class getColumnClass(int c) {
-        return cells[0][c].getClass();
-    }
 
     public int getColumnCount() {
         return columnNames.length;
