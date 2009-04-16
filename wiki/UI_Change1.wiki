@@ -1,5 +1,13 @@
 #labels UI,change
 =UI Change=
+2009.4.16
+
+[http://jwms-lqik2004.googlecode.com/files/7.PNG]
+
+完整的程序界面已经完成
+目前是v0.01
+alpha 1
+
 2009.4.14
 
 [http://jwms-lqik2004.googlecode.com/files/6.PNG]
