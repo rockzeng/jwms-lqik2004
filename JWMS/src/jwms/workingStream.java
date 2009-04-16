@@ -33,13 +33,10 @@ public class workingStream {
 
     static workingFrame frame = new workingFrame();
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) throws Exception {
+    public workingStream() {
 
         frame.setLocationRelativeTo(null);//一句让窗口居中
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
     }
 

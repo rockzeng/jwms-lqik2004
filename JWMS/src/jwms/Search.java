@@ -32,21 +32,18 @@ public class Search {
 
     static searchFrame frame = new searchFrame();
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) throws Exception {
+    public Search() {
 
-        frame.setLocationRelativeTo(null);//一句让窗口居中
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+    frame.setLocationRelativeTo (null);//一句让窗口居中
+
+    frame.setDefaultCloseOperation (JFrame.DISPOSE_ON_CLOSE);
+
+    frame.setVisible (true);
     }
-
     public static Point frameLocateOnScr() {
         return frame.getLocationOnScreen();
     }
 }
-
 class searchFrame extends JFrame {
 
     private Object[] Objyear = {
@@ -68,7 +65,6 @@ class searchFrame extends JFrame {
     private JComboBox eMonth = new JComboBox(Objmonth);
     private JComboBox eDay = new JComboBox(Objday);
     private JComboBox storeComboBox = new JComboBox();
-    private JComboBox typeComboBox = new JComboBox(type);
     private choicePopFrame storePop = new choicePopFrame();//设置仓库弹出窗口
     private static List liststore = new Vector();
     private static List listtypeDB = new Vector();
@@ -113,12 +109,12 @@ class searchFrame extends JFrame {
         eYear.setMaximumSize(eYear.getPreferredSize());
         eMonth.setMaximumSize(eMonth.getPreferredSize());
         eDay.setMaximumSize(eDay.getPreferredSize());
-        JButton confirm = new JButton("查询");
+        JButton confirm = new JButton("基本查询");
 
         Box hbox1 = Box.createHorizontalBox();
         hbox1.add(Box.createHorizontalStrut(5));
         hbox1.add(panel);
-        hbox1.add(Box.createHorizontalStrut(50));
+        hbox1.add(Box.createHorizontalStrut(30));
         hbox1.add(label1);
         hbox1.add(bYear);
         hbox1.add(label2);
@@ -134,7 +130,7 @@ class searchFrame extends JFrame {
         hbox1.add(label6);
         hbox1.add(eDay);
         hbox1.add(label7);
-        hbox1.add(Box.createHorizontalStrut(30));
+        hbox1.add(Box.createHorizontalStrut(20));
         hbox1.add(confirm);
         hbox1.add(Box.createHorizontalGlue());
         //加入仓库选择
@@ -153,8 +149,41 @@ class searchFrame extends JFrame {
         hbox2.add(states);
         hbox2.add(storeSelect);
         hbox2.add(Box.createHorizontalGlue());
+        //加入基本表单
+        Object[] colName1 = new Object[4];
+        colName1[0] = "仓库";
+        colName1[1] = "销售数量";
+        colName1[2] = "销售额";
+        colName1[3] = "销售利润";
+        model1.setColumnCount(4);
+        model1.setRowCount(8);
+        TableColumnModel tc = table1.getColumnModel();
+        tc.getColumn(0).setPreferredWidth(20);
+        tc.getColumn(0).setPreferredWidth(25);
+        tc.getColumn(0).setPreferredWidth(15);
+        model1.setColumnIdentifiers(colName1);//定义列名
+        JScrollPane panel1 = new JScrollPane(table1);
+        panel1.setPreferredSize(new Dimension(600, 150));
 
-  
+        //加入工具按钮
+        JButton tool0 = new JButton("库存盘点");
+        JButton tool1 = new JButton("销售排行");
+        JButton tool2 = new JButton("利润排行");
+        JLabel advLabel = new JLabel("高级工具:");
+        Box vhbox3 = Box.createVerticalBox();
+        vhbox3.add(advLabel);
+        vhbox3.add(Box.createVerticalStrut(10));
+        vhbox3.add(tool0);
+        vhbox3.add(tool1);
+        vhbox3.add(tool2);
+        vhbox3.add(Box.createVerticalGlue());
+        Box hbox3 = Box.createHorizontalBox();
+        hbox3.add(Box.createHorizontalStrut(5));
+        hbox3.add(panel1);
+        hbox3.add(Box.createHorizontalStrut(10));
+        hbox3.add(vhbox3);
+        hbox3.add(Box.createHorizontalGlue());
+
 
         //hbox4.add(Box.createHorizontalStrut(400));
 
@@ -164,6 +193,8 @@ class searchFrame extends JFrame {
         vbox.add(hbox1);
         vbox.add(Box.createVerticalStrut(10));
         vbox.add(hbox2);
+        vbox.add(Box.createVerticalStrut(10));
+        vbox.add(hbox3);
         vbox.add(Box.createVerticalGlue());
         //显示箱式布局
         add(vbox, BorderLayout.NORTH);
@@ -185,8 +216,225 @@ class searchFrame extends JFrame {
         });
         confirm.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {  
-        }});
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+        confirm.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                for (int j = table1.getRowCount() - 1; j >= 0; j--) {
+                    for (int i = table1.getColumnCount() - 1; i >= 0; i--) {
+                        table1.setValueAt("", j, i);
+                    }
+                }
+                table1.repaint();
+                dbOperation init = new dbOperation();
+                init.DBConnect();
+                String sqlinit;
+                sqlinit = "delete from SearchCache";
+                try {
+                    init.DBSqlExe(sqlinit);
+                } catch (SQLException ex) {
+                    Logger.getLogger(dbOperation.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                init.DBClosed();
+                ResultSet rs = null;
+                String sql;
+                String store;
+                String byear = bYear.getSelectedItem().toString().trim();
+                String bmonth = bMonth.getSelectedItem().toString().trim();
+                String bday = bDay.getSelectedItem().toString().trim();
+                String eyear = eYear.getSelectedItem().toString().trim();
+                String emonth = eMonth.getSelectedItem().toString().trim();
+                String eday = eDay.getSelectedItem().toString().trim();
+                int sumamount = 0;
+                float sumoutprice = 0;
+                float income = 0;
+                if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
+                    for (int k = 0; k < liststore.size(); k++) {
+                        store = liststore.get(k).toString().trim();
+                        sumamount = 0;
+                        sumoutprice = 0;
+                        income = 0;
+                        for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
+                            for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
+                                for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
+                                    if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                        break;
+                                    } else {
+                                        String syear = getDate.fixYear(String.valueOf(year));
+                                        String smonth = getDate.fixMonth(String.valueOf(month));
+                                        String sday = getDate.fixDay(String.valueOf(day));
+                                        sql = "select amount,outPrice,info from sellt where (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' and sellorreturn=0 ";
+                                        System.out.print(sql);
+                                        dbOperation stable = new dbOperation();
+                                        stable.DBConnect();
+                                        try {
+                                            rs = stable.DBSqlQuery(sql);
+                                            while (rs.next()) {
+                                                int amount = Integer.parseInt(rs.getString(1).trim());
+                                                float outprice = Float.parseFloat(rs.getString(2).trim());
+                                                sumamount = sumamount + amount;
+                                                sumoutprice = sumoutprice + outprice * amount;
+                                                dbOperation tem = new dbOperation();
+                                                ResultSet inprice = null;
+                                                tem.DBConnect();
+                                                String s = "select distinct inPrice from inputt where info='" + rs.getString(3).trim() + "'";
+                                                //System.out.print(s);
+                                                inprice = tem.DBSqlQuery(s);
+                                                if (inprice.next()) {
+                                                    income = income + (outprice - Float.parseFloat(inprice.getString(1).trim())) * amount;
+                                                }
+                                                tem.DBClosed();
+                                            }
+                                            stable.DBClosed();
+                                        } catch (SQLException ex) {
+                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        dbOperation tem = new dbOperation();
+                        tem.DBConnect();
+                        String s = "insert into SearchCache values('" + store + "','" + sumamount + "','" + sumoutprice + "','" + income + "')";
+                        try {
+                            tem.DBSqlExe(s);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(searchFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        tem.DBClosed();
+                    }
+                } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
+                    for (int k = 1; k < storeComboBox.getItemCount() - 1; k++) {
+                        store = storeComboBox.getItemAt(k).toString().trim();
+                        sumamount = 0;
+                        sumoutprice = 0;
+                        income = 0;
+                        for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
+                            for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
+                                for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
+                                    if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                        break;
+                                    } else {
+                                        String syear = getDate.fixYear(String.valueOf(year));
+                                        String smonth = getDate.fixMonth(String.valueOf(month));
+                                        String sday = getDate.fixDay(String.valueOf(day));
+                                        sql = "select amount,outPrice,info from sellt where (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' and sellorreturn=0 ";
+                                        System.out.print(sql);
+                                        dbOperation stable = new dbOperation();
+                                        stable.DBConnect();
+                                        try {
+                                            rs = stable.DBSqlQuery(sql);
+                                            while (rs.next()) {
+                                                int amount = Integer.parseInt(rs.getString(1).trim());
+                                                float outprice = Float.parseFloat(rs.getString(2).trim());
+                                                sumamount = sumamount + amount;
+                                                sumoutprice = sumoutprice + outprice * amount;
+                                                dbOperation tem = new dbOperation();
+                                                ResultSet inprice = null;
+                                                tem.DBConnect();
+                                                String s = "select distinct inPrice from inputt where info='" + rs.getString(3).trim() + "'";
+                                                //System.out.print(s);
+                                                inprice = tem.DBSqlQuery(s);
+                                                if (inprice.next()) {
+                                                    income = income + (outprice - Float.parseFloat(inprice.getString(1).trim())) * amount;
+                                                }
+                                                tem.DBClosed();
+                                            }
+                                            stable.DBClosed();
+                                        } catch (SQLException ex) {
+                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        dbOperation tem = new dbOperation();
+                        tem.DBConnect();
+                        String s = "insert into SearchCache values('" + store + "','" + sumamount + "','" + sumoutprice + "','" + income + "')";
+                        try {
+                            tem.DBSqlExe(s);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(searchFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        tem.DBClosed();
+                    }
+                } else {
+                    store = storeComboBox.getSelectedItem().toString().trim();
+                    sumamount = 0;
+                    sumoutprice = 0;
+                    income = 0;
+                    for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
+                        for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
+                            for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
+                                if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                    break;
+                                } else {
+                                    String syear = getDate.fixYear(String.valueOf(year));
+                                    String smonth = getDate.fixMonth(String.valueOf(month));
+                                    String sday = getDate.fixDay(String.valueOf(day));
+                                    sql = "select amount,outPrice,info from sellt where (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' and sellorreturn=0 ";
+                                    System.out.print(sql);
+                                    dbOperation stable = new dbOperation();
+                                    stable.DBConnect();
+                                    try {
+                                        rs = stable.DBSqlQuery(sql);
+                                        while (rs.next()) {
+                                            int amount = Integer.parseInt(rs.getString(1).trim());
+                                            float outprice = Float.parseFloat(rs.getString(2).trim());
+                                            sumamount = sumamount + amount;
+                                            sumoutprice = sumoutprice + outprice * amount;
+                                            dbOperation tem = new dbOperation();
+                                            ResultSet inprice = null;
+                                            tem.DBConnect();
+                                            String s = "select distinct inPrice from inputt where info='" + rs.getString(3).trim() + "'";
+                                            //System.out.print(s);
+                                            inprice = tem.DBSqlQuery(s);
+                                            if (inprice.next()) {
+                                                income = income + (outprice - Float.parseFloat(inprice.getString(1).trim())) * amount;
+                                            }
+                                            tem.DBClosed();
+                                        }
+                                        stable.DBClosed();
+                                    } catch (SQLException ex) {
+                                        Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    dbOperation tem = new dbOperation();
+                    tem.DBConnect();
+                    String s = "insert into SearchCache values('" + store + "','" + sumamount + "','" + sumoutprice + "','" + income + "')";
+                    try {
+                        tem.DBSqlExe(s);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(searchFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    tem.DBClosed();
+                }
+
+                int k = 0;
+                ResultSet RS = null;
+                dbOperation c = new dbOperation();
+                c.DBConnect();
+                sql = "select store,amount,sumprice,income from SearchCache";
+                try {
+                    RS = c.DBSqlQuery(sql);
+                    while (RS.next()) {
+                        table1.setValueAt(RS.getString(1), k, 0);
+                        table1.setValueAt(RS.getString(2), k, 1);
+                        table1.setValueAt(RS.getString(3), k, 2);
+                        table1.setValueAt(RS.getString(4), k, 3);
+                        k++;
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                c.DBClosed();
+            }
+        });
     }
 
     private void storeLoad() throws SQLException {
@@ -233,80 +481,6 @@ class searchFrame extends JFrame {
         listtype.add(x);
     }
 }
-class imagePanel extends JPanel {
 
-    private Image image;
 
-    public imagePanel() {
-        setPreferredSize(new Dimension(153, 54));
-        setMaximumSize(getPreferredSize());
-        setMinimumSize(getPreferredSize());
-        try {
-            image = ImageIO.read(new File("image\\logo.gif"));
-        } catch (IOException ex) {
-            Logger.getLogger(imagePanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        if (image == null) {
-            return;
-        }
-        g.drawImage(image, 0, 0, null);
-    }
-}
-
-class choicePopFrame extends JFrame {
-
-    public JComboBox cb;
-    DefaultTableModel model = new DefaultTableModel();
-    JTable table = new JTable(model);
-
-    public choicePopFrame() {
-        Object[] colName = new Object[1];
-        colName[0] = "更多仓库组合...";
-        model.setColumnCount(1);
-        model.setRowCount(7);
-        model.setColumnIdentifiers(colName);//定义列名
-        table.setRowHeight(30);
-        cb = new JComboBox();
-        TableColumnModel columnModel = table.getColumnModel();
-        TableColumn popColumn = columnModel.getColumn(0);
-        popColumn.setCellEditor(new DefaultCellEditor(cb));
-        JScrollPane panel = new JScrollPane(table);
-        panel.setPreferredSize(new Dimension(100, 200));
-        JButton confirmBt = new JButton("确认");
-
-        Box vbox = Box.createVerticalBox();
-        vbox.add(panel);
-        vbox.add(confirmBt);
-        add(vbox, BorderLayout.CENTER);
-
-        confirmBt.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                String temStoreSelect = "";
-                for (int i = 0; i < table.getRowCount(); i++) {
-                    if (model.getValueAt(i, 0) != null) {
-                        searchFrame.setListStore(model.getValueAt(i, 0).toString());
-                        temStoreSelect = temStoreSelect + model.getValueAt(i, 0).toString().trim() + "  ";
-                    }
-                }
-                System.out.print(temStoreSelect);
-                searchFrame.setStoreSelected(temStoreSelect);
-                dispose();
-            }
-        });
-    }
-}
-
-class model extends DefaultTableModel {
-
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false;
-    }
-}
 

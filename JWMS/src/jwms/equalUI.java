@@ -47,7 +47,7 @@ public class equalUI {
         frame.setLocation(locateWidth, locateHeight);
          */
         frame.setLocationRelativeTo(null);//一句让窗口居中
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
     }
 }

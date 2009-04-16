@@ -11,7 +11,7 @@ import method.dbOperation;
 
 /**
  *
- * @author Administrator
+ * @author lqik2004
  */
 public class pressText {
 
