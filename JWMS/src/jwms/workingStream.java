@@ -171,7 +171,7 @@ class workingFrame extends JFrame {
         colName1[1] = "ID";
         colName1[2] = "单据类型";
         model1.setColumnCount(3);
-        model1.setRowCount(50);
+        model1.setRowCount(5000);
         TableColumnModel tc = table1.getColumnModel();
         tc.getColumn(0).setPreferredWidth(20);
         tc.getColumn(0).setPreferredWidth(25);
@@ -488,6 +488,7 @@ class workingFrame extends JFrame {
                 String eyear = eYear.getSelectedItem().toString().trim();
                 String emonth = eMonth.getSelectedItem().toString().trim();
                 String eday = eDay.getSelectedItem().toString().trim();
+
 
 
                 if (typeComboBox.getSelectedItem().toString().trim() == "更多组合") {

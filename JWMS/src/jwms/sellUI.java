@@ -434,7 +434,7 @@ class sellFrame extends JFrame {
                 //                                 tb.setRowSelectionInterval(selectingrow,selectingrow);   
                 //                                 tb.setColumnSelectionInterval(selectingcol,selectingcol);   
                 tb.editCellAt(selectingrow, selectingcol);
-                ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
+                (((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
                 ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();
                 tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1) * tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
                 ResultSet rs = null;

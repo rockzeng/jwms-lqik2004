@@ -65,7 +65,7 @@ class mainFrame extends JFrame {
         String font = "JeansWest";
         JLabel label = new JLabel(font);
         label.setFont(new Font("serif", Font.BOLD, 35));
-        JLabel label2 = new JLabel("测试版0.01_Alpha");
+        JLabel label2 = new JLabel("测试版");
         label2.setFont(new Font("宋体", Font.ITALIC, 10));
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(Box.createHorizontalStrut(5));
