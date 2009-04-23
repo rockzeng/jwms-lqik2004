@@ -442,7 +442,7 @@ class sellFrame extends JFrame {
                     /**
                      * 对Tagrow的库存价进行查找
                      */
-                    if (model.getValueAt(tagrow, 2).toString() == "") {
+                    if (model.getValueAt(tagrow, 3).toString() == "") {
                         String in = null;
                         String out = null;
                         dbOperation findMain = new dbOperation();
@@ -547,10 +547,7 @@ class PlanetTableModel extends AbstractTableModel {
         return columnNames[c];
     }
 
-    @Override
-    public Class getColumnClass(int c) {
-        return cells[0][c].getClass();
-    }
+
 
     public int getColumnCount() {
         return columnNames.length;
