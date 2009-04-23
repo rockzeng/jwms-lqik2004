@@ -3,26 +3,24 @@ package jwms;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Rectangle2D;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
-import java.io.*;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Vector;
-import javax.imageio.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import method.dbOperation;
 import method.getDate;
 import method.propertiesRW;
-
 
 /**
  *
@@ -34,16 +32,18 @@ public class Search {
 
     public Search() {
 
-    frame.setLocationRelativeTo (null);//一句让窗口居中
+        frame.setLocationRelativeTo(null);//一句让窗口居中
 
-    frame.setDefaultCloseOperation (JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-    frame.setVisible (true);
+        frame.setVisible(true);
     }
+
     public static Point frameLocateOnScr() {
         return frame.getLocationOnScreen();
     }
 }
+
 class searchFrame extends JFrame {
 
     private Object[] Objyear = {
@@ -65,19 +65,18 @@ class searchFrame extends JFrame {
     private JComboBox eMonth = new JComboBox(Objmonth);
     private JComboBox eDay = new JComboBox(Objday);
     private JComboBox storeComboBox = new JComboBox();
-    private choicePopFrame storePop = new choicePopFrame();//设置仓库弹出窗口
+    private choicePopFrameSearch storePop = new choicePopFrameSearch();//设置仓库弹出窗口
     private static List liststore = new Vector();
-    private static List listtypeDB = new Vector();
-    private static List listtype = new Vector();
-    private static JLabel storeSelect = new JLabel();
-    private static JLabel typeSelect = new JLabel();
+    public static JLabel storeSelect = new JLabel();
     DefaultTableModel model1 = new model();
-    JTable table1 = new JTable(model1);
-    DefaultTableModel model2 = new model();
-    JTable table2 = new JTable(model2);
+    public JTable table1 = new JTable(model1);
     JLabel storeX = new JLabel();
     JLabel sumpriceX = new JLabel();
     JLabel sumvaluesX = new JLabel();
+    JPanel panel2 = new JPanel();
+    JButton tool0 = new JButton("库存盘点");
+    JButton tool1 = new JButton("销售排行");
+    JButton tool2 = new JButton("利润排行");
 
     @SuppressWarnings("empty-statement")
     public searchFrame() {
@@ -166,9 +165,7 @@ class searchFrame extends JFrame {
         panel1.setPreferredSize(new Dimension(600, 150));
 
         //加入工具按钮
-        JButton tool0 = new JButton("库存盘点");
-        JButton tool1 = new JButton("销售排行");
-        JButton tool2 = new JButton("利润排行");
+
         JLabel advLabel = new JLabel("高级工具:");
         Box vhbox3 = Box.createVerticalBox();
         vhbox3.add(advLabel);
@@ -187,6 +184,9 @@ class searchFrame extends JFrame {
 
         //hbox4.add(Box.createHorizontalStrut(400));
 
+
+        panel2.setPreferredSize(new Dimension(600, 200));
+
         //垂直布局
         Box vbox = Box.createVerticalBox();
         vbox.add(Box.createVerticalStrut(5));
@@ -195,6 +195,8 @@ class searchFrame extends JFrame {
         vbox.add(hbox2);
         vbox.add(Box.createVerticalStrut(10));
         vbox.add(hbox3);
+        vbox.add(Box.createVerticalStrut(10));
+        vbox.add(panel2);
         vbox.add(Box.createVerticalGlue());
         //显示箱式布局
         add(vbox, BorderLayout.NORTH);
@@ -212,11 +214,6 @@ class searchFrame extends JFrame {
                     storePop.dispose();
                     setStoreSelected(storeComboBox.getSelectedItem().toString().trim());
                 }
-            }
-        });
-        confirm.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
             }
         });
         confirm.addActionListener(new ActionListener() {
@@ -435,6 +432,27 @@ class searchFrame extends JFrame {
                 c.DBClosed();
             }
         });
+        tool2.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                drawPanel draw = new drawPanel();
+                panel2.add(draw);
+                draw.num = table1.getRowCount();
+                draw.maxNumSize = 0;
+                draw.v.add(table1.getValueAt(0, 3)); //根据参数取得货物数量或者利润或者销售总量
+                draw.vName.add(table1.getValueAt(0, 0));//取得仓库的名字
+                for (int i = 1; i < table1.getRowCount(); i++) {
+                    draw.v.add(table1.getValueAt(i, 3)); //根据参数取得货物数量或者利润或者销售总量
+                    draw.vName.add(table1.getValueAt(i, 0));//取得仓库的名字
+                    if (Float.parseFloat(table1.getValueAt(i, 3).toString().trim()) > draw.maxNumSize) {
+                        draw.maxNumSize = Float.parseFloat(table1.getValueAt(i, 3).toString().trim());
+                    }
+                }
+                draw.draw();
+
+            }
+        });
+
     }
 
     private void storeLoad() throws SQLException {
@@ -453,34 +471,103 @@ class searchFrame extends JFrame {
                 storeComboBox.addItem(rs.getString(1).trim());
                 storePop.cb.addItem(rs.getString(1).trim());
             }
+
             storeLoad.DBClosed();
         } catch (SQLException ex) {
             Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         storeComboBox.addItem("更多组合...");
     }
-    //从子窗口把仓库选择信息传递回来
+//从子窗口把仓库选择信息传递回来
 
     public static void setListStore(String x) {
-        liststore.add(x);
+        if (x == "clear") {
+            liststore.clear();
+        } else {
+            liststore.add(x);
+        }
     }
 
     public static void setStoreSelected(String x) {
         storeSelect.setText(x);
     }
+//设置初始数据，X为需要输入的JTABLE，y为需要输入的列
+}
 
-    public static void setTypeSelected(String x) {
-        typeSelect.setText(x);
+class drawPanel extends JPanel {
+
+    public int standardHeight = 200;//最高块的高度
+    public int standardWidth = 600;
+    public int num = 0;
+    //public static int perSize = standardWidth / num;//每个块的宽度
+    public float maxNumSize; //取得最大的数字
+    public List v = new Vector();
+    public List vName = new Vector();
+    Graphics2D g2 = null;
+
+    public void draw() {
+
+
+        int perSize = standardWidth / num;
+        // draw a rectangle
+        for (int i = 0; i < v.size(); i++) {
+            double height = (Float.parseFloat(v.get(i).toString().trim()) * standardHeight) / maxNumSize;
+            double width = perSize;
+            double leftX = i * (width);
+            double topY = standardHeight - height;
+            System.out.println(topY);
+            Rectangle2D rect = new Rectangle2D.Double(leftX, topY, width, height);
+            g2.draw(rect);
+        }
     }
 
-    public static void setListTypeDB(String x) {
-        listtypeDB.add(x);
-    }
-
-    public static void setListType(String x) {
-        listtype.add(x);
+    @Override
+    public void paintComponent(Graphics g) {
+        update(g);
+        super.paintComponent(g);
+        g2 = (Graphics2D) g;
     }
 }
 
+class choicePopFrameSearch extends JFrame {
 
+    public JComboBox cb;        //开放使得可以loadstore方法可以写入数据
+    private DefaultTableModel model = new DefaultTableModel();
+    private JTable table = new JTable(model);
+    private JButton confirmBt = new JButton("确认");
 
+    public choicePopFrameSearch() {
+        Object[] colName = new Object[1];
+        colName[0] = "更多仓库组合...";
+        model.setColumnCount(1);
+        model.setRowCount(7);
+        model.setColumnIdentifiers(colName);//定义列名
+        table.setRowHeight(30);
+        cb = new JComboBox();
+        TableColumnModel columnModel = table.getColumnModel();
+        TableColumn popColumn = columnModel.getColumn(0);
+        popColumn.setCellEditor(new DefaultCellEditor(cb));
+        JScrollPane panel = new JScrollPane(table);
+        panel.setPreferredSize(new Dimension(100, 200));
+        Box vbox = Box.createVerticalBox();
+        vbox.add(panel);
+        vbox.add(confirmBt);
+        add(vbox, BorderLayout.CENTER);
+        confirmBt.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                searchFrame.setListStore("clear");
+                String temStoreSelect = "";
+                for (int i = 0; i < table.getRowCount(); i++) {
+                    if (model.getValueAt(i, 0) != null) {
+                        searchFrame.setListStore(model.getValueAt(i, 0).toString());
+                        temStoreSelect = temStoreSelect + model.getValueAt(i, 0).toString().trim() + "  ";
+                    }
+                }
+                System.out.print(temStoreSelect);
+                searchFrame.setStoreSelected(temStoreSelect);
+                dispose();
+            }
+        });
+    }
+}

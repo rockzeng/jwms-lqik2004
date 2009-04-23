@@ -924,7 +924,11 @@ class workingFrame extends JFrame {
     //从子窗口把仓库选择信息传递回来
 
     public static void setListStore(String x) {
-        liststore.add(x);
+        if (x == "clear") {
+            liststore.clear();
+        } else {
+            liststore.add(x);
+        }
     }
 
     public static void setStoreSelected(String x) {
@@ -936,11 +940,19 @@ class workingFrame extends JFrame {
     }
 
     public static void setListTypeDB(String x) {
-        listtypeDB.add(x);
+        if (x == "clear") {
+            listtypeDB.clear();
+        } else {
+            listtypeDB.add(x);
+        }
     }
 
     public static void setListType(String x) {
-        listtype.add(x);
+        if (x == "clear") {
+            listtype.clear();
+        } else {
+            listtype.add(x);
+        }
     }
 }
 
@@ -998,6 +1010,7 @@ class choicePopFrame extends JFrame {
         confirmBt.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                workingFrame.setListStore("clear");
                 String temStoreSelect = "";
                 for (int i = 0; i < table.getRowCount(); i++) {
                     if (model.getValueAt(i, 0) != null) {
@@ -1051,6 +1064,8 @@ class choicePopFrameType extends JFrame {
         confirmBt.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                workingFrame.setListTypeDB("clear");
+                workingFrame.setListType("clear");
                 String temStoreSelect = "";
                 for (int i = 0; i < table.getRowCount(); i++) {
                     if (model.getValueAt(i, 0) != null) {
@@ -1069,7 +1084,7 @@ class choicePopFrameType extends JFrame {
                         } else if (model.getValueAt(i, 0).toString() == "同价调拨单") {
                             workingFrame.setListTypeDB("equalt where ");
                         }
-                        workingFrame.setListType(model.getValueAt(i, 0).toString().trim());
+                         workingFrame.setListType(model.getValueAt(i, 0).toString().trim());
                         temStoreSelect = temStoreSelect + model.getValueAt(i, 0).toString().trim() + "  ";
 
                     }
