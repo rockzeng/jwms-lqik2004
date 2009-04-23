@@ -172,11 +172,10 @@ class workingFrame extends JFrame {
         colName1[2] = "单据类型";
         model1.setColumnCount(3);
         model1.setRowCount(5000);
-        TableColumnModel tc = table1.getColumnModel();
-        tc.getColumn(0).setPreferredWidth(20);
-        tc.getColumn(0).setPreferredWidth(25);
-        tc.getColumn(0).setPreferredWidth(15);
         model1.setColumnIdentifiers(colName1);//定义列名
+        table1.getColumnModel().getColumn(0).setPreferredWidth(70);
+        table1.getColumnModel().getColumn(1).setPreferredWidth(100);
+        table1.getColumnModel().getColumn(2).setPreferredWidth(90);
         JScrollPane panel1 = new JScrollPane(table1);
         panel1.setPreferredSize(new Dimension(300, 400));
 
@@ -607,9 +606,9 @@ class workingFrame extends JFrame {
                     try {
                         RS = c.DBSqlQuery(sql);
                         while (RS.next()) {
-                            table1.setValueAt(RS.getString(1).substring(0, 8), k, 0);
-                            table1.setValueAt(RS.getString("id"), k, 1);
-                            table1.setValueAt(RS.getString("type"), k, 2);
+                            table1.setValueAt(RS.getString(1).substring(0, 8).trim(), k, 0);
+                            table1.setValueAt(RS.getString("id").trim(), k, 1);
+                            table1.setValueAt(RS.getString("type").trim(), k, 2);
                             k++;
                         }
                     } catch (SQLException ex) {
@@ -747,9 +746,9 @@ class workingFrame extends JFrame {
                     try {
                         RS = c.DBSqlQuery(sql);
                         while (RS.next()) {
-                            table1.setValueAt(RS.getString(1).substring(0, 8), k, 0);
-                            table1.setValueAt(RS.getString("id"), k, 1);
-                            table1.setValueAt(RS.getString("type"), k, 2);
+                            table1.setValueAt(RS.getString(1).substring(0, 8).trim(), k, 0);
+                            table1.setValueAt(RS.getString("id").trim(), k, 1);
+                            table1.setValueAt(RS.getString("type").trim(), k, 2);
                             k++;
                         }
                     } catch (SQLException ex) {
@@ -887,9 +886,9 @@ class workingFrame extends JFrame {
                 try {
                     RS = c.DBSqlQuery(sql);
                     while (RS.next()) {
-                        table1.setValueAt(RS.getString(1).substring(0, 8), k, 0);
-                        table1.setValueAt(RS.getString("id"), k, 1);
-                        table1.setValueAt(RS.getString("type"), k, 2);
+                        table1.setValueAt(RS.getString(1).substring(0, 8).trim(), k, 0);
+                        table1.setValueAt(RS.getString("id").trim(), k, 1);
+                        table1.setValueAt(RS.getString("type").trim(), k, 2);
                         k++;
                     }
                 } catch (SQLException ex) {
