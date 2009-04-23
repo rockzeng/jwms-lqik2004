@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.Vector;
 import javax.imageio.*;
+import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -255,7 +256,7 @@ class workingFrame extends JFrame {
                     typePop.setLocation(point.x - 100, point.y + 60);//设置窗口停靠，自动生成在主窗口左侧
                     typePop.setSize(100, 300);
                     typePop.setUndecorated(true);//隐藏标题栏
-                    typePop.setVisible(true);
+                         typePop.setVisible(true);
                 } else {//实现弹出窗口的自动关闭和打开
                     typePop.dispose();
                     setTypeSelected(typeComboBox.getSelectedItem().toString().trim());
@@ -1043,9 +1044,9 @@ class choicePopFrameType extends JFrame {
     public choicePopFrameType() {
         Object[] colName = new Object[1];
         colName[0] = "更多单据组合...";
-        Object[] type = {"销售单", "进货单", "同价调拨单", "报损单", "报益单", "销售退货单", "进货退货单"};
+        Object[] type = {"销售单", "进货单", "同价调拨单", "报损单", "报益单", "销售退货单", "进货退货单", ""}; //增加了清空项
         model.setColumnCount(1);
-        model.setRowCount(7);
+        model.setRowCount(8);
         model.setColumnIdentifiers(colName);//定义列名
         table.setRowHeight(30);
         cb = new JComboBox(type);
@@ -1069,24 +1070,25 @@ class choicePopFrameType extends JFrame {
                 String temStoreSelect = "";
                 for (int i = 0; i < table.getRowCount(); i++) {
                     if (model.getValueAt(i, 0) != null) {
-                        if (model.getValueAt(i, 0).toString() == "销售单") {
-                            workingFrame.setListTypeDB("sellt where sellORreturn=0 and");
-                        } else if (model.getValueAt(i, 0).toString() == "销售退货单") {
-                            workingFrame.setListTypeDB("sellt where sellORreturn=1 and");
-                        } else if (model.getValueAt(i, 0).toString() == "进货退货单") {
-                            workingFrame.setListTypeDB("inputt where inputORreturn=1 and");
-                        } else if (model.getValueAt(i, 0).toString() == "进货单") {
-                            workingFrame.setListTypeDB("inputt where inputORreturn=0 and");
-                        } else if (model.getValueAt(i, 0).toString() == "报损单") {
-                            workingFrame.setListTypeDB("loset where loseORgain=0 and");
-                        } else if (model.getValueAt(i, 0).toString() == "报益单") {
-                            workingFrame.setListTypeDB("loset where loseORgain=1 and");
-                        } else if (model.getValueAt(i, 0).toString() == "同价调拨单") {
-                            workingFrame.setListTypeDB("equalt where ");
+                        if (model.getValueAt(i, 0).toString() != "") {      //判断当选项不为空的时候才进行判断操作，如果为空则不操作
+                            if (model.getValueAt(i, 0).toString() == "销售单") {
+                                workingFrame.setListTypeDB("sellt where sellORreturn=0 and");
+                            } else if (model.getValueAt(i, 0).toString() == "销售退货单") {
+                                workingFrame.setListTypeDB("sellt where sellORreturn=1 and");
+                            } else if (model.getValueAt(i, 0).toString() == "进货退货单") {
+                                workingFrame.setListTypeDB("inputt where inputORreturn=1 and");
+                            } else if (model.getValueAt(i, 0).toString() == "进货单") {
+                                workingFrame.setListTypeDB("inputt where inputORreturn=0 and");
+                            } else if (model.getValueAt(i, 0).toString() == "报损单") {
+                                workingFrame.setListTypeDB("loset where loseORgain=0 and");
+                            } else if (model.getValueAt(i, 0).toString() == "报益单") {
+                                workingFrame.setListTypeDB("loset where loseORgain=1 and");
+                            } else if (model.getValueAt(i, 0).toString() == "同价调拨单") {
+                                workingFrame.setListTypeDB("equalt where ");
+                            }
+                            workingFrame.setListType(model.getValueAt(i, 0).toString().trim());
+                            temStoreSelect = temStoreSelect + model.getValueAt(i, 0).toString().trim() + "  ";
                         }
-                         workingFrame.setListType(model.getValueAt(i, 0).toString().trim());
-                        temStoreSelect = temStoreSelect + model.getValueAt(i, 0).toString().trim() + "  ";
-
                     }
                 }
                 System.out.print(temStoreSelect);

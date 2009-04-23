@@ -204,7 +204,6 @@ class mainFrame extends JFrame {
                     aboutDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     aboutDialog.setLocation(point.x + 500, point.y + 30);//设置窗口停靠，自动生成在主窗口左侧
                     aboutDialog.setUndecorated(true);//隐藏标题栏
-                    aboutDialog.setVisible(true);
                     dialogTag=1;
                 }
                 if(aboutDialog.isVisible()){
