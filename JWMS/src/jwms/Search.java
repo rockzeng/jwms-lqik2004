@@ -73,10 +73,11 @@ class searchFrame extends JFrame {
     JLabel storeX = new JLabel();
     JLabel sumpriceX = new JLabel();
     JLabel sumvaluesX = new JLabel();
-    JPanel panel2 = new JPanel();
+   // drawPanel drawpanel = new drawPanel();
     JButton tool0 = new JButton("库存盘点");
     JButton tool1 = new JButton("销售排行");
     JButton tool2 = new JButton("利润排行");
+    Box vbox = Box.createVerticalBox();
 
     @SuppressWarnings("empty-statement")
     public searchFrame() {
@@ -185,10 +186,12 @@ class searchFrame extends JFrame {
         //hbox4.add(Box.createHorizontalStrut(400));
 
 
-        panel2.setPreferredSize(new Dimension(600, 200));
-
+       /* drawpanel.setPreferredSize(new Dimension(600, 300));
+        drawpanel.setMinimumSize(getPreferredSize());
+        drawpanel.setMaximumSize(getPreferredSize());
+        */
         //垂直布局
-        Box vbox = Box.createVerticalBox();
+        
         vbox.add(Box.createVerticalStrut(5));
         vbox.add(hbox1);
         vbox.add(Box.createVerticalStrut(10));
@@ -196,7 +199,7 @@ class searchFrame extends JFrame {
         vbox.add(Box.createVerticalStrut(10));
         vbox.add(hbox3);
         vbox.add(Box.createVerticalStrut(10));
-        vbox.add(panel2);
+      // vbox.add(drawpanel);
         vbox.add(Box.createVerticalGlue());
         //显示箱式布局
         add(vbox, BorderLayout.NORTH);
@@ -430,14 +433,9 @@ class searchFrame extends JFrame {
                     Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 c.DBClosed();
-            }
-        });
-        tool2.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                drawPanel draw = new drawPanel();
-                panel2.add(draw);
+               drawPanel draw = new drawPanel();
                 draw.num = table1.getRowCount();
+                draw.perSize = draw.standardWidth / draw.num;
                 draw.maxNumSize = 0;
                 draw.v.add(table1.getValueAt(0, 3)); //根据参数取得货物数量或者利润或者销售总量
                 draw.vName.add(table1.getValueAt(0, 0));//取得仓库的名字
@@ -448,11 +446,11 @@ class searchFrame extends JFrame {
                         draw.maxNumSize = Float.parseFloat(table1.getValueAt(i, 3).toString().trim());
                     }
                 }
-                draw.draw();
-
+                //drawpanel.add(draw);
+                add(draw);
+                validate(); //更新组件，进行绘图
             }
         });
-
     }
 
     private void storeLoad() throws SQLException {
@@ -496,20 +494,21 @@ class searchFrame extends JFrame {
 
 class drawPanel extends JPanel {
 
-    public int standardHeight = 200;//最高块的高度
+    public int standardHeight = 280;//最高块的高度
     public int standardWidth = 600;
-    public int num = 0;
+    public int num = 1;
     //public static int perSize = standardWidth / num;//每个块的宽度
     public float maxNumSize; //取得最大的数字
     public List v = new Vector();
     public List vName = new Vector();
-    Graphics2D g2 = null;
+    int perSize;
+    // draw a rectangle
 
-    public void draw() {
-
-
-        int perSize = standardWidth / num;
-        // draw a rectangle
+    @Override
+    public void paintComponent(Graphics g) {
+        //update(g);
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
         for (int i = 0; i < v.size(); i++) {
             double height = (Float.parseFloat(v.get(i).toString().trim()) * standardHeight) / maxNumSize;
             double width = perSize;
@@ -519,13 +518,6 @@ class drawPanel extends JPanel {
             Rectangle2D rect = new Rectangle2D.Double(leftX, topY, width, height);
             g2.draw(rect);
         }
-    }
-
-    @Override
-    public void paintComponent(Graphics g) {
-        update(g);
-        super.paintComponent(g);
-        g2 = (Graphics2D) g;
     }
 }
 
