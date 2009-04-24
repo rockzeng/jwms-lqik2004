@@ -256,7 +256,7 @@ class workingFrame extends JFrame {
                     typePop.setLocation(point.x - 100, point.y + 60);//设置窗口停靠，自动生成在主窗口左侧
                     typePop.setSize(100, 300);
                     typePop.setUndecorated(true);//隐藏标题栏
-                         typePop.setVisible(true);
+                    typePop.setVisible(true);
                 } else {//实现弹出窗口的自动关闭和打开
                     typePop.dispose();
                     setTypeSelected(typeComboBox.getSelectedItem().toString().trim());
@@ -499,32 +499,36 @@ class workingFrame extends JFrame {
                                 store = store + "' or store= '" + liststore.get(k).toString().trim();
                             }
                             for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
-                                    for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
-                                        if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                            break;
-                                        } else {
-                                            String syear = getDate.fixYear(String.valueOf(year));
-                                            String smonth = getDate.fixMonth(String.valueOf(month));
-                                            String sday = getDate.fixDay(String.valueOf(day));
-                                            sql = "select distinct date,id from " + listtypeDB.get(i) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                            System.out.print(sql);
-                                            dbOperation stable = new dbOperation();
-                                            stable.DBConnect();
-                                            try {
-                                                rs = stable.DBSqlQuery(sql);
-                                                while (rs.next()) {
-                                                    String date = rs.getString(1).substring(0, 8);
-                                                    dbOperation tem = new dbOperation();
-                                                    tem.DBConnect();
-                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
-                                                    System.out.print(s);
-                                                    tem.DBSqlExe(s);
-                                                    tem.DBClosed();
+                                for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
+                                    if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
+                                        break;
+                                    } else {
+                                        for (int day = Integer.parseInt(bday); day <= 31; day++) {
+                                            if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                                break;
+                                            } else {
+                                                String syear = getDate.fixYear(String.valueOf(year));
+                                                String smonth = getDate.fixMonth(String.valueOf(month));
+                                                String sday = getDate.fixDay(String.valueOf(day));
+                                                sql = "select distinct date,id from " + listtypeDB.get(i) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                System.out.print(sql);
+                                                dbOperation stable = new dbOperation();
+                                                stable.DBConnect();
+                                                try {
+                                                    rs = stable.DBSqlQuery(sql);
+                                                    while (rs.next()) {
+                                                        String date = rs.getString(1).substring(0, 8);
+                                                        dbOperation tem = new dbOperation();
+                                                        tem.DBConnect();
+                                                        String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
+                                                        System.out.print(s);
+                                                        tem.DBSqlExe(s);
+                                                        tem.DBClosed();
+                                                    }
+                                                    stable.DBClosed();
+                                                } catch (SQLException ex) {
+                                                    Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                 }
-                                                stable.DBClosed();
-                                            } catch (SQLException ex) {
-                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                             }
                                         }
                                     }
@@ -532,32 +536,36 @@ class workingFrame extends JFrame {
                             }
                         } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
                             for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
-                                    for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
-                                        if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                            break;
-                                        } else {
-                                            String syear = getDate.fixYear(String.valueOf(year));
-                                            String smonth = getDate.fixMonth(String.valueOf(month));
-                                            String sday = getDate.fixDay(String.valueOf(day));
-                                            sql = "select distinct date,id from " + listtypeDB.get(i) + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                            System.out.print(sql);
-                                            dbOperation stable = new dbOperation();
-                                            stable.DBConnect();
-                                            try {
-                                                rs = stable.DBSqlQuery(sql);
-                                                while (rs.next()) {
-                                                    String date = rs.getString(1).substring(0, 8);
-                                                    dbOperation tem = new dbOperation();
-                                                    tem.DBConnect();
-                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
-                                                    System.out.print(s);
-                                                    tem.DBSqlExe(s);
-                                                    tem.DBClosed();
+                                for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
+                                    if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
+                                        break;
+                                    } else {
+                                        for (int day = Integer.parseInt(bday); day <= 31; day++) {
+                                            if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                                break;
+                                            } else {
+                                                String syear = getDate.fixYear(String.valueOf(year));
+                                                String smonth = getDate.fixMonth(String.valueOf(month));
+                                                String sday = getDate.fixDay(String.valueOf(day));
+                                                sql = "select distinct date,id from " + listtypeDB.get(i) + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                System.out.print(sql);
+                                                dbOperation stable = new dbOperation();
+                                                stable.DBConnect();
+                                                try {
+                                                    rs = stable.DBSqlQuery(sql);
+                                                    while (rs.next()) {
+                                                        String date = rs.getString(1).substring(0, 8);
+                                                        dbOperation tem = new dbOperation();
+                                                        tem.DBConnect();
+                                                        String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
+                                                        System.out.print(s);
+                                                        tem.DBSqlExe(s);
+                                                        tem.DBClosed();
+                                                    }
+                                                    stable.DBClosed();
+                                                } catch (SQLException ex) {
+                                                    Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                 }
-                                                stable.DBClosed();
-                                            } catch (SQLException ex) {
-                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                             }
                                         }
                                     }
@@ -566,32 +574,36 @@ class workingFrame extends JFrame {
                         } else {
                             store = storeComboBox.getSelectedItem().toString().trim();
                             for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
-                                    for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
-                                        if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                            break;
-                                        } else {
-                                            String syear = getDate.fixYear(String.valueOf(year));
-                                            String smonth = getDate.fixMonth(String.valueOf(month));
-                                            String sday = getDate.fixDay(String.valueOf(day));
-                                            sql = "select distinct date,id from " + listtypeDB.get(i) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                            System.out.print(sql);
-                                            dbOperation stable = new dbOperation();
-                                            stable.DBConnect();
-                                            try {
-                                                rs = stable.DBSqlQuery(sql);
-                                                while (rs.next()) {
-                                                    String date = rs.getString(1).substring(0, 8);
-                                                    dbOperation tem = new dbOperation();
-                                                    tem.DBConnect();
-                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
-                                                    System.out.print(s);
-                                                    tem.DBSqlExe(s);
-                                                    tem.DBClosed();
+                                for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
+                                    if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
+                                        break;
+                                    } else {
+                                        for (int day = Integer.parseInt(bday); day <= 31; day++) {
+                                            if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                                break;
+                                            } else {
+                                                String syear = getDate.fixYear(String.valueOf(year));
+                                                String smonth = getDate.fixMonth(String.valueOf(month));
+                                                String sday = getDate.fixDay(String.valueOf(day));
+                                                sql = "select distinct date,id from " + listtypeDB.get(i) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                System.out.print(sql);
+                                                dbOperation stable = new dbOperation();
+                                                stable.DBConnect();
+                                                try {
+                                                    rs = stable.DBSqlQuery(sql);
+                                                    while (rs.next()) {
+                                                        String date = rs.getString(1).substring(0, 8);
+                                                        dbOperation tem = new dbOperation();
+                                                        tem.DBConnect();
+                                                        String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
+                                                        System.out.print(s);
+                                                        tem.DBSqlExe(s);
+                                                        tem.DBClosed();
+                                                    }
+                                                    stable.DBClosed();
+                                                } catch (SQLException ex) {
+                                                    Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                 }
-                                                stable.DBClosed();
-                                            } catch (SQLException ex) {
-                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                             }
                                         }
                                     }
@@ -639,32 +651,36 @@ class workingFrame extends JFrame {
                                 store = store + "' or store= '" + liststore.get(k).toString().trim();
                             }
                             for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
-                                    for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
-                                        if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                            break;
-                                        } else {
-                                            String syear = getDate.fixYear(String.valueOf(year));
-                                            String smonth = getDate.fixMonth(String.valueOf(month));
-                                            String sday = getDate.fixDay(String.valueOf(day));
-                                            sql = "select distinct date,id from " + type.get(i + 1) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                            System.out.print(sql);
-                                            dbOperation stable = new dbOperation();
-                                            stable.DBConnect();
-                                            try {
-                                                rs = stable.DBSqlQuery(sql);
-                                                while (rs.next()) {
-                                                    String date = rs.getString(1).substring(0, 8);
-                                                    dbOperation tem = new dbOperation();
-                                                    tem.DBConnect();
-                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + type.get(i).toString().trim() + "')";
-                                                    System.out.print(s);
-                                                    tem.DBSqlExe(s);
-                                                    tem.DBClosed();
+                                for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
+                                    if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
+                                        break;
+                                    } else {
+                                        for (int day = Integer.parseInt(bday); day <= 31; day++) {
+                                            if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                                break;
+                                            } else {
+                                                String syear = getDate.fixYear(String.valueOf(year));
+                                                String smonth = getDate.fixMonth(String.valueOf(month));
+                                                String sday = getDate.fixDay(String.valueOf(day));
+                                                sql = "select distinct date,id from " + type.get(i + 1) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                System.out.print(sql);
+                                                dbOperation stable = new dbOperation();
+                                                stable.DBConnect();
+                                                try {
+                                                    rs = stable.DBSqlQuery(sql);
+                                                    while (rs.next()) {
+                                                        String date = rs.getString(1).substring(0, 8);
+                                                        dbOperation tem = new dbOperation();
+                                                        tem.DBConnect();
+                                                        String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + type.get(i).toString().trim() + "')";
+                                                        System.out.print(s);
+                                                        tem.DBSqlExe(s);
+                                                        tem.DBClosed();
+                                                    }
+                                                    stable.DBClosed();
+                                                } catch (SQLException ex) {
+                                                    Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                 }
-                                                stable.DBClosed();
-                                            } catch (SQLException ex) {
-                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                             }
                                         }
                                     }
@@ -672,32 +688,36 @@ class workingFrame extends JFrame {
                             }
                         } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
                             for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
-                                    for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
-                                        if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                            break;
-                                        } else {
-                                            String syear = getDate.fixYear(String.valueOf(year));
-                                            String smonth = getDate.fixMonth(String.valueOf(month));
-                                            String sday = getDate.fixDay(String.valueOf(day));
-                                            sql = "select distinct date,id from " + type.get(i + 1) + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                            System.out.print(sql);
-                                            dbOperation stable = new dbOperation();
-                                            stable.DBConnect();
-                                            try {
-                                                rs = stable.DBSqlQuery(sql);
-                                                while (rs.next()) {
-                                                    String date = rs.getString(1).substring(0, 8);
-                                                    dbOperation tem = new dbOperation();
-                                                    tem.DBConnect();
-                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + type.get(i).toString().trim() + "')";
-                                                    System.out.print(s);
-                                                    tem.DBSqlExe(s);
-                                                    tem.DBClosed();
+                                for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
+                                    if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
+                                        break;
+                                    } else {
+                                        for (int day = Integer.parseInt(bday); day <= 31; day++) {
+                                            if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                                break;
+                                            } else {
+                                                String syear = getDate.fixYear(String.valueOf(year));
+                                                String smonth = getDate.fixMonth(String.valueOf(month));
+                                                String sday = getDate.fixDay(String.valueOf(day));
+                                                sql = "select distinct date,id from " + type.get(i + 1) + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                System.out.print(sql);
+                                                dbOperation stable = new dbOperation();
+                                                stable.DBConnect();
+                                                try {
+                                                    rs = stable.DBSqlQuery(sql);
+                                                    while (rs.next()) {
+                                                        String date = rs.getString(1).substring(0, 8);
+                                                        dbOperation tem = new dbOperation();
+                                                        tem.DBConnect();
+                                                        String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + type.get(i).toString().trim() + "')";
+                                                        System.out.print(s);
+                                                        tem.DBSqlExe(s);
+                                                        tem.DBClosed();
+                                                    }
+                                                    stable.DBClosed();
+                                                } catch (SQLException ex) {
+                                                    Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                 }
-                                                stable.DBClosed();
-                                            } catch (SQLException ex) {
-                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                             }
                                         }
                                     }
@@ -706,36 +726,41 @@ class workingFrame extends JFrame {
                         } else {
                             store = storeComboBox.getSelectedItem().toString().trim();
                             for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
-                                    for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
-                                        if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                            break;
-                                        } else {
-                                            String syear = getDate.fixYear(String.valueOf(year));
-                                            String smonth = getDate.fixMonth(String.valueOf(month));
-                                            String sday = getDate.fixDay(String.valueOf(day));
-                                            sql = "select distinct date,id from " + type.get(i + 1) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                            System.out.print(sql);
-                                            dbOperation stable = new dbOperation();
-                                            stable.DBConnect();
-                                            try {
-                                                rs = stable.DBSqlQuery(sql);
-                                                while (rs.next()) {
-                                                    String date = rs.getString(1).substring(0, 8);
-                                                    dbOperation tem = new dbOperation();
-                                                    tem.DBConnect();
-                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + type.get(i).toString().trim() + "')";
-                                                    System.out.print(s);
-                                                    tem.DBSqlExe(s);
-                                                    tem.DBClosed();
+                                for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
+                                    if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
+                                        break;
+                                    } else {
+                                        for (int day = Integer.parseInt(bday); day <= 31; day++) {
+                                            if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                                break;
+                                            } else {
+                                                String syear = getDate.fixYear(String.valueOf(year));
+                                                String smonth = getDate.fixMonth(String.valueOf(month));
+                                                String sday = getDate.fixDay(String.valueOf(day));
+                                                sql = "select distinct date,id from " + type.get(i + 1) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                System.out.print(sql);
+                                                dbOperation stable = new dbOperation();
+                                                stable.DBConnect();
+                                                try {
+                                                    rs = stable.DBSqlQuery(sql);
+                                                    while (rs.next()) {
+                                                        String date = rs.getString(1).substring(0, 8);
+                                                        dbOperation tem = new dbOperation();
+                                                        tem.DBConnect();
+                                                        String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + type.get(i).toString().trim() + "')";
+                                                        System.out.print(s);
+                                                        tem.DBSqlExe(s);
+                                                        tem.DBClosed();
+                                                    }
+                                                    stable.DBClosed();
+                                                } catch (SQLException ex) {
+                                                    Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                 }
-                                                stable.DBClosed();
-                                            } catch (SQLException ex) {
-                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                             }
                                         }
                                     }
                                 }
+
                             }
                         }
                     }
@@ -779,32 +804,36 @@ class workingFrame extends JFrame {
                             store = store + "' or store= '" + liststore.get(k).toString().trim();
                         }
                         for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                            for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
-                                for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
-                                    if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                        break;
-                                    } else {
-                                        String syear = getDate.fixYear(String.valueOf(year));
-                                        String smonth = getDate.fixMonth(String.valueOf(month));
-                                        String sday = getDate.fixDay(String.valueOf(day));
-                                        sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                        System.out.print(sql);
-                                        dbOperation stable = new dbOperation();
-                                        stable.DBConnect();
-                                        try {
-                                            rs = stable.DBSqlQuery(sql);
-                                            while (rs.next()) {
-                                                String date = rs.getString(1).substring(0, 8);
-                                                dbOperation tem = new dbOperation();
-                                                tem.DBConnect();
-                                                String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
-                                                System.out.print(s);
-                                                tem.DBSqlExe(s);
-                                                tem.DBClosed();
+                            for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
+                                if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
+                                    break;
+                                } else {
+                                    for (int day = Integer.parseInt(bday); day <= 31; day++) {
+                                        if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                            break;
+                                        } else {
+                                            String syear = getDate.fixYear(String.valueOf(year));
+                                            String smonth = getDate.fixMonth(String.valueOf(month));
+                                            String sday = getDate.fixDay(String.valueOf(day));
+                                            sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                            System.out.print(sql);
+                                            dbOperation stable = new dbOperation();
+                                            stable.DBConnect();
+                                            try {
+                                                rs = stable.DBSqlQuery(sql);
+                                                while (rs.next()) {
+                                                    String date = rs.getString(1).substring(0, 8);
+                                                    dbOperation tem = new dbOperation();
+                                                    tem.DBConnect();
+                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
+                                                    System.out.print(s);
+                                                    tem.DBSqlExe(s);
+                                                    tem.DBClosed();
+                                                }
+                                                stable.DBClosed();
+                                            } catch (SQLException ex) {
+                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                             }
-                                            stable.DBClosed();
-                                        } catch (SQLException ex) {
-                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                         }
                                     }
                                 }
@@ -812,32 +841,36 @@ class workingFrame extends JFrame {
                         }
                     } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
                         for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                            for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
-                                for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
-                                    if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                        break;
-                                    } else {
-                                        String syear = getDate.fixYear(String.valueOf(year));
-                                        String smonth = getDate.fixMonth(String.valueOf(month));
-                                        String sday = getDate.fixDay(String.valueOf(day));
-                                        sql = "select distinct date,id from " + type + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                        System.out.print(sql);
-                                        dbOperation stable = new dbOperation();
-                                        stable.DBConnect();
-                                        try {
-                                            rs = stable.DBSqlQuery(sql);
-                                            while (rs.next()) {
-                                                String date = rs.getString(1).substring(0, 8);
-                                                dbOperation tem = new dbOperation();
-                                                tem.DBConnect();
-                                                String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
-                                                System.out.print(s);
-                                                tem.DBSqlExe(s);
-                                                tem.DBClosed();
+                            for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
+                                if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
+                                    break;
+                                } else {
+                                    for (int day = Integer.parseInt(bday); day <= 31; day++) {
+                                        if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                            break;
+                                        } else {
+                                            String syear = getDate.fixYear(String.valueOf(year));
+                                            String smonth = getDate.fixMonth(String.valueOf(month));
+                                            String sday = getDate.fixDay(String.valueOf(day));
+                                            sql = "select distinct date,id from " + type + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                            System.out.print(sql);
+                                            dbOperation stable = new dbOperation();
+                                            stable.DBConnect();
+                                            try {
+                                                rs = stable.DBSqlQuery(sql);
+                                                while (rs.next()) {
+                                                    String date = rs.getString(1).substring(0, 8);
+                                                    dbOperation tem = new dbOperation();
+                                                    tem.DBConnect();
+                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
+                                                    System.out.print(s);
+                                                    tem.DBSqlExe(s);
+                                                    tem.DBClosed();
+                                                }
+                                                stable.DBClosed();
+                                            } catch (SQLException ex) {
+                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                             }
-                                            stable.DBClosed();
-                                        } catch (SQLException ex) {
-                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                         }
                                     }
                                 }
@@ -846,32 +879,36 @@ class workingFrame extends JFrame {
                     } else {
                         store = storeComboBox.getSelectedItem().toString().trim();
                         for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                            for (int month = Integer.parseInt(bmonth); month <= Integer.parseInt(emonth); month++) {
-                                for (int day = Integer.parseInt(bday); day <= Integer.parseInt(eday); day++) {
-                                    if (month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                        break;
-                                    } else {
-                                        String syear = getDate.fixYear(String.valueOf(year));
-                                        String smonth = getDate.fixMonth(String.valueOf(month));
-                                        String sday = getDate.fixDay(String.valueOf(day));
-                                        sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                        System.out.print(sql);
-                                        dbOperation stable = new dbOperation();
-                                        stable.DBConnect();
-                                        try {
-                                            rs = stable.DBSqlQuery(sql);
-                                            while (rs.next()) {
-                                                String date = rs.getString(1).substring(0, 8);
-                                                dbOperation tem = new dbOperation();
-                                                tem.DBConnect();
-                                                String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
-                                                System.out.print(s);
-                                                tem.DBSqlExe(s);
-                                                tem.DBClosed();
+                            for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
+                                if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
+                                    break;
+                                } else {
+                                    for (int day = Integer.parseInt(bday); day <= 31; day++) {
+                                        if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                            break;
+                                        } else {
+                                            String syear = getDate.fixYear(String.valueOf(year));
+                                            String smonth = getDate.fixMonth(String.valueOf(month));
+                                            String sday = getDate.fixDay(String.valueOf(day));
+                                            sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                            System.out.print(sql);
+                                            dbOperation stable = new dbOperation();
+                                            stable.DBConnect();
+                                            try {
+                                                rs = stable.DBSqlQuery(sql);
+                                                while (rs.next()) {
+                                                    String date = rs.getString(1).substring(0, 8);
+                                                    dbOperation tem = new dbOperation();
+                                                    tem.DBConnect();
+                                                    String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
+                                                    System.out.print(s);
+                                                    tem.DBSqlExe(s);
+                                                    tem.DBClosed();
+                                                }
+                                                stable.DBClosed();
+                                            } catch (SQLException ex) {
+                                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                             }
-                                            stable.DBClosed();
-                                        } catch (SQLException ex) {
-                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                         }
                                     }
                                 }
