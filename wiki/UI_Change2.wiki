@@ -1,0 +1,11 @@
+=UI_Change-2=
+
+2009.4.24
+
+[http://jwms-lqik2004.googlecode.com/files/10.PNG]
+
+加入了进度条显示
+
+[http://jwms-lqik2004.googlecode.com/files/8.PNG]
+
+加入了柱状图
