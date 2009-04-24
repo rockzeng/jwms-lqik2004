@@ -18,7 +18,6 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.Vector;
 import javax.imageio.*;
-import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;

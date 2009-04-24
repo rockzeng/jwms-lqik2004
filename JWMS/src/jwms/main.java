@@ -37,6 +37,7 @@ public class main {
         Toolkit tool = Toolkit.getDefaultToolkit();
         Dimension screenSize = tool.getScreenSize();
         int locateWidth = (screenSize.width - frame.getWidth()) / 2;
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("真维斯");
         frame.setLocation(locateWidth, 0);
         frame.setUndecorated(true);
