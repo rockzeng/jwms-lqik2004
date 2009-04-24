@@ -1,7 +1,9 @@
 package jwms;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -73,7 +75,7 @@ class searchFrame extends JFrame {
     JLabel storeX = new JLabel();
     JLabel sumpriceX = new JLabel();
     JLabel sumvaluesX = new JLabel();
-   // drawPanel drawpanel = new drawPanel();
+    // drawPanel drawpanel = new drawPanel();
     JButton tool0 = new JButton("库存盘点");
     JButton tool1 = new JButton("销售排行");
     JButton tool2 = new JButton("利润排行");
@@ -186,12 +188,12 @@ class searchFrame extends JFrame {
         //hbox4.add(Box.createHorizontalStrut(400));
 
 
-       /* drawpanel.setPreferredSize(new Dimension(600, 300));
+        /* drawpanel.setPreferredSize(new Dimension(600, 300));
         drawpanel.setMinimumSize(getPreferredSize());
         drawpanel.setMaximumSize(getPreferredSize());
-        */
+         */
         //垂直布局
-        
+
         vbox.add(Box.createVerticalStrut(5));
         vbox.add(hbox1);
         vbox.add(Box.createVerticalStrut(10));
@@ -199,7 +201,7 @@ class searchFrame extends JFrame {
         vbox.add(Box.createVerticalStrut(10));
         vbox.add(hbox3);
         vbox.add(Box.createVerticalStrut(10));
-      // vbox.add(drawpanel);
+        // vbox.add(drawpanel);
         vbox.add(Box.createVerticalGlue());
         //显示箱式布局
         add(vbox, BorderLayout.NORTH);
@@ -433,7 +435,7 @@ class searchFrame extends JFrame {
                     Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 c.DBClosed();
-               drawPanel draw = new drawPanel();
+                drawPanel draw = new drawPanel();
                 draw.num = table1.getRowCount();
                 draw.perSize = draw.standardWidth / draw.num;
                 draw.maxNumSize = 0;
@@ -502,21 +504,29 @@ class drawPanel extends JPanel {
     public List v = new Vector();
     public List vName = new Vector();
     int perSize;
+    String storeName="kdkdk";
     // draw a rectangle
-
+    public void setStore(String x){
+        storeName=x;
+    }
     @Override
     public void paintComponent(Graphics g) {
         //update(g);
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         for (int i = 0; i < v.size(); i++) {
-            double height = (Float.parseFloat(v.get(i).toString().trim()) * standardHeight) / maxNumSize;
+            double height = ((Float.parseFloat(v.get(i).toString().trim()) * standardHeight) / maxNumSize)-2;//防止出现最大矩形不会显示上边线的情况
             double width = perSize;
-            double leftX = i * (width);
+            double leftX = i * (width)+5;//加上5个单位保持和左侧边框距离保持一段距离
             double topY = standardHeight - height;
             System.out.println(topY);
             Rectangle2D rect = new Rectangle2D.Double(leftX, topY, width, height);
+            g2.setColor(Color.BLACK);
             g2.draw(rect);
+            //g2.setColor(Color.BLUE);
+            //g2.fill(rect);
+            //g2.setFont(new Font(storeName, Font.CENTER_BASELINE, 18));
+            g2.drawString(vName.get(i).toString().trim(), (float)leftX+15, standardHeight+12);
         }
     }
 }
