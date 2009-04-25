@@ -3,7 +3,6 @@ package jwms;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -20,6 +19,7 @@ import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import jwms.search.storeRemain;
 import method.ProgressBarDialog;
 import method.dbOperation;
 import method.getDate;
@@ -77,14 +77,15 @@ class searchFrame extends JFrame {
     JLabel sumpriceX = new JLabel();
     JLabel sumvaluesX = new JLabel();
     // drawPanel drawpanel = new drawPanel();
-    JButton tool0 = new JButton("库存盘点");
-    JButton tool1 = new JButton("销售排行");
-    JButton tool2 = new JButton("利润排行");
+    JButton tool0 = new JButton("销售利润");
+    JButton tool1 = new JButton("销售金额");
+    JButton tool2 = new JButton("销售数量");
     Box vbox = Box.createVerticalBox();
     // JProgressBar progressBar=new JProgressBar();
 
     @SuppressWarnings("empty-statement")
     public searchFrame() {
+        tool0.setEnabled(false);
         try {
             storeLoad(); //读取仓库信息
         } catch (SQLException ex) {
@@ -145,6 +146,7 @@ class searchFrame extends JFrame {
         storeComboBox.setEditable(false);   //仓库不可直接修改
         //状态标签
         JLabel states = new JLabel("已选仓库：");
+       storeSelect.setText("全部仓库");
         Box hbox2 = Box.createHorizontalBox();
         hbox2.add(Box.createHorizontalStrut(5));
         hbox2.add(labelStore);
@@ -160,7 +162,7 @@ class searchFrame extends JFrame {
         colName1[2] = "销售额";
         colName1[3] = "销售利润";
         model1.setColumnCount(4);
-        model1.setRowCount(8);
+        model1.setRowCount(9);
         TableColumnModel tc = table1.getColumnModel();
         tc.getColumn(0).setPreferredWidth(20);
         tc.getColumn(0).setPreferredWidth(25);
@@ -477,28 +479,94 @@ class searchFrame extends JFrame {
                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         c.DBClosed();
-                        drawPanel draw = new drawPanel();
-                        draw.num = table1.getRowCount();
-                        draw.perSize = draw.standardWidth / draw.num;
-                        draw.maxNumSize = 0;
-                        draw.v.add(table1.getValueAt(0, 3)); //根据参数取得货物数量或者利润或者销售总量
-                        draw.vName.add(table1.getValueAt(0, 0));//取得仓库的名字
-                        for (int i = 1; i < table1.getRowCount(); i++) {
-                            draw.v.add(table1.getValueAt(i, 3)); //根据参数取得货物数量或者利润或者销售总量
-                            draw.vName.add(table1.getValueAt(i, 0));//取得仓库的名字
-                            if (Float.parseFloat(table1.getValueAt(i, 3).toString().trim()) > draw.maxNumSize) {
-                                draw.maxNumSize = Float.parseFloat(table1.getValueAt(i, 3).toString().trim());
-                            }
-                        }
-                        //drawpanel.add(draw);
-                        add(draw);
-                        validate(); //更新组件，进行绘图
+
+                        darwMethod(tool0.getText().trim());
                         proBar.finishDeterminate();
+                        
                     }
                 }.start();
                 proBar.setVisible(true);
             }
         });
+        tool0.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+               /* storeRemain remain = new storeRemain();
+                if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
+                    remain.store(null);
+                } else if (storeComboBox.getSelectedItem().toString().trim() == "更多组合") {
+                    //整理仓库信息，直接变成可执行的SQL语句块
+                    String tem = "store=" + liststore.get(0);
+                    for (int i = 1; i < liststore.size() - 1; i++) {
+                        tem = liststore.get(i) + " and store=";
+                    }
+                    tem = tem + liststore.get(liststore.size() - 1);
+                    remain.store(tem);
+                } else {
+                    remain.store("store=" + storeComboBox.getSelectedItem().toString().trim());
+                }*/
+                tool1.setEnabled(true);
+                tool0.setEnabled(false);
+                tool2.setEnabled(true);
+                //只有在查询之后才会绘制图表，防止出错
+                if(table1.getValueAt(0, 0).toString()!=""){
+                    darwMethod(tool0.getText().trim());
+                }
+            }
+        });
+        tool1.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+                tool1.setEnabled(false);
+                tool0.setEnabled(true);
+                tool2.setEnabled(true);
+                //只有在查询之后才会绘制图表，防止出错
+                if(table1.getValueAt(0, 0).toString()!=""){
+                    darwMethod(tool1.getText().trim());
+                }
+            }
+        });
+        tool2.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+                tool1.setEnabled(true);
+                tool0.setEnabled(true);
+                tool2.setEnabled(false);
+                //只有在查询之后才会绘制图表，防止出错
+                if(table1.getValueAt(0, 0).toString()!=null){
+                    darwMethod(tool2.getText().trim());
+                }
+            }
+        });
+    }
+
+    public void darwMethod(String button) {
+        int swit=-1;    //作为不同按钮的功能选择变量
+        if(button=="销售利润"){
+            swit=3;
+        }else if(button=="销售金额"){
+            swit=2;
+        }else{
+            swit=1;
+        }
+        drawPanel draw = new drawPanel();
+        draw.num = table1.getRowCount();
+        draw.perSize = draw.standardWidth / draw.num;
+        draw.maxNumSize = 0;
+        draw.v.add(table1.getValueAt(0, swit)); //根据参数取得货物数量或者利润或者销售总量
+        draw.vName.add(table1.getValueAt(0, 0));//取得仓库的名字
+        for (int i = 1; i < table1.getRowCount()&&table1.getValueAt(i, 0)!=""; i++) {
+            draw.v.add(table1.getValueAt(i, swit)); //根据参数取得货物数量或者利润或者销售总量
+            draw.vName.add(table1.getValueAt(i, 0));//取得仓库的名字
+            if (Float.parseFloat(table1.getValueAt(i, swit).toString().trim()) > draw.maxNumSize) {
+                draw.maxNumSize = Float.parseFloat(table1.getValueAt(i, swit).toString().trim());
+            }
+        }
+        //drawpanel.add(draw);
+        add(draw);
+        validate(); //更新组件，进行绘图
     }
 
     private void storeLoad() throws SQLException {

@@ -53,9 +53,6 @@ public class AutoCompleter
                 autoCompleteDel(str, caretPosition);
 
             }
-        } else if (ch == KeyEvent.VK_1) {
-
-            System.out.print(model.getSelectedItem().toString());
         } else if (ch == KeyEvent.CHAR_UNDEFINED || Character.isISOControl(ch)) {
             return;
         } else {
@@ -90,7 +87,14 @@ public class AutoCompleter
             String str = opts[0].toString();
 
             editor.setCaretPosition(caretPosition);
-            editor.setText(editor.getText().trim().substring(0, caretPosition));
+            //如果备选只有一个的时候，实现自动上词
+            if(opts.length==1){
+                editor.setText(opts[0].toString().trim());
+                editor.setCaretPosition(opts[0].toString().length());
+            }else{
+                //否则维持原样不变
+            editor.setText(strf.substring(0, caretPosition));
+            }
             if (owner != null) {
                 try {
                     owner.showPopup();
@@ -116,7 +120,12 @@ public class AutoCompleter
                 return;
             }
             editor.setCaretPosition(caretPosition);
-            editor.setText(editor.getText().trim().substring(0, caretPosition));
+            if(opts.length==1){
+                editor.setText(opts[0].toString().trim());
+                editor.setCaretPosition(opts[0].toString().length());
+            }else{
+            editor.setText(strf.substring(0, caretPosition));
+            }
             if (owner != null) {
                 try {
                     owner.showPopup();
@@ -144,7 +153,7 @@ public class AutoCompleter
 
             if (itemObj != null) {
                 String item = itemObj.toString().toLowerCase();
-                if (item.startsWith(str.toLowerCase())) {
+                if (KmpAlgorith.kmp(item, str)) {
                     v.add(model.getElementAt(k));
                 }
             /* else {
@@ -173,7 +182,7 @@ public class AutoCompleter
             Object itemObj = items[k];
             if (itemObj != null) {
                 String item = itemObj.toString().toLowerCase();
-                if (item.startsWith(str.toLowerCase())) {
+                if (KmpAlgorith.kmp(item, str)) {
                     v.add(items[k]);
                 }
             /* else {
