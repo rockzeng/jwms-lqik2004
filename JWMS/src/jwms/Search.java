@@ -8,18 +8,21 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import jwms.search.storeRemain;
 import method.ProgressBarDialog;
 import method.dbOperation;
 import method.getDate;
@@ -146,7 +149,7 @@ class searchFrame extends JFrame {
         storeComboBox.setEditable(false);   //仓库不可直接修改
         //状态标签
         JLabel states = new JLabel("已选仓库：");
-       storeSelect.setText("全部仓库");
+        storeSelect.setText("全部仓库");
         Box hbox2 = Box.createHorizontalBox();
         hbox2.add(Box.createHorizontalStrut(5));
         hbox2.add(labelStore);
@@ -479,10 +482,9 @@ class searchFrame extends JFrame {
                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         c.DBClosed();
-
                         darwMethod(tool0.getText().trim());
                         proBar.finishDeterminate();
-                        
+
                     }
                 }.start();
                 proBar.setVisible(true);
@@ -491,25 +493,25 @@ class searchFrame extends JFrame {
         tool0.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-               /* storeRemain remain = new storeRemain();
+                /* storeRemain remain = new storeRemain();
                 if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
-                    remain.store(null);
+                remain.store(null);
                 } else if (storeComboBox.getSelectedItem().toString().trim() == "更多组合") {
-                    //整理仓库信息，直接变成可执行的SQL语句块
-                    String tem = "store=" + liststore.get(0);
-                    for (int i = 1; i < liststore.size() - 1; i++) {
-                        tem = liststore.get(i) + " and store=";
-                    }
-                    tem = tem + liststore.get(liststore.size() - 1);
-                    remain.store(tem);
+                //整理仓库信息，直接变成可执行的SQL语句块
+                String tem = "store=" + liststore.get(0);
+                for (int i = 1; i < liststore.size() - 1; i++) {
+                tem = liststore.get(i) + " and store=";
+                }
+                tem = tem + liststore.get(liststore.size() - 1);
+                remain.store(tem);
                 } else {
-                    remain.store("store=" + storeComboBox.getSelectedItem().toString().trim());
+                remain.store("store=" + storeComboBox.getSelectedItem().toString().trim());
                 }*/
                 tool1.setEnabled(true);
                 tool0.setEnabled(false);
                 tool2.setEnabled(true);
                 //只有在查询之后才会绘制图表，防止出错
-                if(table1.getValueAt(0, 0).toString()!=""){
+                if (table1.getValueAt(0, 0).toString() != "") {
                     darwMethod(tool0.getText().trim());
                 }
             }
@@ -522,7 +524,7 @@ class searchFrame extends JFrame {
                 tool0.setEnabled(true);
                 tool2.setEnabled(true);
                 //只有在查询之后才会绘制图表，防止出错
-                if(table1.getValueAt(0, 0).toString()!=""){
+                if (table1.getValueAt(0, 0).toString() != "") {
                     darwMethod(tool1.getText().trim());
                 }
             }
@@ -535,7 +537,7 @@ class searchFrame extends JFrame {
                 tool0.setEnabled(true);
                 tool2.setEnabled(false);
                 //只有在查询之后才会绘制图表，防止出错
-                if(table1.getValueAt(0, 0).toString()!=null){
+                if (table1.getValueAt(0, 0).toString() != null) {
                     darwMethod(tool2.getText().trim());
                 }
             }
@@ -543,13 +545,13 @@ class searchFrame extends JFrame {
     }
 
     public void darwMethod(String button) {
-        int swit=-1;    //作为不同按钮的功能选择变量
-        if(button=="销售利润"){
-            swit=3;
-        }else if(button=="销售金额"){
-            swit=2;
-        }else{
-            swit=1;
+        int swit = -1;    //作为不同按钮的功能选择变量
+        if (button == "销售利润") {
+            swit = 3;
+        } else if (button == "销售金额") {
+            swit = 2;
+        } else {
+            swit = 1;
         }
         drawPanel draw = new drawPanel();
         draw.num = table1.getRowCount();
@@ -557,7 +559,7 @@ class searchFrame extends JFrame {
         draw.maxNumSize = 0;
         draw.v.add(table1.getValueAt(0, swit)); //根据参数取得货物数量或者利润或者销售总量
         draw.vName.add(table1.getValueAt(0, 0));//取得仓库的名字
-        for (int i = 1; i < table1.getRowCount()&&table1.getValueAt(i, 0)!=""; i++) {
+        for (int i = 1; i < table1.getRowCount() && table1.getValueAt(i, 0) != ""; i++) {
             draw.v.add(table1.getValueAt(i, swit)); //根据参数取得货物数量或者利润或者销售总量
             draw.vName.add(table1.getValueAt(i, 0));//取得仓库的名字
             if (Float.parseFloat(table1.getValueAt(i, swit).toString().trim()) > draw.maxNumSize) {
@@ -565,6 +567,7 @@ class searchFrame extends JFrame {
             }
         }
         //drawpanel.add(draw);
+        draw.prePaint();    //提出数据处理部分，独立成为一个方法
         add(draw);
         validate(); //更新组件，进行绘图
     }
@@ -618,12 +621,35 @@ class drawPanel extends JPanel {
     public List v = new Vector();
     public List vName = new Vector();
     public int perSize;
-    String storeName = "kdkdk";
+    private String storeName = "kdkdk";
     //数据结构：0：X,1:Y,2:WIDTH,3:HEIGHT,4:STORE    每次步进5
-    private Vector locData = new Vector();
+    //private Vector locData = new Vector();
+    public ArrayList<Rectangle2D> rectes;
+    private int colorChgTag = -1; //标记那个矩形的颜色会发生变化,初始量为一个不存在的index
+    //public Rectangle2D current;
+
+    public drawPanel() {
+        rectes = new ArrayList<Rectangle2D>();
+        addMouseMotionListener(new MouseMovingHandler());
+    }
 
     public void setStore(String x) {
         storeName = x;
+    }
+
+    public void prePaint() {
+        rectes.clear();//每次绘图的时候对以前保留的矩形数组进行清空
+        System.out.println();
+        System.out.print(rectes.isEmpty());
+        for (int i = 0; i < v.size(); i++) {
+            double height = ((Float.parseFloat(v.get(i).toString().trim()) * standardHeight) / maxNumSize) - 5;//防止出现最大矩形不会显示上边线的情况
+            double width = perSize;
+            double leftX = i * (width) + 5;//加上5个单位保持和左侧边框距离保持一段距离
+            double topY = standardHeight - height;
+            System.out.println(topY);
+            Rectangle2D rect = new Rectangle2D.Double(leftX, topY, width, height);
+            rectes.add(rect);//把绘制的举行加入到列表中
+        }
     }
 
     @Override
@@ -631,20 +657,43 @@ class drawPanel extends JPanel {
         //update(g);
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        for (int i = 0; i < v.size(); i++) {
-            double height = ((Float.parseFloat(v.get(i).toString().trim()) * standardHeight) / maxNumSize) - 2;//防止出现最大矩形不会显示上边线的情况
-            double width = perSize;
-            double leftX = i * (width) + 5;//加上5个单位保持和左侧边框距离保持一段距离
-            double topY = standardHeight - height;
-            System.out.println(topY);
-            Rectangle2D rect = new Rectangle2D.Double(leftX, topY, width, height);
-            g2.setColor(Color.BLACK);
-            g2.draw(rect);
-            //g2.setColor(Color.BLUE);
-            //g2.fill(rect);
-            //g2.setFont(new Font(storeName, Font.CENTER_BASELINE, 18));
-            g2.drawString(vName.get(i).toString().trim(), (float) leftX + 15, standardHeight + 12);
+        for (int i = 0; i < rectes.size(); i++) {
+            if (i == colorChgTag) {
+                g2.setColor(Color.BLACK);
+                g2.draw(rectes.get(i));//绘制矩形
+                g2.setColor(Color.BLUE);
+                g2.fill(rectes.get(i));
+                //g2.setFont(new Font(storeName, Font.CENTER_BASELINE, 18));
+                g2.drawString(vName.get(i).toString().trim(), (float) (rectes.get(i).getX()) + 15, standardHeight + 12); //绘制矩形下方的仓库信息
+            } else {
+                g2.setColor(Color.BLACK);
+                g2.draw(rectes.get(i));//绘制矩形
+                g2.drawString(vName.get(i).toString().trim(), (float) (rectes.get(i).getX()) + 15, standardHeight + 12); //绘制矩形下方的仓库信息
+            }
+        }
+    }
+    //如果在鼠标当前位置发现矩形，那么返回矩形在arrayList中的index，没有发现则返回-1
 
+    public int find(Point2D point) {
+        for (int i = 0; i < rectes.size(); i++) {
+            if (rectes.get(i).contains(point)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private class MouseMovingHandler implements MouseMotionListener {
+
+        public void mouseMoved(MouseEvent event) {
+            if (find(event.getPoint()) != -1) {
+                colorChgTag = find(event.getPoint());
+                repaint();
+            }
+        }
+
+        public void mouseDragged(MouseEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
 }

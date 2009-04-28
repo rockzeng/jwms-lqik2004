@@ -20,7 +20,7 @@ import method.getDate;
  *
  * @author Administrator
  */
-class RemainText {
+class RemainText {     
 
     /**
      * @param args the command line arguments
