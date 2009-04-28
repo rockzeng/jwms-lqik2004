@@ -60,6 +60,7 @@ class mainFrame extends JFrame {
         JButton lose = new JButton("报损报益单");
         JButton stream = new JButton("经营历程");
         JButton search = new JButton("综合查询");
+        JButton storeRemain=new JButton("库存管理");
 
         JButton exit = new JButton("退出");
         JButton about = new JButton("关于");
@@ -88,6 +89,8 @@ class mainFrame extends JFrame {
         hbox2.add(stream);
         hbox2.add(Box.createHorizontalStrut(5));
         hbox2.add(search);
+        hbox2.add(Box.createHorizontalStrut(5));
+        hbox2.add(storeRemain);
 
         Box vb0 = Box.createVerticalBox();
         vb0.add(hbox0);

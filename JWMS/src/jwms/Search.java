@@ -447,7 +447,7 @@ class searchFrame extends JFrame {
                                                 } catch (SQLException ex) {
                                                     Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                 }
-                                                proBarValues++;
+                                                proBar.setValue(proBarValues++);
                                             }
                                         }
                                     }
