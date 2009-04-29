@@ -172,7 +172,7 @@ class workingFrame extends JFrame {
         colName1[1] = "ID";
         colName1[2] = "单据类型";
         model1.setColumnCount(3);
-        model1.setRowCount(5000);
+        model1.setRowCount(0);
         model1.setColumnIdentifiers(colName1);//定义列名
         table1.getColumnModel().getColumn(0).setPreferredWidth(70);
         table1.getColumnModel().getColumn(1).setPreferredWidth(100);
@@ -185,7 +185,7 @@ class workingFrame extends JFrame {
         colName2[1] = "ID";
         colName2[2] = "单据类型";
         model2.setColumnCount(3);
-        model2.setRowCount(50);
+        model2.setRowCount(0);
         TableColumnModel tc2 = table2.getColumnModel();
         tc2.getColumn(0).setPreferredWidth(20);
         tc2.getColumn(0).setPreferredWidth(25);
@@ -265,6 +265,7 @@ class workingFrame extends JFrame {
         });
         table1.addMouseListener(new MouseAdapter() {
 
+            @Override
             public void mouseClicked(MouseEvent e) {
                 String keyWord;
                 String keyStore;
@@ -272,11 +273,12 @@ class workingFrame extends JFrame {
                 ResultSet rs = null;
                 if (e.getButton() == MouseEvent.BUTTON1) {// 单击鼠标左键
                     if (e.getClickCount() == 2) {
-                        for (int j = table2.getRowCount() - 1; j >= 0; j--) {
-                            for (int i = table2.getColumnCount() - 1; i >= 0; i--) {
-                                table2.setValueAt("", j, i);
-                            }
+                        /*for (int j = table2.getRowCount() - 1; j >= 0; j--) {
+                        for (int i = table2.getColumnCount() - 1; i >= 0; i--) {
+                        table2.setValueAt("", j, i);
                         }
+                        }*/
+                        model2.setRowCount(0);
                         table2.repaint();
                         keyWord = table1.getModel().getValueAt(table1.getSelectedRow(), 1).toString().trim();
                         if (keyWord.startsWith("S")) {
@@ -290,7 +292,7 @@ class workingFrame extends JFrame {
                             model2.setColumnCount(6);
                             model2.setColumnIdentifiers(colName);
                             keyStore = "sellt";
-                            sql = "select num,info,amount,outprice,others,store from " + keyStore + " where id='" + keyWord + "'";
+                            sql = "select num,info,amount,outprice,others,store from " + keyStore + " where id='" + keyWord + "'order by num";
                             System.out.print(sql);
                             dbOperation st = new dbOperation();
                             st.DBConnect();
@@ -300,17 +302,19 @@ class workingFrame extends JFrame {
                                 int sum1 = 0;//合计数量
                                 float sum2 = 0;//合计金额
                                 while (rs.next()) {
-                                    table2.setValueAt(rs.getString(1), i, 0);
-                                    table2.setValueAt(rs.getString(2), i, 1);
-                                    table2.setValueAt(rs.getString(3), i, 2);
-                                    float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
-                                    table2.setValueAt(rs.getString(4), i, 3);
-                                    table2.setValueAt(sum, i, 4);
-                                    table2.setValueAt(rs.getString(5), i, 5);
+                                    Object[] data = new Object[6];
+                                    data[0] = rs.getString(1).trim();
+                                    data[1] =rs.getString(2).trim();
+                                    data[2] = rs.getString(3).trim();
+                                     float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
+                                    data[3] = rs.getString(4).trim();
+                                    data[4] = sum;
+                                    data[5] = rs.getString(5).trim();
+                                    model2.addRow(data);
                                     storeX.setText(rs.getString(6).trim());
-                                    sum1 = sum1 + Integer.parseInt(table2.getValueAt(i, 2).toString().trim());
+                                    sum1 = sum1 + Integer.parseInt(data[2].toString().trim());
                                     sum2 = sum2 + sum;
-                                    i++;
+                                    
                                 }
                                 sumvaluesX.setText(String.valueOf(sum1));
                                 sumpriceX.setText(String.valueOf(sum2));
@@ -327,7 +331,7 @@ class workingFrame extends JFrame {
                             model2.setColumnCount(4);
                             model2.setColumnIdentifiers(colName);
                             keyStore = "equalt";
-                            sql = "select num,info,amount,others,inStore,outStore from " + keyStore + " where id='" + keyWord + "'";
+                            sql = "select num,info,amount,others,inStore,outStore from " + keyStore + " where id='" + keyWord + "' order by num";
                             System.out.print(sql);
                             dbOperation st = new dbOperation();
                             st.DBConnect();
@@ -337,16 +341,17 @@ class workingFrame extends JFrame {
                                 int sum1 = 0;//合计数量
                                 float sum2 = 0;//合计金额
                                 while (rs.next()) {
-                                    table2.setValueAt(rs.getString(1), i, 0);
-                                    table2.setValueAt(rs.getString(2), i, 1);
-                                    table2.setValueAt(rs.getString(3), i, 2);
-                                    table2.setValueAt(rs.getString(4), i, 3);
+                                    Object[] data = new Object[4];
+                                    data[0] = rs.getString(1).trim();
+                                    data[1] =rs.getString(2).trim();
+                                    data[2] = rs.getString(3).trim();
+                                    data[3] = rs.getString(4).trim();
+                                    model2.addRow(data);
                                     storeX.setText("'" + rs.getString(5) + "' 收  '" + rs.getString(6) + "' 发");
-                                    sum1 = sum1 + Integer.parseInt(table2.getValueAt(i, 2).toString().trim());
-                                    i++;
+                                    sum1 = sum1 + Integer.parseInt(data[2].toString().trim());
                                 }
                                 sumvaluesX.setText(String.valueOf(sum1));
-                                sumpriceX.setText(String.valueOf(sum2));
+                                sumpriceX.setText("NULL");
                             } catch (SQLException ex) {
                                 Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                             }
@@ -365,7 +370,7 @@ class workingFrame extends JFrame {
                             model2.setColumnCount(6);
                             model2.setColumnIdentifiers(colName);
 
-                            sql = "select num,info,amount,inprice,others,store from " + keyStore + " where id='" + keyWord + "'";
+                            sql = "select num,info,amount,inprice,others,store from " + keyStore + " where id='" + keyWord + "'order by num";
                             System.out.print(sql);
                             dbOperation st = new dbOperation();
                             st.DBConnect();
@@ -375,17 +380,18 @@ class workingFrame extends JFrame {
                                 int sum1 = 0;//合计数量
                                 float sum2 = 0;//合计金额
                                 while (rs.next()) {
-                                    table2.setValueAt(rs.getString(1), i, 0);
-                                    table2.setValueAt(rs.getString(2), i, 1);
-                                    table2.setValueAt(rs.getString(3), i, 2);
-                                    float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
-                                    table2.setValueAt(rs.getString(4), i, 3);
-                                    table2.setValueAt(sum, i, 4);
-                                    table2.setValueAt(rs.getString(5), i, 5);
+                                    Object[] data = new Object[6];
+                                    data[0] = rs.getString(1).trim();
+                                    data[1] =rs.getString(2).trim();
+                                    data[2] = rs.getString(3).trim();
+                                     float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
+                                    data[3] = rs.getString(4).trim();
+                                    data[4] = sum;
+                                    data[5] = rs.getString(5).trim();
+                                    model2.addRow(data);
                                     storeX.setText(rs.getString(6).trim());
-                                    sum1 = sum1 + Integer.parseInt(table2.getValueAt(i, 2).toString().trim());
+                                    sum1 = sum1 + Integer.parseInt(data[2].toString().trim());
                                     sum2 = sum2 + sum;
-                                    i++;
                                 }
                                 sumvaluesX.setText(String.valueOf(sum1));
                                 sumpriceX.setText(String.valueOf(sum2));
@@ -405,7 +411,7 @@ class workingFrame extends JFrame {
                             model2.setColumnCount(6);
                             model2.setColumnIdentifiers(colName);
 
-                            sql = "select num,info,amount,inprice,outPrice,sumprice,store from " + keyStore + " where id='" + keyWord + "'";
+                            sql = "select num,info,amount,inprice,outPrice,sumprice,store from " + keyStore + " where id='" + keyWord + "'order by num";
                             System.out.print(sql);
                             dbOperation st = new dbOperation();
                             st.DBConnect();
@@ -415,17 +421,19 @@ class workingFrame extends JFrame {
                                 int sum1 = 0;//合计数量
                                 float sum2 = 0;//合计金额
                                 while (rs.next()) {
-                                    table2.setValueAt(rs.getString(1), i, 0);
-                                    table2.setValueAt(rs.getString(2), i, 1);
-                                    table2.setValueAt(rs.getString(3), i, 2);
-                                    float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
-                                    table2.setValueAt(rs.getString(4), i, 3);
-                                    table2.setValueAt(rs.getString(5), i, 4);
-                                    table2.setValueAt(sum, i, 5);
+                                    Object[] data = new Object[6];
+                                    data[0] = rs.getString(1).trim();
+                                    data[1] =rs.getString(2).trim();
+                                    data[2] = rs.getString(3).trim();
+                                     float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
+                                    data[3] = rs.getString(4).trim();
+                                    data[4] = rs.getString(5).trim();
+                                    data[5] = sum;
+                                    model2.addRow(data);
                                     storeX.setText(rs.getString(7).trim());
-                                    sum1 = sum1 + Integer.parseInt(table2.getValueAt(i, 2).toString().trim());
+                                    sum1 = sum1 + Integer.parseInt(data[2].toString().trim());
                                     sum2 = sum2 + sum;
-                                    i++;
+                                   
                                 }
                                 sumvaluesX.setText(String.valueOf(sum1));
                                 sumpriceX.setText(String.valueOf(sum2));
@@ -434,21 +442,7 @@ class workingFrame extends JFrame {
                             }
                             st.DBClosed();
                         }
-                        dbOperation st = new dbOperation();
-                        st.DBConnect();
-                        try {
-                            int i = 0;
-                            rs = st.DBSqlQuery(sql);
-                            while (rs.next()) {
-                                table2.setValueAt(rs.getString(1), i, 0);
-                                table2.setValueAt(rs.getString(2), i, 1);
-                                table2.setValueAt(rs.getString(3), i, 2);
-                                i++;
-                            }
-                        } catch (SQLException ex) {
-                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        st.DBClosed();
+                       
                     /*
                     int colummCount = table1.getModel().getColumnCount();// 列数
                     for (int i = 0; i < colummCount; i++) {
@@ -463,11 +457,12 @@ class workingFrame extends JFrame {
         confirm.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                for (int j = table1.getRowCount() - 1; j >= 0; j--) {
-                    for (int i = table1.getColumnCount() - 1; i >= 0; i--) {
-                        table1.setValueAt("", j, i);
-                    }
+                /*for (int j = table1.getRowCount() - 1; j >= 0; j--) {
+                for (int i = table1.getColumnCount() - 1; i >= 0; i--) {
+                table1.setValueAt("", j, i);
                 }
+                }*/
+                model1.setRowCount(0);
                 table1.repaint();
                 dbOperation init = new dbOperation();
                 init.DBConnect();
@@ -639,10 +634,11 @@ class workingFrame extends JFrame {
                             try {
                                 RS = c.DBSqlQuery(sql);
                                 while (RS.next()) {
-                                    table1.setValueAt(RS.getString(1).substring(0, 8).trim(), k, 0);
-                                    table1.setValueAt(RS.getString("id").trim(), k, 1);
-                                    table1.setValueAt(RS.getString("type").trim(), k, 2);
-                                    k++;
+                                    Object[] data = new Object[3];
+                                    data[0] = RS.getString(1).substring(0, 8).trim();
+                                    data[1] = RS.getString("id").trim();
+                                    data[2] = RS.getString("type").trim();
+                                    model1.addRow(data);
                                 }
                             } catch (SQLException ex) {
                                 Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -760,7 +756,7 @@ class workingFrame extends JFrame {
                                                         String syear = getDate.fixYear(String.valueOf(year));
                                                         String smonth = getDate.fixMonth(String.valueOf(month));
                                                         String sday = getDate.fixDay(String.valueOf(day));
-                                                        sql = "select distinct date,id from " + type.get(i + 1) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                        sql = "select distinct date,id from  '" + type.get(i + 1) + " ' (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         System.out.print(sql);
                                                         dbOperation stable = new dbOperation();
                                                         stable.DBConnect();
@@ -796,10 +792,11 @@ class workingFrame extends JFrame {
                             try {
                                 RS = c.DBSqlQuery(sql);
                                 while (RS.next()) {
-                                    table1.setValueAt(RS.getString(1).substring(0, 8).trim(), k, 0);
-                                    table1.setValueAt(RS.getString("id").trim(), k, 1);
-                                    table1.setValueAt(RS.getString("type").trim(), k, 2);
-                                    k++;
+                                    Object[] data = new Object[3];
+                                    data[0] = RS.getString(1).substring(0, 8).trim();
+                                    data[1] = RS.getString("id").trim();
+                                    data[2] = RS.getString("type").trim();
+                                    model1.addRow(data);
                                 }
                             } catch (SQLException ex) {
                                 Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -952,10 +949,15 @@ class workingFrame extends JFrame {
                         try {
                             RS = c.DBSqlQuery(sql);
                             while (RS.next()) {
-                                table1.setValueAt(RS.getString(1).substring(0, 8).trim(), k, 0);
-                                table1.setValueAt(RS.getString("id").trim(), k, 1);
-                                table1.setValueAt(RS.getString("type").trim(), k, 2);
-                                k++;
+                                Object[] data = new Object[3];
+                                data[0] = RS.getString(1).substring(0, 8).trim();
+                                data[1] = RS.getString("id").trim();
+                                data[2] = RS.getString("type").trim();
+                                model1.addRow(data);
+                            /*table1.setValueAt(RS.getString(1).substring(0, 8).trim(), k, 0);
+                            table1.setValueAt(RS.getString("id").trim(), k, 1);
+                            table1.setValueAt(RS.getString("type").trim(), k, 2);
+                            k++;*/
                             }
                         } catch (SQLException ex) {
                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);

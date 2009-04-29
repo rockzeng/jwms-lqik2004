@@ -198,6 +198,12 @@ class mainFrame extends JFrame {
                 new Search();
             }
         });
+        storeRemain.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                RemainText.main(null);
+            }
+        });
         about.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {

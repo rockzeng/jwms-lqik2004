@@ -1,12 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package jwms;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Label;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,11 +23,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import method.dbOperation;
-import method.getDate;
 
 /**
  *
- * @author Administrator
+ * @author lqik2004
  */
 class RemainText {
 
@@ -40,17 +34,19 @@ class RemainText {
      * @param args the command line arguments
      */
     static storeRemain frame = new storeRemain();
+
     public static void main(String[] args) {
         // TODO code application logic here
-        
+
         frame.setSize(200, 400);
         frame.setLocationRelativeTo(null);
         frame.pack();
         frame.setVisible(true);
         frame.setTitle("库存查询");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
-     public static Point frameLocateOnScr() {
+
+    public static Point frameLocateOnScr() {
         return frame.getLocationOnScreen();
     }
 }
@@ -68,9 +64,10 @@ public class storeRemain extends JFrame {
     private JTable table1 = new JTable(model1);
     private JComboBox storeComboBox = new JComboBox();
     private JLabel states = new JLabel("已选仓库：");
-    private static  JLabel storel = new JLabel();
+    private static JLabel storel = new JLabel();
     private static List liststore = new Vector();
-    choicePopFrameRemain rFrame=new choicePopFrameRemain();
+    choicePopFrameRemain rFrame = new choicePopFrameRemain();
+    private JButton confirm = new JButton("查询");
 
     public storeRemain() {
         try {
@@ -78,28 +75,36 @@ public class storeRemain extends JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Object[] colName1 = new Object[2];
+        Object[] colName1 = new Object[3];
         colName1[0] = "商品名称";
-        colName1[1] = "仓库";
-        model1.setColumnCount(2);
-        model1.setRowCount(5000);
+        colName1[1] = "商品数量";
+        colName1[2] = "仓库";
+        model1.setColumnCount(3);
+        model1.setRowCount(0);
         model1.setColumnIdentifiers(colName1);//定义列名
         table1.getColumnModel().getColumn(0).setPreferredWidth(130);
         table1.getColumnModel().getColumn(1).setPreferredWidth(70);
+        table1.getColumnModel().getColumn(2).setPreferredWidth(70);
         JScrollPane panel1 = new JScrollPane(table1);
-        panel1.setPreferredSize(new Dimension(200, 400));
+        panel1.setPreferredSize(new Dimension(270, 400));
 
-        Box hbox0=Box.createHorizontalBox();
+        Box hbox0 = Box.createHorizontalBox();
         hbox0.add(storeComboBox);
-        hbox0.add(Box.createHorizontalStrut(5));
-        hbox0.add(states);
-        //hbox0.add(Box.createHorizontalStrut(5));
-        hbox0.add(storel);
+        hbox0.add(Box.createHorizontalStrut(20));
+        hbox0.add(confirm);
         hbox0.add(Box.createHorizontalGlue());
-        
-        Box vbox=Box.createVerticalBox();
+
+        Box hbox1 = Box.createHorizontalBox();
+        hbox1.add(states);
+        //hbox0.add(Box.createHorizontalStrut(5));
+        hbox1.add(storel);
+        hbox1.add(Box.createHorizontalGlue());
+
+        Box vbox = Box.createVerticalBox();
         vbox.add(hbox0);
         vbox.add(Box.createVerticalStrut(5));
+        vbox.add(hbox1);
+        vbox.add(Box.createVerticalStrut(10));
         vbox.add(panel1);
         vbox.add(Box.createVerticalGlue());
         add(vbox);
@@ -120,10 +125,18 @@ public class storeRemain extends JFrame {
                 }
             }
         });
+        confirm.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                search();
+            }
+        });
     }
-    public static void setStoreSelected(String x){
+
+    public static void setStoreSelected(String x) {
         storel.setText(x);
     }
+
     public static void setListStore(String x) {
         if (x == "clear") {
             liststore.clear();
@@ -137,22 +150,76 @@ public class storeRemain extends JFrame {
 
             @Override
             public void run() {
-
+                model1.setRowCount(0);
                 String sql;
                 ResultSet rs = null;
                 String info;
                 int amount;
-                for (int i = 0; i < liststore.size(); i++) {
-                    store=liststore.get(i).toString().trim();
-                    sql = "select info,amount from maint where '" + store + "' ";
+                int rowTag = 0;
+                if (storeComboBox.getSelectedItem().toString() == "全部仓库") {
+                    sql = "select info,amount,store from maint order by store";
                     System.out.print(sql);
                     dbOperation stable = new dbOperation();
                     stable.DBConnect();
                     try {
                         rs = stable.DBSqlQuery(sql);
                         while (rs.next()) {
-                            info = rs.getString(1).trim();
-                            amount = Integer.parseInt(rs.getString(2).trim());
+                            Object[] data = new Object[3];
+                            data[0] = rs.getString(1).trim();
+                            data[1] = rs.getString(2).trim();
+                            data[2] = rs.getString(3).trim();
+                            /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
+                            table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
+                            table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
+                            model1.addRow(data);
+                        }
+                        //设置表格
+                        stable.DBClosed();
+                    } catch (SQLException ex) {
+                        Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else if (storeComboBox.getSelectedItem().toString() == "更多组合...") {
+                    for (int i = 0; i < liststore.size(); i++) {
+                        store = liststore.get(i).toString().trim();
+                        sql = "select info,amount,store from maint where store='" + store + "' ";
+                        System.out.print(sql);
+                        dbOperation stable = new dbOperation();
+                        stable.DBConnect();
+                        try {
+                            rs = stable.DBSqlQuery(sql);
+                            while (rs.next()) {
+                                Object[] data = new Object[3];
+                                data[0] = rs.getString(1).trim();
+                                data[1] = rs.getString(2).trim();
+                                data[2] = rs.getString(3).trim();
+                                /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
+                                table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
+                                table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
+                                model1.addRow(data);
+                            }
+                            //设置表格
+                            stable.DBClosed();
+                        } catch (SQLException ex) {
+                            Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                } else {
+                    store = storeComboBox.getSelectedItem().toString().trim();
+                    sql = "select info,amount,store from maint where store='" + store + "' ";
+                    System.out.print(sql);
+                    dbOperation stable = new dbOperation();
+                    stable.DBConnect();
+                    try {
+                        rs = stable.DBSqlQuery(sql);
+                        while (rs.next()) {
+                            Object[] data = new Object[3];
+                            data[0] = rs.getString(1).trim();
+                            data[1] = rs.getString(2).trim();
+                            data[2] = rs.getString(3).trim();
+                            /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
+                            table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
+                            table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
+                            model1.addRow(data);
                         }
                         //设置表格
                         stable.DBClosed();
@@ -163,6 +230,7 @@ public class storeRemain extends JFrame {
             }
         }.start();
     }
+
     private void storeLoad() throws SQLException {
         storeComboBox.addItem("全部仓库");
         dbOperation storeLoad = new dbOperation();
@@ -179,6 +247,7 @@ public class storeRemain extends JFrame {
                 storeComboBox.addItem(rs.getString(1).trim());
                 rFrame.cb.addItem(rs.getString(1).trim());
             }
+
             rFrame.cb.addItem("");
             storeLoad.DBClosed();
         } catch (SQLException ex) {
@@ -226,13 +295,13 @@ class choicePopFrameRemain extends JFrame {
                 storeRemain.setListStore("clear");
                 String temStoreSelect = "";
                 for (int i = 0; i < table.getRowCount(); i++) {
-                    if (model.getValueAt(i, 0) != "") {
+                    if (model.getValueAt(i, 0) != null) {
                         storeRemain.setListStore(model.getValueAt(i, 0).toString());
                         temStoreSelect = temStoreSelect + model.getValueAt(i, 0).toString().trim() + "  ";
                     }
                 }
                 System.out.print(temStoreSelect);
-                storeRemain.setStoreSelected(temStoreSelect);
+                storeRemain.setStoreSelected(temStoreSelect.trim());
                 dispose();
             }
         });
