@@ -22,6 +22,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import method.ProgressBarDialog;
 import method.dbOperation;
 
 /**
@@ -68,8 +69,13 @@ public class storeRemain extends JFrame {
     private static List liststore = new Vector();
     choicePopFrameRemain rFrame = new choicePopFrameRemain();
     private JButton confirm = new JButton("查询");
+    private JLabel sumLabel = new JLabel("总数量:");
+    private JLabel priceLabel = new JLabel("总金额:");
+    private JLabel sumLabelSta = new JLabel("      ");
+    private JLabel priceLabelSta = new JLabel(" ");
 
     public storeRemain() {
+        storel.setText("全部仓库");
         try {
             storeLoad();
         } catch (SQLException ex) {
@@ -89,21 +95,35 @@ public class storeRemain extends JFrame {
         panel1.setPreferredSize(new Dimension(270, 400));
 
         Box hbox0 = Box.createHorizontalBox();
+        hbox0.add(Box.createHorizontalStrut(5));
         hbox0.add(storeComboBox);
         hbox0.add(Box.createHorizontalStrut(20));
         hbox0.add(confirm);
         hbox0.add(Box.createHorizontalGlue());
 
         Box hbox1 = Box.createHorizontalBox();
+        hbox1.add(Box.createHorizontalStrut(5));
         hbox1.add(states);
         //hbox0.add(Box.createHorizontalStrut(5));
         hbox1.add(storel);
         hbox1.add(Box.createHorizontalGlue());
 
+        Box hbox2 = Box.createHorizontalBox();
+        hbox2.add(Box.createHorizontalStrut(5));
+        hbox2.add(sumLabel);
+        hbox2.add(sumLabelSta);
+        hbox2.add(Box.createHorizontalStrut(10));
+        hbox2.add(priceLabel);
+        hbox2.add(priceLabelSta);
+        hbox2.add(Box.createHorizontalGlue());
+
         Box vbox = Box.createVerticalBox();
+        vbox.add(Box.createVerticalStrut(5));
         vbox.add(hbox0);
         vbox.add(Box.createVerticalStrut(5));
         vbox.add(hbox1);
+        vbox.add(Box.createVerticalStrut(5));
+        vbox.add(hbox2);
         vbox.add(Box.createVerticalStrut(10));
         vbox.add(panel1);
         vbox.add(Box.createVerticalGlue());
@@ -146,56 +166,90 @@ public class storeRemain extends JFrame {
     }
 
     public void search() {
+        final ProgressBarDialog proBar = new ProgressBarDialog();
+        Point point = RemainText.frameLocateOnScr();
+        proBar.setLocation(point.x + 65, point.y + 240);
+        //proBar.adoptDeterminate();
         new Thread() {
 
             @Override
             public void run() {
                 model1.setRowCount(0);
                 String sql;
+                String sqlCount;
                 ResultSet rs = null;
-                String info;
-                int amount;
+                float price = 0;
+                int amount = 0;
                 int rowTag = 0;
                 if (storeComboBox.getSelectedItem().toString() == "全部仓库") {
-                    sql = "select info,amount,store from maint order by store";
-                    System.out.print(sql);
+                    sql = "select info,amount,store,outprice from maint order by store";
+                    sqlCount = "select count(info) from maint";
+                    //System.out.print(sql);
                     dbOperation stable = new dbOperation();
                     stable.DBConnect();
                     try {
+                        rs = stable.DBSqlQuery(sqlCount);
+                        while (rs.next()) {
+                            proBar.adoptDeterminate(Integer.parseInt(rs.getString(1).trim()));
+                        }
                         rs = stable.DBSqlQuery(sql);
                         while (rs.next()) {
                             Object[] data = new Object[3];
                             data[0] = rs.getString(1).trim();
                             data[1] = rs.getString(2).trim();
+                            amount += Integer.parseInt(rs.getString(2));
                             data[2] = rs.getString(3).trim();
+                            price += Float.parseFloat(rs.getString(4));   //总价格（售价）
                             /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
                             table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
                             table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
                             model1.addRow(data);
+                            proBar.setValue(rowTag++);
                         }
                         //设置表格
                         stable.DBClosed();
+
                     } catch (SQLException ex) {
                         Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else if (storeComboBox.getSelectedItem().toString() == "更多组合...") {
+                    rowTag = 0;
+                    dbOperation stable = new dbOperation();
+                    stable.DBConnect();
+                    int va = 0;
                     for (int i = 0; i < liststore.size(); i++) {
                         store = liststore.get(i).toString().trim();
-                        sql = "select info,amount,store from maint where store='" + store + "' ";
-                        System.out.print(sql);
-                        dbOperation stable = new dbOperation();
-                        stable.DBConnect();
+                        sqlCount = "select count(info) from maint where store='" + store + "'";
                         try {
-                            rs = stable.DBSqlQuery(sql);
+                            rs = stable.DBSqlQuery(sqlCount);
+                            while (rs.next()) {
+                                va += Integer.parseInt(rs.getString(1).trim());
+                            }
+                        } catch (SQLException ex) {
+                            Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    proBar.adoptDeterminate(va);
+                    dbOperation stable1 = new dbOperation();
+                    stable1.DBConnect();
+                    for (int i = 0; i < liststore.size(); i++) {
+                        store = liststore.get(i).toString().trim();
+                        sql = "select info,amount,store,outprice from maint where store='" + store + "' ";
+                        //System.out.print(sql);
+                        try {
+                            rs = stable1.DBSqlQuery(sql);
                             while (rs.next()) {
                                 Object[] data = new Object[3];
                                 data[0] = rs.getString(1).trim();
                                 data[1] = rs.getString(2).trim();
+                                amount += Integer.parseInt(rs.getString(2));
                                 data[2] = rs.getString(3).trim();
+                                price += Float.parseFloat(rs.getString(4));
                                 /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
                                 table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
                                 table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
                                 model1.addRow(data);
+                                proBar.setValue(rowTag++);
                             }
                             //设置表格
                             stable.DBClosed();
@@ -204,22 +258,31 @@ public class storeRemain extends JFrame {
                         }
                     }
                 } else {
+                    rowTag = 0;
                     store = storeComboBox.getSelectedItem().toString().trim();
-                    sql = "select info,amount,store from maint where store='" + store + "' ";
-                    System.out.print(sql);
+                    sql = "select info,amount,store,outprice from maint where store='" + store + "' ";
+                    sqlCount = "select count(info) from maint where store='" + store + "' ";
+                    //System.out.print(sql);
                     dbOperation stable = new dbOperation();
                     stable.DBConnect();
                     try {
+                        rs = stable.DBSqlQuery(sqlCount);
+                        if (rs.next()) {
+                            proBar.adoptDeterminate(Integer.parseInt(rs.getString(1).trim()));
+                        }
                         rs = stable.DBSqlQuery(sql);
                         while (rs.next()) {
                             Object[] data = new Object[3];
                             data[0] = rs.getString(1).trim();
                             data[1] = rs.getString(2).trim();
+                            amount += Integer.parseInt(rs.getString(2));
                             data[2] = rs.getString(3).trim();
+                            price += Float.parseFloat(rs.getString(4));
                             /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
                             table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
                             table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
                             model1.addRow(data);
+                            proBar.setValue(rowTag++);
                         }
                         //设置表格
                         stable.DBClosed();
@@ -227,8 +290,12 @@ public class storeRemain extends JFrame {
                         Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+                sumLabelSta.setText(String.valueOf(amount));
+                priceLabelSta.setText(String.valueOf(price));
+                proBar.finishDeterminate();
             }
         }.start();
+        proBar.setVisible(true);
     }
 
     private void storeLoad() throws SQLException {

@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 
 /**
  *
- * @author Administrator
+ * @author lqik2004
  */
 public class about {
 
@@ -33,7 +33,7 @@ class aboutDialog extends JFrame{
 
     public aboutDialog() {
         String version=null;
-        version="0.141_Alpha";
+        version="0.142_Alpha";
         JLabel l1=new JLabel("Version：'"+version+"'");
         JLabel l2=new JLabel("Author：刘潮");
         JLabel l3=new JLabel("Update：2009-4-29");
