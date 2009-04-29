@@ -2,6 +2,10 @@
 
 2009.4.29
 
+[http://jwms-lqik2004.googlecode.com/files/logo-15.PNG]
+
+“仓库管理”界面
+
 [http://jwms-lqik2004.googlecode.com/files/logo-14.PNG]
 
 更新了JTABLE显示
