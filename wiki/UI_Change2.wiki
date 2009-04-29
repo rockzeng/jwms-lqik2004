@@ -1,5 +1,11 @@
 =UI_Change-2=
 
+2009.4.29
+
+[http://jwms-lqik2004.googlecode.com/files/logo-14.PNG]
+
+更新了JTABLE显示
+
 2009.4.28
 
 [http://jwms-lqik2004.googlecode.com/files/12.PNG]
