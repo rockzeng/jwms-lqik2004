@@ -165,7 +165,7 @@ class searchFrame extends JFrame {
         colName1[2] = "销售额";
         colName1[3] = "销售利润";
         model1.setColumnCount(4);
-        model1.setRowCount(9);
+        model1.setRowCount(0);
         TableColumnModel tc = table1.getColumnModel();
         tc.getColumn(0).setPreferredWidth(20);
         tc.getColumn(0).setPreferredWidth(25);
@@ -231,11 +231,7 @@ class searchFrame extends JFrame {
         confirm.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                for (int j = table1.getRowCount() - 1; j >= 0; j--) {
-                    for (int i = table1.getColumnCount() - 1; i >= 0; i--) {
-                        table1.setValueAt("", j, i);
-                    }
-                }
+               model1.setRowCount(0);
                 table1.repaint();
                 dbOperation init = new dbOperation();
                 init.DBConnect();
@@ -280,6 +276,7 @@ class searchFrame extends JFrame {
 
                         if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
                             int proBarValue = 0;
+
                             for (int k = 0; k < liststore.size(); k++) {
                                 store = liststore.get(k).toString().trim();
                                 sumamount = 0;
@@ -472,11 +469,12 @@ class searchFrame extends JFrame {
                         try {
                             RS = c.DBSqlQuery(sql);
                             while (RS.next()) {
-                                table1.setValueAt(RS.getString(1), k, 0);
-                                table1.setValueAt(RS.getString(2), k, 1);
-                                table1.setValueAt(RS.getString(3), k, 2);
-                                table1.setValueAt(RS.getString(4), k, 3);
-                                k++;
+                                Object[] obj=new Object[4];
+                                obj[0]=RS.getString(1);
+                                obj[1]=RS.getString(2);
+                                obj[2]=RS.getString(3);
+                                obj[3]=RS.getString(4);
+                                model1.addRow(obj);
                             }
                         } catch (SQLException ex) {
                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);

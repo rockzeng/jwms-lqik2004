@@ -304,9 +304,9 @@ class workingFrame extends JFrame {
                                 while (rs.next()) {
                                     Object[] data = new Object[6];
                                     data[0] = rs.getString(1).trim();
-                                    data[1] =rs.getString(2).trim();
+                                    data[1] = rs.getString(2).trim();
                                     data[2] = rs.getString(3).trim();
-                                     float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
+                                    float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
                                     data[3] = rs.getString(4).trim();
                                     data[4] = sum;
                                     data[5] = rs.getString(5).trim();
@@ -314,7 +314,7 @@ class workingFrame extends JFrame {
                                     storeX.setText(rs.getString(6).trim());
                                     sum1 = sum1 + Integer.parseInt(data[2].toString().trim());
                                     sum2 = sum2 + sum;
-                                    
+
                                 }
                                 sumvaluesX.setText(String.valueOf(sum1));
                                 sumpriceX.setText(String.valueOf(sum2));
@@ -343,7 +343,7 @@ class workingFrame extends JFrame {
                                 while (rs.next()) {
                                     Object[] data = new Object[4];
                                     data[0] = rs.getString(1).trim();
-                                    data[1] =rs.getString(2).trim();
+                                    data[1] = rs.getString(2).trim();
                                     data[2] = rs.getString(3).trim();
                                     data[3] = rs.getString(4).trim();
                                     model2.addRow(data);
@@ -382,9 +382,9 @@ class workingFrame extends JFrame {
                                 while (rs.next()) {
                                     Object[] data = new Object[6];
                                     data[0] = rs.getString(1).trim();
-                                    data[1] =rs.getString(2).trim();
+                                    data[1] = rs.getString(2).trim();
                                     data[2] = rs.getString(3).trim();
-                                     float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
+                                    float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
                                     data[3] = rs.getString(4).trim();
                                     data[4] = sum;
                                     data[5] = rs.getString(5).trim();
@@ -423,9 +423,9 @@ class workingFrame extends JFrame {
                                 while (rs.next()) {
                                     Object[] data = new Object[6];
                                     data[0] = rs.getString(1).trim();
-                                    data[1] =rs.getString(2).trim();
+                                    data[1] = rs.getString(2).trim();
                                     data[2] = rs.getString(3).trim();
-                                     float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
+                                    float sum = Float.parseFloat(rs.getString(3).trim()) * Float.parseFloat(rs.getString(4).trim());
                                     data[3] = rs.getString(4).trim();
                                     data[4] = rs.getString(5).trim();
                                     data[5] = sum;
@@ -433,7 +433,7 @@ class workingFrame extends JFrame {
                                     storeX.setText(rs.getString(7).trim());
                                     sum1 = sum1 + Integer.parseInt(data[2].toString().trim());
                                     sum2 = sum2 + sum;
-                                   
+
                                 }
                                 sumvaluesX.setText(String.valueOf(sum1));
                                 sumpriceX.setText(String.valueOf(sum2));
@@ -442,7 +442,7 @@ class workingFrame extends JFrame {
                             }
                             st.DBClosed();
                         }
-                       
+
                     /*
                     int colummCount = table1.getModel().getColumnCount();// 列数
                     for (int i = 0; i < colummCount; i++) {
@@ -821,42 +821,47 @@ class workingFrame extends JFrame {
                                 type = "equalt where ";
                             }
                             if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
-                                store = liststore.get(0).toString().trim();
-                                for (int k = 1; k < liststore.size(); k++) {
-                                    store = store + "' or store= '" + liststore.get(k).toString().trim();
-                                }
-                                for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                    for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
-                                        if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
-                                            break;
-                                        } else {
-                                            for (int day = Integer.parseInt(bday); day <= 31; day++) {
-                                                if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                                    break;
-                                                } else {
-                                                    String syear = getDate.fixYear(String.valueOf(year));
-                                                    String smonth = getDate.fixMonth(String.valueOf(month));
-                                                    String sday = getDate.fixDay(String.valueOf(day));
-                                                    sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                    System.out.print(sql);
-                                                    dbOperation stable = new dbOperation();
-                                                    stable.DBConnect();
-                                                    try {
-                                                        rs = stable.DBSqlQuery(sql);
-                                                        while (rs.next()) {
-                                                            String date = rs.getString(1).substring(0, 8);
-                                                            dbOperation tem = new dbOperation();
-                                                            tem.DBConnect();
-                                                            String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
-                                                            System.out.print(s);
-                                                            tem.DBSqlExe(s);
-                                                            tem.DBClosed();
+                                //用户同时在”仓库“栏选择了”更多选择“并且在“类型”选择了“同价调拨单”，那么弹出窗口进行警告
+                                if (type == "equalt where ") {
+                                    JOptionPane.showMessageDialog(null, "此查询方法暂时不被支持！");
+                                } else {
+                                    store = liststore.get(0).toString().trim();
+                                    for (int k = 1; k < liststore.size(); k++) {
+                                        store = store + "' or store= '" + liststore.get(k).toString().trim();
+                                    }
+                                    for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
+                                        for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
+                                            if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
+                                                break;
+                                            } else {
+                                                for (int day = Integer.parseInt(bday); day <= 31; day++) {
+                                                    if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                                        break;
+                                                    } else {
+                                                        String syear = getDate.fixYear(String.valueOf(year));
+                                                        String smonth = getDate.fixMonth(String.valueOf(month));
+                                                        String sday = getDate.fixDay(String.valueOf(day));
+                                                        sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                        System.out.print(sql);
+                                                        dbOperation stable = new dbOperation();
+                                                        stable.DBConnect();
+                                                        try {
+                                                            rs = stable.DBSqlQuery(sql);
+                                                            while (rs.next()) {
+                                                                String date = rs.getString(1).substring(0, 8);
+                                                                dbOperation tem = new dbOperation();
+                                                                tem.DBConnect();
+                                                                String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
+                                                                System.out.print(s);
+                                                                tem.DBSqlExe(s);
+                                                                tem.DBClosed();
+                                                            }
+                                                            stable.DBClosed();
+                                                        } catch (SQLException ex) {
+                                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                         }
-                                                        stable.DBClosed();
-                                                    } catch (SQLException ex) {
-                                                        Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                                        proBar.setValue(proBarValues++);
                                                     }
-                                                    proBar.setValue(proBarValues++);
                                                 }
                                             }
                                         }
@@ -914,7 +919,11 @@ class workingFrame extends JFrame {
                                                     String syear = getDate.fixYear(String.valueOf(year));
                                                     String smonth = getDate.fixMonth(String.valueOf(month));
                                                     String sday = getDate.fixDay(String.valueOf(day));
-                                                    sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                    if (type == "equalt where ") {
+                                                        sql = "select distinct date,id from " + type + " (instore='" + store + "' or outstore='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                    } else {
+                                                        sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                    }
                                                     System.out.print(sql);
                                                     dbOperation stable = new dbOperation();
                                                     stable.DBConnect();

@@ -21,10 +21,10 @@ public class pressText {
     public static void main(String[] args) {
         // TODO code application logic here
         dbOperation increaseDb = new dbOperation();
-        for(int i=0;i<300;i++){
-            String info="91-"+i;
+        for(int i=0;i<20000;i++){
+            String info="92-"+i;
             int amount=i+1;
-            String store="丰南";
+            String store="万隆";
             int inPrice=i*3;
             int outPrice=i*6;
         increaseDb.DBConnect();
@@ -35,6 +35,7 @@ public class pressText {
             } catch (SQLException ex) {
                 Logger.getLogger(pressText.class.getName()).log(Level.SEVERE, null, ex);
             }
-        increaseDb.DBClosed();}
+        increaseDb.DBClosed();
+        System.out.println(i);}
     }
 }
