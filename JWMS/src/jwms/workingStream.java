@@ -492,13 +492,16 @@ class workingFrame extends JFrame {
                     public void run() {
                         ResultSet rs = null;
                         String sql;
-                        String store;
+                        String store = null;
                         String byear = bYear.getSelectedItem().toString().trim();
                         String bmonth = bMonth.getSelectedItem().toString().trim();
                         String bday = bDay.getSelectedItem().toString().trim();
                         String eyear = eYear.getSelectedItem().toString().trim();
                         String emonth = eMonth.getSelectedItem().toString().trim();
                         String eday = eDay.getSelectedItem().toString().trim();
+                        dbOperation stable = new dbOperation();
+                        stable.DBConnect();
+
                         for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
                             for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
                                 if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
@@ -522,8 +525,7 @@ class workingFrame extends JFrame {
 
                                                         sql = "select distinct date,id from " + listtypeDB.get(i) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         System.out.print(sql);
-                                                        dbOperation stable = new dbOperation();
-                                                        stable.DBConnect();
+
                                                         try {
                                                             rs = stable.DBSqlQuery(sql);
                                                             while (rs.next()) {
@@ -535,7 +537,7 @@ class workingFrame extends JFrame {
                                                                 tem.DBSqlExe(s);
                                                                 tem.DBClosed();
                                                             }
-                                                            stable.DBClosed();
+
                                                         } catch (SQLException ex) {
                                                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                         }
@@ -543,20 +545,18 @@ class workingFrame extends JFrame {
                                                     } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
                                                         sql = "select distinct date,id from " + listtypeDB.get(i) + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         System.out.print(sql);
-                                                        dbOperation stable = new dbOperation();
-                                                        stable.DBConnect();
+
                                                         try {
                                                             rs = stable.DBSqlQuery(sql);
                                                             while (rs.next()) {
                                                                 String date = rs.getString(1).substring(0, 8);
-                                                                dbOperation tem = new dbOperation();
-                                                                tem.DBConnect();
+
                                                                 String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
                                                                 System.out.print(s);
-                                                                tem.DBSqlExe(s);
-                                                                tem.DBClosed();
+                                                                stable.DBSqlExe(s);
+
                                                             }
-                                                            stable.DBClosed();
+
                                                         } catch (SQLException ex) {
                                                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                         }
@@ -565,8 +565,7 @@ class workingFrame extends JFrame {
                                                         store = storeComboBox.getSelectedItem().toString().trim();
                                                         sql = "select distinct date,id from " + listtypeDB.get(i) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         System.out.print(sql);
-                                                        dbOperation stable = new dbOperation();
-                                                        stable.DBConnect();
+
                                                         try {
                                                             rs = stable.DBSqlQuery(sql);
 
@@ -580,7 +579,7 @@ class workingFrame extends JFrame {
                                                                 tem.DBClosed();
                                                             }
 
-                                                            stable.DBClosed();
+
                                                         } catch (SQLException ex) {
                                                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                         }
@@ -606,14 +605,22 @@ class workingFrame extends JFrame {
                                                 type.add("equalt where");
                                                 for (int i = 0; i < type.size(); i = i + 2) {
                                                     if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
-                                                        store = liststore.get(0).toString().trim();
-                                                        for (int k = 1; k < liststore.size(); k++) {
-                                                            store = store + "' or store= '" + liststore.get(k).toString().trim();
+                                                        //如果当出现“同价调拨单”的时候sql语句会发生变化，所以采用了分支
+                                                        if (type.get(i) == "同价调拨单") {
+                                                             store="instore=  '"+liststore.get(0).toString().trim()+ "' or outstore= '" + liststore.get(0).toString().trim() +"'";
+                                                            for (int k = 1; k < liststore.size(); k++) {
+                                                               store += "or instore= '"+liststore.get(k).toString().trim()+ "' or outstore= '" + liststore.get(k).toString().trim()+"'";
+                                                            }   
+                                                            sql = "select distinct date,id from " + type.get(i + 1) + " (" + store + ") and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                        } else {
+                                                            store = liststore.get(0).toString().trim();
+                                                            for (int k = 1; k < liststore.size(); k++) {
+                                                                store = store + "' or store= '" + liststore.get(k).toString().trim();
+                                                            }
+                                                            sql = "select distinct date,id from " + type.get(i + 1) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         }
-                                                        sql = "select distinct date,id from " + type.get(i + 1) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                        System.out.print(sql);
-                                                        dbOperation stable = new dbOperation();
-                                                        stable.DBConnect();
+                                                        System.out.println(sql);
+
                                                         try {
                                                             rs = stable.DBSqlQuery(sql);
                                                             while (rs.next()) {
@@ -625,7 +632,7 @@ class workingFrame extends JFrame {
                                                                 tem.DBSqlExe(s);
                                                                 tem.DBClosed();
                                                             }
-                                                            stable.DBClosed();
+
                                                         } catch (SQLException ex) {
                                                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                         }
@@ -633,8 +640,7 @@ class workingFrame extends JFrame {
                                                     } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
                                                         sql = "select distinct date,id from " + type.get(i + 1) + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         System.out.print(sql);
-                                                        dbOperation stable = new dbOperation();
-                                                        stable.DBConnect();
+
                                                         try {
                                                             rs = stable.DBSqlQuery(sql);
                                                             while (rs.next()) {
@@ -646,17 +652,20 @@ class workingFrame extends JFrame {
                                                                 tem.DBSqlExe(s);
                                                                 tem.DBClosed();
                                                             }
-                                                            stable.DBClosed();
+
                                                         } catch (SQLException ex) {
                                                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                         }
                                                         proBar.setValue(proBarValues++);
                                                     } else {
                                                         store = storeComboBox.getSelectedItem().toString().trim();
-                                                        sql = "select distinct date,id from  '" + type.get(i + 1) + " ' (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                        if (type.get(i) == "同价调拨单") {
+                                                            sql = "select distinct date,id from " + type.get(i + 1) + " (instore='" + store + "' or outstore='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                        } else {
+                                                            sql = "select distinct date,id from " + type.get(i + 1) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                        }
                                                         System.out.print(sql);
-                                                        dbOperation stable = new dbOperation();
-                                                        stable.DBConnect();
+
                                                         try {
                                                             rs = stable.DBSqlQuery(sql);
                                                             while (rs.next()) {
@@ -668,7 +677,7 @@ class workingFrame extends JFrame {
                                                                 tem.DBSqlExe(s);
                                                                 tem.DBClosed();
                                                             }
-                                                            stable.DBClosed();
+
                                                         } catch (SQLException ex) {
                                                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                         }
@@ -695,19 +704,20 @@ class workingFrame extends JFrame {
                                                     type = "equalt where ";
                                                 }
                                                 if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
-                                                    //用户同时在”仓库“栏选择了”更多选择“并且在“类型”选择了“同价调拨单”，那么弹出窗口进行警告
                                                     if (type == "equalt where ") {
-                                                        JOptionPane.showMessageDialog(null, "此查询方法暂时不被支持！");
+                                                        store="instore=  '"+liststore.get(0).toString().trim()+ "' or outstore= '" + liststore.get(0).toString().trim() +"'";
+                                                            for (int k = 1; k < liststore.size(); k++) {
+                                                               store += "or instore= '"+liststore.get(k).toString().trim()+ "' or outstore= '" + liststore.get(k).toString().trim()+"'";
+                                                            }
+                                                            sql = "select distinct date,id from eqult where (" + store + ") and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                     } else {
-                                                        store = liststore.get(0).toString().trim();
-                                                        for (int k = 1; k < liststore.size(); k++) {
-                                                            store = store + "' or store= '" + liststore.get(k).toString().trim();
-                                                        }
+                                                       store = liststore.get(0).toString().trim();
+                                                            for (int k = 1; k < liststore.size(); k++) {
+                                                                store = store + "' or store= '" + liststore.get(k).toString().trim();
+                                                            }
+                                                            sql = "select distinct date,id from " + type+ " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                        System.out.println(sql);
 
-                                                        sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                        System.out.print(sql);
-                                                        dbOperation stable = new dbOperation();
-                                                        stable.DBConnect();
                                                         try {
                                                             rs = stable.DBSqlQuery(sql);
                                                             while (rs.next()) {
@@ -719,7 +729,7 @@ class workingFrame extends JFrame {
                                                                 tem.DBSqlExe(s);
                                                                 tem.DBClosed();
                                                             }
-                                                            stable.DBClosed();
+
                                                         } catch (SQLException ex) {
                                                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                         }
@@ -729,8 +739,7 @@ class workingFrame extends JFrame {
                                                 } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
                                                     sql = "select distinct date,id from " + type + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                     System.out.print(sql);
-                                                    dbOperation stable = new dbOperation();
-                                                    stable.DBConnect();
+
                                                     try {
                                                         rs = stable.DBSqlQuery(sql);
                                                         while (rs.next()) {
@@ -742,7 +751,7 @@ class workingFrame extends JFrame {
                                                             tem.DBSqlExe(s);
                                                             tem.DBClosed();
                                                         }
-                                                        stable.DBClosed();
+
                                                     } catch (SQLException ex) {
                                                         Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                     }
@@ -757,8 +766,7 @@ class workingFrame extends JFrame {
                                                         sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                     }
                                                     System.out.print(sql);
-                                                    dbOperation stable = new dbOperation();
-                                                    stable.DBConnect();
+
                                                     try {
                                                         rs = stable.DBSqlQuery(sql);
                                                         while (rs.next()) {
@@ -770,7 +778,7 @@ class workingFrame extends JFrame {
                                                             tem.DBSqlExe(s);
                                                             tem.DBClosed();
                                                         }
-                                                        stable.DBClosed();
+
                                                     } catch (SQLException ex) {
                                                         Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                     }
@@ -782,6 +790,7 @@ class workingFrame extends JFrame {
                                 }
                             }
                         }
+                        stable.DBClosed();
                         ResultSet RS = null;
                         dbOperation c = new dbOperation();
                         c.DBConnect();
@@ -824,7 +833,7 @@ class workingFrame extends JFrame {
                 storeComboBox.addItem(rs.getString(1).trim());
                 storePop.cb.addItem(rs.getString(1).trim());
             }
-
+             storePop.cb.addItem(null);
             storeLoad.DBClosed();
         } catch (SQLException ex) {
             Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
