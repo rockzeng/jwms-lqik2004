@@ -949,29 +949,29 @@ class workingFrame extends JFrame {
                                     }
                                 }
                             }
-                        }
-                        int k = 0;
-                        ResultSet RS = null;
-                        dbOperation c = new dbOperation();
-                        c.DBConnect();
-                        sql = "select date,id,type from StreamCache order by date ASC";
-                        try {
-                            RS = c.DBSqlQuery(sql);
-                            while (RS.next()) {
-                                Object[] data = new Object[3];
-                                data[0] = RS.getString(1).substring(0, 8).trim();
-                                data[1] = RS.getString("id").trim();
-                                data[2] = RS.getString("type").trim();
-                                model1.addRow(data);
-                            /*table1.setValueAt(RS.getString(1).substring(0, 8).trim(), k, 0);
-                            table1.setValueAt(RS.getString("id").trim(), k, 1);
-                            table1.setValueAt(RS.getString("type").trim(), k, 2);
-                            k++;*/
+                            int k = 0;
+                            ResultSet RS = null;
+                            dbOperation c = new dbOperation();
+                            c.DBConnect();
+                            sql = "select date,id,type from StreamCache order by date ASC";
+                            try {
+                                RS = c.DBSqlQuery(sql);
+                                while (RS.next()) {
+                                    Object[] data = new Object[3];
+                                    data[0] = RS.getString(1).substring(0, 8).trim();
+                                    data[1] = RS.getString("id").trim();
+                                    data[2] = RS.getString("type").trim();
+                                    model1.addRow(data);
+                                /*table1.setValueAt(RS.getString(1).substring(0, 8).trim(), k, 0);
+                                table1.setValueAt(RS.getString("id").trim(), k, 1);
+                                table1.setValueAt(RS.getString("type").trim(), k, 2);
+                                k++;*/
+                                }
+                            } catch (SQLException ex) {
+                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                        } catch (SQLException ex) {
-                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            c.DBClosed();
                         }
-                        c.DBClosed();
                         proBar.finishDeterminate();
                     }
                 }.start();
