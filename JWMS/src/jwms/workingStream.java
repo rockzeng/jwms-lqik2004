@@ -499,29 +499,27 @@ class workingFrame extends JFrame {
                         String eyear = eYear.getSelectedItem().toString().trim();
                         String emonth = eMonth.getSelectedItem().toString().trim();
                         String eday = eDay.getSelectedItem().toString().trim();
+                        for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
+                            for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
+                                if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
+                                    break;
+                                } else {
+                                    for (int day = Integer.parseInt(bday); day <= 31; day++) {
+                                        if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
+                                            break;
+                                        } else {
+                                            String syear = getDate.fixYear(String.valueOf(year));
+                                            String smonth = getDate.fixMonth(String.valueOf(month));
+                                            String sday = getDate.fixDay(String.valueOf(day));
+                                            if (typeComboBox.getSelectedItem().toString().trim() == "更多组合") {
+                                                int proBarValues = 0;
+                                                for (int i = 0; i < listtypeDB.size(); i++) {
+                                                    if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
+                                                        store = liststore.get(0).toString().trim();
+                                                        for (int k = 1; k < liststore.size(); k++) {
+                                                            store = store + "' or store= '" + liststore.get(k).toString().trim();
+                                                        }
 
-
-
-                        if (typeComboBox.getSelectedItem().toString().trim() == "更多组合") {
-                            int proBarValues = 0;
-                            for (int i = 0; i < listtypeDB.size(); i++) {
-                                if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
-                                    store = liststore.get(0).toString().trim();
-                                    for (int k = 1; k < liststore.size(); k++) {
-                                        store = store + "' or store= '" + liststore.get(k).toString().trim();
-                                    }
-                                    for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                        for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
-                                            if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
-                                                break;
-                                            } else {
-                                                for (int day = Integer.parseInt(bday); day <= 31; day++) {
-                                                    if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                                        break;
-                                                    } else {
-                                                        String syear = getDate.fixYear(String.valueOf(year));
-                                                        String smonth = getDate.fixMonth(String.valueOf(month));
-                                                        String sday = getDate.fixDay(String.valueOf(day));
                                                         sql = "select distinct date,id from " + listtypeDB.get(i) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         System.out.print(sql);
                                                         dbOperation stable = new dbOperation();
@@ -542,24 +540,7 @@ class workingFrame extends JFrame {
                                                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                         }
                                                         proBar.setValue(proBarValues++);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
-                                    for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                        for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
-                                            if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
-                                                break;
-                                            } else {
-                                                for (int day = Integer.parseInt(bday); day <= 31; day++) {
-                                                    if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                                        break;
-                                                    } else {
-                                                        String syear = getDate.fixYear(String.valueOf(year));
-                                                        String smonth = getDate.fixMonth(String.valueOf(month));
-                                                        String sday = getDate.fixDay(String.valueOf(day));
+                                                    } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
                                                         sql = "select distinct date,id from " + listtypeDB.get(i) + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         System.out.print(sql);
                                                         dbOperation stable = new dbOperation();
@@ -579,106 +560,56 @@ class workingFrame extends JFrame {
                                                         } catch (SQLException ex) {
                                                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                         }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    proBar.setValue(proBarValues++);
-                                } else {
-                                    store = storeComboBox.getSelectedItem().toString().trim();
-                                    for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                        for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
-                                            if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
-                                                break;
-                                            } else {
-                                                for (int day = Integer.parseInt(bday); day <= 31; day++) {
-                                                    if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                                        break;
+                                                        proBar.setValue(proBarValues++);
                                                     } else {
-                                                        String syear = getDate.fixYear(String.valueOf(year));
-                                                        String smonth = getDate.fixMonth(String.valueOf(month));
-                                                        String sday = getDate.fixDay(String.valueOf(day));
+                                                        store = storeComboBox.getSelectedItem().toString().trim();
                                                         sql = "select distinct date,id from " + listtypeDB.get(i) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         System.out.print(sql);
                                                         dbOperation stable = new dbOperation();
                                                         stable.DBConnect();
                                                         try {
                                                             rs = stable.DBSqlQuery(sql);
+
                                                             while (rs.next()) {
-                                                                String date = rs.getString(1).substring(0, 8);
                                                                 dbOperation tem = new dbOperation();
                                                                 tem.DBConnect();
+                                                                String date = rs.getString(1).substring(0, 8);
                                                                 String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
                                                                 System.out.print(s);
                                                                 tem.DBSqlExe(s);
                                                                 tem.DBClosed();
                                                             }
+
                                                             stable.DBClosed();
                                                         } catch (SQLException ex) {
                                                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                         }
+                                                        proBar.setValue(proBarValues++);
                                                     }
                                                 }
-                                            }
-                                        }
-                                    }
-                                    proBar.setValue(proBarValues++);
-                                }
-                            }
-                            int k = 0;
-                            ResultSet RS = null;
-                            dbOperation c = new dbOperation();
-                            c.DBConnect();
-                            sql = "select date,id,type from StreamCache order by date ASC";
-                            try {
-                                RS = c.DBSqlQuery(sql);
-                                while (RS.next()) {
-                                    Object[] data = new Object[3];
-                                    data[0] = RS.getString(1).substring(0, 8).trim();
-                                    data[1] = RS.getString("id").trim();
-                                    data[2] = RS.getString("type").trim();
-                                    model1.addRow(data);
-                                }
-                            } catch (SQLException ex) {
-                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            c.DBClosed();
-                        } else if (typeComboBox.getSelectedItem().toString().trim() == "全部类型") {
-                            int proBarValues = 0;
-                            List type = new Vector();
-                            type.add("销售单");
-                            type.add("sellt where sellORreturn=0 and");
-                            type.add("销售退货单");
-                            type.add("sellt where sellORreturn=1 and");
-                            type.add("进货退货单");
-                            type.add("inputt where inputORreturn=1 and");
-                            type.add("进货单");
-                            type.add("inputt where inputORreturn=0 and");
-                            type.add("报损单");
-                            type.add("loset where loseORgain=0 and");
-                            type.add("报益单");
-                            type.add("loset where loseORgain=1 and");
-                            type.add("同价调拨单");
-                            type.add("equalt where");
-                            for (int i = 0; i < type.size(); i = i + 2) {
-                                if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
-                                    store = liststore.get(0).toString().trim();
-                                    for (int k = 1; k < liststore.size(); k++) {
-                                        store = store + "' or store= '" + liststore.get(k).toString().trim();
-                                    }
-                                    for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                        for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
-                                            if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
-                                                break;
-                                            } else {
-                                                for (int day = Integer.parseInt(bday); day <= 31; day++) {
-                                                    if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                                        break;
-                                                    } else {
-                                                        String syear = getDate.fixYear(String.valueOf(year));
-                                                        String smonth = getDate.fixMonth(String.valueOf(month));
-                                                        String sday = getDate.fixDay(String.valueOf(day));
+                                            } else if (typeComboBox.getSelectedItem().toString().trim() == "全部类型") {
+                                                int proBarValues = 0;
+                                                List type = new Vector();
+                                                type.add("销售单");
+                                                type.add("sellt where sellORreturn=0 and");
+                                                type.add("销售退货单");
+                                                type.add("sellt where sellORreturn=1 and");
+                                                type.add("进货退货单");
+                                                type.add("inputt where inputORreturn=1 and");
+                                                type.add("进货单");
+                                                type.add("inputt where inputORreturn=0 and");
+                                                type.add("报损单");
+                                                type.add("loset where loseORgain=0 and");
+                                                type.add("报益单");
+                                                type.add("loset where loseORgain=1 and");
+                                                type.add("同价调拨单");
+                                                type.add("equalt where");
+                                                for (int i = 0; i < type.size(); i = i + 2) {
+                                                    if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
+                                                        store = liststore.get(0).toString().trim();
+                                                        for (int k = 1; k < liststore.size(); k++) {
+                                                            store = store + "' or store= '" + liststore.get(k).toString().trim();
+                                                        }
                                                         sql = "select distinct date,id from " + type.get(i + 1) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         System.out.print(sql);
                                                         dbOperation stable = new dbOperation();
@@ -699,24 +630,7 @@ class workingFrame extends JFrame {
                                                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                         }
                                                         proBar.setValue(proBarValues++);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
-                                    for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                        for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
-                                            if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
-                                                break;
-                                            } else {
-                                                for (int day = Integer.parseInt(bday); day <= 31; day++) {
-                                                    if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                                        break;
-                                                    } else {
-                                                        String syear = getDate.fixYear(String.valueOf(year));
-                                                        String smonth = getDate.fixMonth(String.valueOf(month));
-                                                        String sday = getDate.fixDay(String.valueOf(day));
+                                                    } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
                                                         sql = "select distinct date,id from " + type.get(i + 1) + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         System.out.print(sql);
                                                         dbOperation stable = new dbOperation();
@@ -737,25 +651,8 @@ class workingFrame extends JFrame {
                                                             Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                         }
                                                         proBar.setValue(proBarValues++);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    store = storeComboBox.getSelectedItem().toString().trim();
-                                    for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                        for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
-                                            if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
-                                                break;
-                                            } else {
-                                                for (int day = Integer.parseInt(bday); day <= 31; day++) {
-                                                    if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                                        break;
                                                     } else {
-                                                        String syear = getDate.fixYear(String.valueOf(year));
-                                                        String smonth = getDate.fixMonth(String.valueOf(month));
-                                                        String sday = getDate.fixDay(String.valueOf(day));
+                                                        store = storeComboBox.getSelectedItem().toString().trim();
                                                         sql = "select distinct date,id from  '" + type.get(i + 1) + " ' (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         System.out.print(sql);
                                                         dbOperation stable = new dbOperation();
@@ -777,70 +674,36 @@ class workingFrame extends JFrame {
                                                         }
                                                         proBar.setValue(proBarValues++);
                                                     }
-                                                }
-                                            }
-                                        }
 
-                                    }
-                                }
-                            }
-                            int k = 0;
-                            ResultSet RS = null;
-                            dbOperation c = new dbOperation();
-                            c.DBConnect();
-                            sql = "select date,id,type from StreamCache order by date ASC";
-                            try {
-                                RS = c.DBSqlQuery(sql);
-                                while (RS.next()) {
-                                    Object[] data = new Object[3];
-                                    data[0] = RS.getString(1).substring(0, 8).trim();
-                                    data[1] = RS.getString("id").trim();
-                                    data[2] = RS.getString("type").trim();
-                                    model1.addRow(data);
-                                }
-                            } catch (SQLException ex) {
-                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            c.DBClosed();
-                        } else {
-                            int proBarValues = 0;
-                            String type = null;
-                            if (typeComboBox.getSelectedItem().toString().trim() == "销售单") {
-                                type = "sellt where sellORreturn=0 and";
-                            } else if (typeComboBox.getSelectedItem().toString().trim() == "销售退货单") {
-                                type = "sellt where sellORreturn=1 and";
-                            } else if (typeComboBox.getSelectedItem().toString().trim() == "进货退货单") {
-                                type = "inputt where inputORreturn=1 and";
-                            } else if (typeComboBox.getSelectedItem().toString().trim() == "进货单") {
-                                type = "inputt where inputORreturn=0 and";
-                            } else if (typeComboBox.getSelectedItem().toString().trim() == "报损单") {
-                                type = "loset where loseORgain=0 and";
-                            } else if (typeComboBox.getSelectedItem().toString().trim() == "报益单") {
-                                type = "loset where loseORgain=1 and";
-                            } else if (typeComboBox.getSelectedItem().toString().trim() == "同价调拨单") {
-                                type = "equalt where ";
-                            }
-                            if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
-                                //用户同时在”仓库“栏选择了”更多选择“并且在“类型”选择了“同价调拨单”，那么弹出窗口进行警告
-                                if (type == "equalt where ") {
-                                    JOptionPane.showMessageDialog(null, "此查询方法暂时不被支持！");
-                                } else {
-                                    store = liststore.get(0).toString().trim();
-                                    for (int k = 1; k < liststore.size(); k++) {
-                                        store = store + "' or store= '" + liststore.get(k).toString().trim();
-                                    }
-                                    for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                        for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
-                                            if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
-                                                break;
+                                                }
                                             } else {
-                                                for (int day = Integer.parseInt(bday); day <= 31; day++) {
-                                                    if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                                        break;
+                                                int proBarValues = 0;
+                                                String type = null;
+                                                if (typeComboBox.getSelectedItem().toString().trim() == "销售单") {
+                                                    type = "sellt where sellORreturn=0 and";
+                                                } else if (typeComboBox.getSelectedItem().toString().trim() == "销售退货单") {
+                                                    type = "sellt where sellORreturn=1 and";
+                                                } else if (typeComboBox.getSelectedItem().toString().trim() == "进货退货单") {
+                                                    type = "inputt where inputORreturn=1 and";
+                                                } else if (typeComboBox.getSelectedItem().toString().trim() == "进货单") {
+                                                    type = "inputt where inputORreturn=0 and";
+                                                } else if (typeComboBox.getSelectedItem().toString().trim() == "报损单") {
+                                                    type = "loset where loseORgain=0 and";
+                                                } else if (typeComboBox.getSelectedItem().toString().trim() == "报益单") {
+                                                    type = "loset where loseORgain=1 and";
+                                                } else if (typeComboBox.getSelectedItem().toString().trim() == "同价调拨单") {
+                                                    type = "equalt where ";
+                                                }
+                                                if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
+                                                    //用户同时在”仓库“栏选择了”更多选择“并且在“类型”选择了“同价调拨单”，那么弹出窗口进行警告
+                                                    if (type == "equalt where ") {
+                                                        JOptionPane.showMessageDialog(null, "此查询方法暂时不被支持！");
                                                     } else {
-                                                        String syear = getDate.fixYear(String.valueOf(year));
-                                                        String smonth = getDate.fixMonth(String.valueOf(month));
-                                                        String sday = getDate.fixDay(String.valueOf(day));
+                                                        store = liststore.get(0).toString().trim();
+                                                        for (int k = 1; k < liststore.size(); k++) {
+                                                            store = store + "' or store= '" + liststore.get(k).toString().trim();
+                                                        }
+
                                                         sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         System.out.print(sql);
                                                         dbOperation stable = new dbOperation();
@@ -862,24 +725,8 @@ class workingFrame extends JFrame {
                                                         }
                                                         proBar.setValue(proBarValues++);
                                                     }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
-                                for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                    for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
-                                        if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
-                                            break;
-                                        } else {
-                                            for (int day = Integer.parseInt(bday); day <= 31; day++) {
-                                                if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                                    break;
-                                                } else {
-                                                    String syear = getDate.fixYear(String.valueOf(year));
-                                                    String smonth = getDate.fixMonth(String.valueOf(month));
-                                                    String sday = getDate.fixDay(String.valueOf(day));
+
+                                                } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
                                                     sql = "select distinct date,id from " + type + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                     System.out.print(sql);
                                                     dbOperation stable = new dbOperation();
@@ -900,25 +747,10 @@ class workingFrame extends JFrame {
                                                         Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
                                                     }
                                                     proBar.setValue(proBarValues++);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                store = storeComboBox.getSelectedItem().toString().trim();
-                                for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                                    for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
-                                        if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
-                                            break;
-                                        } else {
-                                            for (int day = Integer.parseInt(bday); day <= 31; day++) {
-                                                if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                                    break;
+
                                                 } else {
-                                                    String syear = getDate.fixYear(String.valueOf(year));
-                                                    String smonth = getDate.fixMonth(String.valueOf(month));
-                                                    String sday = getDate.fixDay(String.valueOf(day));
+                                                    store = storeComboBox.getSelectedItem().toString().trim();
+
                                                     if (type == "equalt where ") {
                                                         sql = "select distinct date,id from " + type + " (instore='" + store + "' or outstore='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                     } else {
@@ -949,35 +781,31 @@ class workingFrame extends JFrame {
                                     }
                                 }
                             }
-                            int k = 0;
-                            ResultSet RS = null;
-                            dbOperation c = new dbOperation();
-                            c.DBConnect();
-                            sql = "select date,id,type from StreamCache order by date ASC";
-                            try {
-                                RS = c.DBSqlQuery(sql);
-                                while (RS.next()) {
-                                    Object[] data = new Object[3];
-                                    data[0] = RS.getString(1).substring(0, 8).trim();
-                                    data[1] = RS.getString("id").trim();
-                                    data[2] = RS.getString("type").trim();
-                                    model1.addRow(data);
-                                /*table1.setValueAt(RS.getString(1).substring(0, 8).trim(), k, 0);
-                                table1.setValueAt(RS.getString("id").trim(), k, 1);
-                                table1.setValueAt(RS.getString("type").trim(), k, 2);
-                                k++;*/
-                                }
-                            } catch (SQLException ex) {
-                                Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            c.DBClosed();
                         }
+                        ResultSet RS = null;
+                        dbOperation c = new dbOperation();
+                        c.DBConnect();
+                        sql = "select date,id,type from StreamCache order by date ASC";
+                        try {
+                            RS = c.DBSqlQuery(sql);
+                            while (RS.next()) {
+                                Object[] data = new Object[3];
+                                data[0] = RS.getString(1).substring(0, 8).trim();
+                                data[1] = RS.getString("id").trim();
+                                data[2] = RS.getString("type").trim();
+                                model1.addRow(data);
+                            }
+                        } catch (SQLException ex) {
+                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        c.DBClosed();
                         proBar.finishDeterminate();
                     }
                 }.start();
                 proBar.setVisible(true);
             }
         });
+
     }
 
     private void storeLoad() throws SQLException {
@@ -996,13 +824,14 @@ class workingFrame extends JFrame {
                 storeComboBox.addItem(rs.getString(1).trim());
                 storePop.cb.addItem(rs.getString(1).trim());
             }
+
             storeLoad.DBClosed();
         } catch (SQLException ex) {
             Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         storeComboBox.addItem("更多组合...");
     }
-    //从子窗口把仓库选择信息传递回来
+//从子窗口把仓库选择信息传递回来
 
     public static void setListStore(String x) {
         if (x == "clear") {
@@ -1010,6 +839,7 @@ class workingFrame extends JFrame {
         } else {
             liststore.add(x);
         }
+
     }
 
     public static void setStoreSelected(String x) {
@@ -1026,6 +856,7 @@ class workingFrame extends JFrame {
         } else {
             listtypeDB.add(x);
         }
+
     }
 
     public static void setListType(String x) {
@@ -1034,6 +865,12 @@ class workingFrame extends JFrame {
         } else {
             listtype.add(x);
         }
+
+
+
+
+
+
     }
 }
 
