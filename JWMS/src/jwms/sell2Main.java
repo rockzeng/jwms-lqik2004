@@ -183,6 +183,7 @@ public class sell2Main {
         } catch (SQLException ex) {
             Logger.getLogger(sell2Main.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "数据未能写入，请检查是否正确设置数据库，如依旧有问题请与作者联系");
+            //写入异常标记变量，使得窗口不会关闭
             sellFrame.setExTag(1);
         }
     }

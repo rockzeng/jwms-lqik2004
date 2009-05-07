@@ -24,6 +24,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -82,7 +84,8 @@ class sellFrame extends JFrame {
     private JTable table = new JTable(model);
     private JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
     private JTextField sumValues = new JTextField(3);
-    private static int exceptionTag = 0;  //异常标记
+    private static int exceptionTag = 0;  //异常标记，比如如果没有正确写入信息到数据库就会改写exceptionTag
+    private int[] isTableRowSumPriceTag=new int[model.getRowCount()];   //使得table中的“总金额”一列可以修改，但在第一次还会自动计算一个标准值
 
     public static void setExTag(int tag) {
         exceptionTag = tag;
@@ -92,16 +95,17 @@ class sellFrame extends JFrame {
         //初始化数据库，读入信息
         storeLoad();//读入仓库信息
         items = infoLoad();//读入info信息
-        setTitle("销售退货单");
-        setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        setTitle("销售退货单");//设置标题栏名称
+        setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);//设置大小
         //设置单选按钮
+        //同时设置了sellORreturn的值，sell->0,return->1
         ButtonGroup group = new ButtonGroup();//设置按钮组，保证只能单选
         JRadioButton sell = new JRadioButton("销售", true);
         sell.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 sellORreturn = 0;
-                System.out.println(sellORreturn);
+                //System.out.println(sellORreturn);
             }
         });
         JRadioButton Return = new JRadioButton("退货", false);
@@ -109,15 +113,15 @@ class sellFrame extends JFrame {
 
             public void actionPerformed(ActionEvent e) {
                 sellORreturn = 1;
-                System.out.println(sellORreturn);
+               // System.out.println(sellORreturn);
             }
         });
         group.add(sell);
         group.add(Return);
         //设置ID
-        JLabel labelID = new JLabel("编号：");
+        JLabel labelID = new JLabel("编号：");//设置文字
         ID.setEditable(false);//不可修改        
-        ID.setText(new idMake().idMake("S"));   //设置编号，销售单以S开头
+        ID.setText(new idMake().idMake("S"));   //设置编号，销售单以S开头，这里可能有问题
         ID.setMaximumSize(ID.getPreferredSize());   //使在箱式布局下不会默认取得最大值，保持预定义大小
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(sell);
@@ -155,18 +159,17 @@ class sellFrame extends JFrame {
         storeComboBox.setSelectedIndex(Integer.parseInt(propertiesRW.proIDMakeRead("storeSell")));
         storeComboBox.setMaximumSize(storeComboBox.getPreferredSize());
         storeComboBox.setEditable(false);   //仓库不可直接修改
-        //JButton addStore = new JButton("添加仓库");
+       
         Box hbox2 = Box.createHorizontalBox();
         hbox2.add(Box.createHorizontalStrut(5));
         hbox2.add(labelStore);
         hbox2.add(storeComboBox);
-        //hbox2.add(Box.createHorizontalStrut(10));
-        //hbox2.add(addStore);
+
         hbox2.add(Box.createHorizontalGlue());
         //加入列表栏
 
-        table.setRowSelectionAllowed(false);
-        addEditEvent(table);
+        table.setRowSelectionAllowed(false);    //不可选中行
+        addEditEvent(table);    //给table加入了对键盘鼠标的事件响应
         // set up renderers and editors
         //table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
         //table.setDefaultEditor(Color.class, new ColorTableCellEditor());
@@ -175,7 +178,7 @@ class sellFrame extends JFrame {
         //Collections.sort(list);
         //JComboBox cmb = new JAutoCompleteComboBox(list.toArray());
         //Arrays.sort(items);//对item进行排序
-        AutoCompleter.setItems(items);
+        AutoCompleter.setItems(items);  //把infoLoad()得来的信息传递给
         //把单元格改造成JAutoCompleteComboBox
         NameCombo = new JAutoCompleteComboBox(items);
         NameCombo.addActionListener(NameCombo);
@@ -258,14 +261,15 @@ class sellFrame extends JFrame {
         referButton.addActionListener(new ActionListener() {
 
             /**
-             * 给按钮加入响应，用以“持久化”tag和judge两个文件，更新数据
+             * 
              */
             public void actionPerformed(ActionEvent e) {
-
+                //按下提交按钮后会出现一个对话框用来确认是否进行提交
+                //shwoConfirmDialog,返回一个整型值，判定选择的是那个按钮
                 int ifcontinue = JOptionPane.showConfirmDialog(null, "请确认单据过账", "单据确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ifcontinue == JOptionPane.YES_OPTION) {
                     sell2Main sellBt = new sell2Main();//定义一个新的对象，用以传输数据；
-                    inputIDMake idmk = new inputIDMake();
+                    inputIDMake idmk = new inputIDMake();//在提交的时候把ID记录进timeLine？？？？？？？？？？
                     sellBt.setID(ID.getText());
                     sellBt.setYear(year.getSelectedItem().toString());
                     idmk.getYear(year.getSelectedItem().toString().trim());
@@ -275,23 +279,25 @@ class sellFrame extends JFrame {
                     idmk.getDay(day.getSelectedItem().toString().trim());
                     sellBt.setStore(storeComboBox.getSelectedItem().toString());
                     sellBt.setDate(idmk.inputMake());
-                    //未完成：如果是新加入的仓库，把新仓库加入到“仓库”数据库中；并且设置这个仓库为首选仓库修改properties文件
+                  
                     for (int i = 0; i < model.getRowCount(); i++) {     //防止出现中间出现断行丢失数据的问题
-                        if (model.getValueAt(i, 1).toString() != "") {  //如果字符串没有，那么不进行继续写入数据库
+                        if (model.getValueAt(i, 1).toString() != "") {  //如果字符串没有，那么此行写入数据库，继续下一行
                             sellBt.setNum(model.getValueAt(i, 0).toString());
                             sellBt.setInfo(model.getValueAt(i, 1).toString());
                             sellBt.setAmount(model.getValueAt(i, 2).toString());
                             sellBt.setOutPrice(model.getValueAt(i, 3).toString());
                             sellBt.setOthers(model.getValueAt(i, 5).toString());
                             sellBt.setSellORreturn(sellORreturn);
-                            sellBt.test();
+                            //sellBt.test();
+                            //根据单选按钮的信息来选择使用哪个方法
                             if (sellORreturn == 0) {
                                 sellBt.transmitSell();
-                            } else {
+                            } else if (sellORreturn == 1){
                                 sellBt.transmitReturn();
                             }
                         }
                     }
+                    //把ID号写入文件中
                     try {
                         //tagJudgeRW.writeFile("tag", idMake.tag);  老方法，此文件在测试包中的oldPacket
                         //tagJudgeRW.writeFile("judge", idMake.judge);
@@ -302,23 +308,20 @@ class sellFrame extends JFrame {
                     } catch (IOException ex) {
                         Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    //如果没有发生异常，那么关闭窗口。异常信息的来源是sell2Main.java，如果写入数据库抛出异常，tag==1;
                     if (exceptionTag == 0) {
                         dispose();
                     }
                 }
             }
         });
-    //获取信息
-    //1）info
-
-
-
     }
 
     /**
      * 新增加了两个方法：storeLoad和infoLoad
      * 实现了数据从数据库的读取
      */
+    //从storet中读取仓库的信息，比如有多少个仓库
     private void storeLoad() {
         dbOperation storeLoad = new dbOperation();
         storeLoad.DBConnect();
@@ -338,7 +341,7 @@ class sellFrame extends JFrame {
             Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    //在maint中读取商品信息info，目的：提供给“自动完成”模块使用。
     private Object[] infoLoad() {
         List v = new Vector();
         dbOperation infoLoad = new dbOperation();
@@ -358,7 +361,9 @@ class sellFrame extends JFrame {
         return v.toArray();
     }
 
-    public void addEditEvent(JTable tb) {
+    private void addEditEvent(JTable tb) {
+
+        //分别添加了鼠标事件和键盘事件
         tb.addMouseListener(new java.awt.event.MouseAdapter() {
 
             @Override
@@ -433,12 +438,13 @@ class sellFrame extends JFrame {
 
                 //                                 tb.setRowSelectionInterval(selectingrow,selectingrow);   
                 //                                 tb.setColumnSelectionInterval(selectingcol,selectingcol);   
-                tb.editCellAt(selectingrow, selectingcol);
-                (((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
-                ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();
+                tb.editCellAt(selectingrow, selectingcol);//使得选中的单元格处于编辑状态
+                (((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();//当键盘或者鼠标选中单元格的时候，自动获得焦点，进入编辑模式
+                ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();//对与jtextfield，默认进行全选
                 tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1) * tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
                 ResultSet rs = null;
                 if (selectingrow != tagrow) { //为了处理对不同列进行的修改，特别加入判断语句，并且记录上一次保存的行数
+
                     /**
                      * 对Tagrow的库存价进行查找
                      */
@@ -460,11 +466,12 @@ class sellFrame extends JFrame {
                     /**
                      * 对tagrow 的总价进行计算
                      */
-                    if (model.getValueAt(tagrow, 2).toString() != "" && model.getValueAt(tagrow, 3).toString() != "") {
+                    if (model.getValueAt(tagrow, 2).toString() != "" && model.getValueAt(tagrow, 3).toString() != "" && isTableRowSumPriceTag[tagrow]!=1) {
                         float value = Float.parseFloat(model.getValueAt(tagrow, 2).toString().trim());
                         float price = Float.parseFloat(model.getValueAt(tagrow, 3).toString().trim());
                         float sp = value * price;
                         model.setValueAt(String.valueOf(sp), tagrow, 4);
+                        isTableRowSumPriceTag[tagrow]=1;
                         table.repaint();//刷新table;
                     }
                     tagrow = selectingrow;
@@ -490,11 +497,12 @@ class sellFrame extends JFrame {
                 /**
                  * 对tagrow 的总价进行计算
                  */
-                if (model.getValueAt(selectingrow, 2).toString() != "" && model.getValueAt(selectingrow, 3).toString() != "") {
+                if (model.getValueAt(selectingrow, 2).toString() != "" && model.getValueAt(selectingrow, 3).toString() != "" &&  isTableRowSumPriceTag[selectingrow]!=1) {
                     float value = Float.parseFloat(model.getValueAt(selectingrow, 2).toString().trim());
                     float price = Float.parseFloat(model.getValueAt(selectingrow, 3).toString().trim());
                     float sp = value * price;
                     model.setValueAt(String.valueOf(sp), selectingrow, 4);
+                     isTableRowSumPriceTag[selectingrow]=1;
                     table.repaint();
                 }
                 sumvalues = 0;//清空总数量值

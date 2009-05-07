@@ -83,6 +83,7 @@ class inputFrame extends JFrame {
     private JTextField sumValues = new JTextField(3);
     private short inputORreturn = 0;
     private static int exceptionTag = 0;  //异常标记
+    private int[] isTableRowSumPriceTag=new int[model.getRowCount()];   //使得table中的“总金额”一列可以修改，但在第一次还会自动计算一个标准值
 
     public static void setExTag(int tag) {
         exceptionTag = tag;
@@ -464,11 +465,12 @@ class inputFrame extends JFrame {
                     /**
                      * 对tagrow 的总价进行计算
                      */
-                    if (model.getValueAt(tagrow, 2).toString() != "" && model.getValueAt(tagrow, 3).toString() != "") {
+                    if (model.getValueAt(tagrow, 2).toString() != "" && model.getValueAt(tagrow, 3).toString() != ""&& isTableRowSumPriceTag[tagrow]!=1) {
                         float value = Float.parseFloat(model.getValueAt(tagrow, 2).toString().trim());
                         float price = Float.parseFloat(model.getValueAt(tagrow, 3).toString().trim());
                         float sp = value * price;
                         model.setValueAt(String.valueOf(sp), tagrow, 5);
+                        isTableRowSumPriceTag[tagrow]=1;
                         table.repaint();//刷新table;
                     }
                     tagrow = selectingrow;
@@ -496,11 +498,12 @@ class inputFrame extends JFrame {
                 /**
                  * 对tagrow 的总价进行计算
                  */
-                if (model.getValueAt(selectingrow, 2).toString() != "" && model.getValueAt(selectingrow, 3).toString() != "") {
+                if (model.getValueAt(selectingrow, 2).toString() != "" && model.getValueAt(selectingrow, 3).toString() != ""&& isTableRowSumPriceTag[selectingrow]!=1) {
                     float value = Float.parseFloat(model.getValueAt(selectingrow, 2).toString().trim());
                     float price = Float.parseFloat(model.getValueAt(selectingrow, 3).toString().trim());
                     float sp = value * price;
                     model.setValueAt(String.valueOf(sp), selectingrow, 5);
+                    isTableRowSumPriceTag[selectingrow]=1;
                     table.repaint();
                 }
                 sumvalues = 0;//清空总数量值

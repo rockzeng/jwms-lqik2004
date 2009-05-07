@@ -12,7 +12,7 @@ import method.dbOperation;
 
 /**
  *
- * @author Administrator
+ * @author lqik2004
  */
 public class inputIDMake {
 
@@ -33,11 +33,11 @@ public class inputIDMake {
     public void getDay(String x) {
         day = x;
     }
-
+    //生成日期方法
     private void collectDate() {
         date = year + month + day;
     }
-
+    //最有用的一个公用类
     public String inputMake() {
         collectDate();
         searchDateAndTag();

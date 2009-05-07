@@ -501,9 +501,10 @@ class workingFrame extends JFrame {
                         String eday = eDay.getSelectedItem().toString().trim();
                         dbOperation stable = new dbOperation();
                         stable.DBConnect();
-
+                        
                         for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
                             for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
+
                                 if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
                                     break;
                                 } else {
@@ -607,10 +608,10 @@ class workingFrame extends JFrame {
                                                     if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
                                                         //如果当出现“同价调拨单”的时候sql语句会发生变化，所以采用了分支
                                                         if (type.get(i) == "同价调拨单") {
-                                                             store="instore=  '"+liststore.get(0).toString().trim()+ "' or outstore= '" + liststore.get(0).toString().trim() +"'";
+                                                            store = "instore=  '" + liststore.get(0).toString().trim() + "' or outstore= '" + liststore.get(0).toString().trim() + "'";
                                                             for (int k = 1; k < liststore.size(); k++) {
-                                                               store += "or instore= '"+liststore.get(k).toString().trim()+ "' or outstore= '" + liststore.get(k).toString().trim()+"'";
-                                                            }   
+                                                                store += "or instore= '" + liststore.get(k).toString().trim() + "' or outstore= '" + liststore.get(k).toString().trim() + "'";
+                                                            }
                                                             sql = "select distinct date,id from " + type.get(i + 1) + " (" + store + ") and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         } else {
                                                             store = liststore.get(0).toString().trim();
@@ -639,8 +640,8 @@ class workingFrame extends JFrame {
                                                         proBar.setValue(proBarValues++);
                                                     } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
                                                         sql = "select distinct date,id from " + type.get(i + 1) + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                        System.out.print(sql);
-
+                                                        //System.out.println(sql);
+                                                        System.out.println(syear + smonth + sday);
                                                         try {
                                                             rs = stable.DBSqlQuery(sql);
                                                             while (rs.next()) {
@@ -648,7 +649,8 @@ class workingFrame extends JFrame {
                                                                 dbOperation tem = new dbOperation();
                                                                 tem.DBConnect();
                                                                 String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + type.get(i).toString().trim() + "')";
-                                                                System.out.print(s);
+                                                                //System.out.println(s);
+
                                                                 tem.DBSqlExe(s);
                                                                 tem.DBClosed();
                                                             }
@@ -705,17 +707,17 @@ class workingFrame extends JFrame {
                                                 }
                                                 if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
                                                     if (type == "equalt where ") {
-                                                        store="instore=  '"+liststore.get(0).toString().trim()+ "' or outstore= '" + liststore.get(0).toString().trim() +"'";
-                                                            for (int k = 1; k < liststore.size(); k++) {
-                                                               store += "or instore= '"+liststore.get(k).toString().trim()+ "' or outstore= '" + liststore.get(k).toString().trim()+"'";
-                                                            }
-                                                            sql = "select distinct date,id from eqult where (" + store + ") and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                        store = "instore=  '" + liststore.get(0).toString().trim() + "' or outstore= '" + liststore.get(0).toString().trim() + "'";
+                                                        for (int k = 1; k < liststore.size(); k++) {
+                                                            store += "or instore= '" + liststore.get(k).toString().trim() + "' or outstore= '" + liststore.get(k).toString().trim() + "'";
+                                                        }
+                                                        sql = "select distinct date,id from eqult where (" + store + ") and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                     } else {
-                                                       store = liststore.get(0).toString().trim();
-                                                            for (int k = 1; k < liststore.size(); k++) {
-                                                                store = store + "' or store= '" + liststore.get(k).toString().trim();
-                                                            }
-                                                            sql = "select distinct date,id from " + type+ " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
+                                                        store = liststore.get(0).toString().trim();
+                                                        for (int k = 1; k < liststore.size(); k++) {
+                                                            store = store + "' or store= '" + liststore.get(k).toString().trim();
+                                                        }
+                                                        sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
                                                         System.out.println(sql);
 
                                                         try {
@@ -788,6 +790,8 @@ class workingFrame extends JFrame {
                                         }
                                     }
                                 }
+
+
                             }
                         }
                         stable.DBClosed();
@@ -833,7 +837,7 @@ class workingFrame extends JFrame {
                 storeComboBox.addItem(rs.getString(1).trim());
                 storePop.cb.addItem(rs.getString(1).trim());
             }
-             storePop.cb.addItem(null);
+            storePop.cb.addItem(null);
             storeLoad.DBClosed();
         } catch (SQLException ex) {
             Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
