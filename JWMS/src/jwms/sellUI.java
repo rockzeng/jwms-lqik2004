@@ -278,7 +278,7 @@ class sellFrame extends JFrame {
                     sellBt.setDay(day.getSelectedItem().toString());
                     idmk.getDay(day.getSelectedItem().toString().trim());
                     sellBt.setStore(storeComboBox.getSelectedItem().toString());
-                    sellBt.setDate(idmk.inputMake());
+                    sellBt.setDate(idmk.inputMake().substring(0, 8));
                   
                     for (int i = 0; i < model.getRowCount(); i++) {     //防止出现中间出现断行丢失数据的问题
                         if (model.getValueAt(i, 1).toString() != "") {  //如果字符串没有，那么此行写入数据库，继续下一行

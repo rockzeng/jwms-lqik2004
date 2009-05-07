@@ -501,297 +501,279 @@ class workingFrame extends JFrame {
                         String eday = eDay.getSelectedItem().toString().trim();
                         dbOperation stable = new dbOperation();
                         stable.DBConnect();
-                        
-                        for (int year = Integer.parseInt(byear); year <= Integer.parseInt(eyear); year++) {
-                            for (int month = Integer.parseInt(bmonth); month <= 12; month++) {
+                        String bDate=byear+bmonth+bday;
+                        String eDate=eyear+emonth+eday;
 
-                                if (year == Integer.parseInt(eyear) && month > Integer.parseInt(emonth)) {
-                                    break;
-                                } else {
-                                    for (int day = Integer.parseInt(bday); day <= 31; day++) {
-                                        if (year == Integer.parseInt(eyear) && month == Integer.parseInt(emonth) && day > Integer.parseInt(eday)) {
-                                            break;
-                                        } else {
-                                            String syear = getDate.fixYear(String.valueOf(year));
-                                            String smonth = getDate.fixMonth(String.valueOf(month));
-                                            String sday = getDate.fixDay(String.valueOf(day));
-                                            if (typeComboBox.getSelectedItem().toString().trim() == "更多组合") {
-                                                int proBarValues = 0;
-                                                for (int i = 0; i < listtypeDB.size(); i++) {
-                                                    if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
-                                                        store = liststore.get(0).toString().trim();
-                                                        for (int k = 1; k < liststore.size(); k++) {
-                                                            store = store + "' or store= '" + liststore.get(k).toString().trim();
-                                                        }
-
-                                                        sql = "select distinct date,id from " + listtypeDB.get(i) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                        System.out.print(sql);
-
-                                                        try {
-                                                            rs = stable.DBSqlQuery(sql);
-                                                            while (rs.next()) {
-                                                                String date = rs.getString(1).substring(0, 8);
-                                                                dbOperation tem = new dbOperation();
-                                                                tem.DBConnect();
-                                                                String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
-                                                                System.out.print(s);
-                                                                tem.DBSqlExe(s);
-                                                                tem.DBClosed();
-                                                            }
-
-                                                        } catch (SQLException ex) {
-                                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                                                        }
-                                                        proBar.setValue(proBarValues++);
-                                                    } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
-                                                        sql = "select distinct date,id from " + listtypeDB.get(i) + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                        System.out.print(sql);
-
-                                                        try {
-                                                            rs = stable.DBSqlQuery(sql);
-                                                            while (rs.next()) {
-                                                                String date = rs.getString(1).substring(0, 8);
-
-                                                                String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
-                                                                System.out.print(s);
-                                                                stable.DBSqlExe(s);
-
-                                                            }
-
-                                                        } catch (SQLException ex) {
-                                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                                                        }
-                                                        proBar.setValue(proBarValues++);
-                                                    } else {
-                                                        store = storeComboBox.getSelectedItem().toString().trim();
-                                                        sql = "select distinct date,id from " + listtypeDB.get(i) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                        System.out.print(sql);
-
-                                                        try {
-                                                            rs = stable.DBSqlQuery(sql);
-
-                                                            while (rs.next()) {
-                                                                dbOperation tem = new dbOperation();
-                                                                tem.DBConnect();
-                                                                String date = rs.getString(1).substring(0, 8);
-                                                                String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
-                                                                System.out.print(s);
-                                                                tem.DBSqlExe(s);
-                                                                tem.DBClosed();
-                                                            }
-
-
-                                                        } catch (SQLException ex) {
-                                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                                                        }
-                                                        proBar.setValue(proBarValues++);
-                                                    }
-                                                }
-                                            } else if (typeComboBox.getSelectedItem().toString().trim() == "全部类型") {
-                                                int proBarValues = 0;
-                                                List type = new Vector();
-                                                type.add("销售单");
-                                                type.add("sellt where sellORreturn=0 and");
-                                                type.add("销售退货单");
-                                                type.add("sellt where sellORreturn=1 and");
-                                                type.add("进货退货单");
-                                                type.add("inputt where inputORreturn=1 and");
-                                                type.add("进货单");
-                                                type.add("inputt where inputORreturn=0 and");
-                                                type.add("报损单");
-                                                type.add("loset where loseORgain=0 and");
-                                                type.add("报益单");
-                                                type.add("loset where loseORgain=1 and");
-                                                type.add("同价调拨单");
-                                                type.add("equalt where");
-                                                for (int i = 0; i < type.size(); i = i + 2) {
-                                                    if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
-                                                        //如果当出现“同价调拨单”的时候sql语句会发生变化，所以采用了分支
-                                                        if (type.get(i) == "同价调拨单") {
-                                                            store = "instore=  '" + liststore.get(0).toString().trim() + "' or outstore= '" + liststore.get(0).toString().trim() + "'";
-                                                            for (int k = 1; k < liststore.size(); k++) {
-                                                                store += "or instore= '" + liststore.get(k).toString().trim() + "' or outstore= '" + liststore.get(k).toString().trim() + "'";
-                                                            }
-                                                            sql = "select distinct date,id from " + type.get(i + 1) + " (" + store + ") and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                        } else {
-                                                            store = liststore.get(0).toString().trim();
-                                                            for (int k = 1; k < liststore.size(); k++) {
-                                                                store = store + "' or store= '" + liststore.get(k).toString().trim();
-                                                            }
-                                                            sql = "select distinct date,id from " + type.get(i + 1) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                        }
-                                                        System.out.println(sql);
-
-                                                        try {
-                                                            rs = stable.DBSqlQuery(sql);
-                                                            while (rs.next()) {
-                                                                String date = rs.getString(1).substring(0, 8);
-                                                                dbOperation tem = new dbOperation();
-                                                                tem.DBConnect();
-                                                                String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + type.get(i).toString().trim() + "')";
-                                                                System.out.print(s);
-                                                                tem.DBSqlExe(s);
-                                                                tem.DBClosed();
-                                                            }
-
-                                                        } catch (SQLException ex) {
-                                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                                                        }
-                                                        proBar.setValue(proBarValues++);
-                                                    } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
-                                                        sql = "select distinct date,id from " + type.get(i + 1) + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                        //System.out.println(sql);
-                                                        System.out.println(syear + smonth + sday);
-                                                        try {
-                                                            rs = stable.DBSqlQuery(sql);
-                                                            while (rs.next()) {
-                                                                String date = rs.getString(1).substring(0, 8);
-                                                                dbOperation tem = new dbOperation();
-                                                                tem.DBConnect();
-                                                                String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + type.get(i).toString().trim() + "')";
-                                                                //System.out.println(s);
-
-                                                                tem.DBSqlExe(s);
-                                                                tem.DBClosed();
-                                                            }
-
-                                                        } catch (SQLException ex) {
-                                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                                                        }
-                                                        proBar.setValue(proBarValues++);
-                                                    } else {
-                                                        store = storeComboBox.getSelectedItem().toString().trim();
-                                                        if (type.get(i) == "同价调拨单") {
-                                                            sql = "select distinct date,id from " + type.get(i + 1) + " (instore='" + store + "' or outstore='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                        } else {
-                                                            sql = "select distinct date,id from " + type.get(i + 1) + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                        }
-                                                        System.out.print(sql);
-
-                                                        try {
-                                                            rs = stable.DBSqlQuery(sql);
-                                                            while (rs.next()) {
-                                                                String date = rs.getString(1).substring(0, 8);
-                                                                dbOperation tem = new dbOperation();
-                                                                tem.DBConnect();
-                                                                String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + type.get(i).toString().trim() + "')";
-                                                                System.out.print(s);
-                                                                tem.DBSqlExe(s);
-                                                                tem.DBClosed();
-                                                            }
-
-                                                        } catch (SQLException ex) {
-                                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                                                        }
-                                                        proBar.setValue(proBarValues++);
-                                                    }
-
-                                                }
-                                            } else {
-                                                int proBarValues = 0;
-                                                String type = null;
-                                                if (typeComboBox.getSelectedItem().toString().trim() == "销售单") {
-                                                    type = "sellt where sellORreturn=0 and";
-                                                } else if (typeComboBox.getSelectedItem().toString().trim() == "销售退货单") {
-                                                    type = "sellt where sellORreturn=1 and";
-                                                } else if (typeComboBox.getSelectedItem().toString().trim() == "进货退货单") {
-                                                    type = "inputt where inputORreturn=1 and";
-                                                } else if (typeComboBox.getSelectedItem().toString().trim() == "进货单") {
-                                                    type = "inputt where inputORreturn=0 and";
-                                                } else if (typeComboBox.getSelectedItem().toString().trim() == "报损单") {
-                                                    type = "loset where loseORgain=0 and";
-                                                } else if (typeComboBox.getSelectedItem().toString().trim() == "报益单") {
-                                                    type = "loset where loseORgain=1 and";
-                                                } else if (typeComboBox.getSelectedItem().toString().trim() == "同价调拨单") {
-                                                    type = "equalt where ";
-                                                }
-                                                if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
-                                                    if (type == "equalt where ") {
-                                                        store = "instore=  '" + liststore.get(0).toString().trim() + "' or outstore= '" + liststore.get(0).toString().trim() + "'";
-                                                        for (int k = 1; k < liststore.size(); k++) {
-                                                            store += "or instore= '" + liststore.get(k).toString().trim() + "' or outstore= '" + liststore.get(k).toString().trim() + "'";
-                                                        }
-                                                        sql = "select distinct date,id from eqult where (" + store + ") and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                    } else {
-                                                        store = liststore.get(0).toString().trim();
-                                                        for (int k = 1; k < liststore.size(); k++) {
-                                                            store = store + "' or store= '" + liststore.get(k).toString().trim();
-                                                        }
-                                                        sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                        System.out.println(sql);
-
-                                                        try {
-                                                            rs = stable.DBSqlQuery(sql);
-                                                            while (rs.next()) {
-                                                                String date = rs.getString(1).substring(0, 8);
-                                                                dbOperation tem = new dbOperation();
-                                                                tem.DBConnect();
-                                                                String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
-                                                                System.out.print(s);
-                                                                tem.DBSqlExe(s);
-                                                                tem.DBClosed();
-                                                            }
-
-                                                        } catch (SQLException ex) {
-                                                            Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                                                        }
-                                                        proBar.setValue(proBarValues++);
-                                                    }
-
-                                                } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
-                                                    sql = "select distinct date,id from " + type + "  year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                    System.out.print(sql);
-
-                                                    try {
-                                                        rs = stable.DBSqlQuery(sql);
-                                                        while (rs.next()) {
-                                                            String date = rs.getString(1).substring(0, 8);
-                                                            dbOperation tem = new dbOperation();
-                                                            tem.DBConnect();
-                                                            String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
-                                                            System.out.print(s);
-                                                            tem.DBSqlExe(s);
-                                                            tem.DBClosed();
-                                                        }
-
-                                                    } catch (SQLException ex) {
-                                                        Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                                                    }
-                                                    proBar.setValue(proBarValues++);
-
-                                                } else {
-                                                    store = storeComboBox.getSelectedItem().toString().trim();
-
-                                                    if (type == "equalt where ") {
-                                                        sql = "select distinct date,id from " + type + " (instore='" + store + "' or outstore='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                    } else {
-                                                        sql = "select distinct date,id from " + type + " (store='" + store + "') and year='" + syear + "' and month='" + smonth + "' and day='" + sday + "' ";
-                                                    }
-                                                    System.out.print(sql);
-
-                                                    try {
-                                                        rs = stable.DBSqlQuery(sql);
-                                                        while (rs.next()) {
-                                                            String date = rs.getString(1).substring(0, 8);
-                                                            dbOperation tem = new dbOperation();
-                                                            tem.DBConnect();
-                                                            String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
-                                                            System.out.print(s);
-                                                            tem.DBSqlExe(s);
-                                                            tem.DBClosed();
-                                                        }
-
-                                                    } catch (SQLException ex) {
-                                                        Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                                                    }
-                                                    proBar.setValue(proBarValues++);
-                                                }
-                                            }
-                                        }
+                        if (typeComboBox.getSelectedItem().toString().trim() == "更多组合") {
+                            int proBarValues = 0;
+                            for (int i = 0; i < listtypeDB.size(); i++) {
+                                if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
+                                    store = liststore.get(0).toString().trim();
+                                    for (int k = 1; k < liststore.size(); k++) {
+                                        store = store + "' or store= '" + liststore.get(k).toString().trim();
                                     }
+
+                                    sql = "select distinct date,id from " + listtypeDB.get(i) + " (store='" + store + "') and date<='"+eDate+"' and date>='"+bDate+"' ";
+                                    System.out.print(sql);
+
+                                    try {
+                                        rs = stable.DBSqlQuery(sql);
+                                        while (rs.next()) {
+                                            String date = rs.getString(1);
+                                            dbOperation tem = new dbOperation();
+                                            tem.DBConnect();
+                                            String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
+                                            System.out.print(s);
+                                            tem.DBSqlExe(s);
+                                            tem.DBClosed();
+                                        }
+
+                                    } catch (SQLException ex) {
+                                        Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                    proBar.setValue(proBarValues++);
+                                } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
+                                    sql = "select distinct date,id from " + listtypeDB.get(i) + "  date<='"+eDate+"' and date>='"+bDate+"' ";
+                                    System.out.print(sql);
+
+                                    try {
+                                        rs = stable.DBSqlQuery(sql);
+                                        while (rs.next()) {
+                                            String date = rs.getString(1);
+
+                                            String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
+                                            System.out.print(s);
+                                            stable.DBSqlExe(s);
+
+                                        }
+
+                                    } catch (SQLException ex) {
+                                        Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                    proBar.setValue(proBarValues++);
+                                } else {
+                                    store = storeComboBox.getSelectedItem().toString().trim();
+                                    sql = "select distinct date,id from " + listtypeDB.get(i) + " (store='" + store + "') and date<='"+eDate+"' and date>='"+bDate+"'  ";
+                                    System.out.print(sql);
+
+                                    try {
+                                        rs = stable.DBSqlQuery(sql);
+
+                                        while (rs.next()) {
+                                            dbOperation tem = new dbOperation();
+                                            tem.DBConnect();
+                                            String date = rs.getString(1).substring(0, 8);
+                                            String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + listtype.get(i).toString().trim() + "')";
+                                            System.out.print(s);
+                                            tem.DBSqlExe(s);
+                                            tem.DBClosed();
+                                        }
+
+
+                                    } catch (SQLException ex) {
+                                        Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                    proBar.setValue(proBarValues++);
+                                }
+                            }
+                        } else if (typeComboBox.getSelectedItem().toString().trim() == "全部类型") {
+                            int proBarValues = 0;
+                            List type = new Vector();
+                            type.add("销售单");
+                            type.add("sellt where sellORreturn=0 and");
+                            type.add("销售退货单");
+                            type.add("sellt where sellORreturn=1 and");
+                            type.add("进货退货单");
+                            type.add("inputt where inputORreturn=1 and");
+                            type.add("进货单");
+                            type.add("inputt where inputORreturn=0 and");
+                            type.add("报损单");
+                            type.add("loset where loseORgain=0 and");
+                            type.add("报益单");
+                            type.add("loset where loseORgain=1 and");
+                            type.add("同价调拨单");
+                            type.add("equalt where");
+                            for (int i = 0; i < type.size(); i = i + 2) {
+                                if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
+                                    //如果当出现“同价调拨单”的时候sql语句会发生变化，所以采用了分支
+                                    if (type.get(i) == "同价调拨单") {
+                                        store = "instore=  '" + liststore.get(0).toString().trim() + "' or outstore= '" + liststore.get(0).toString().trim() + "'";
+                                        for (int k = 1; k < liststore.size(); k++) {
+                                            store += "or instore= '" + liststore.get(k).toString().trim() + "' or outstore= '" + liststore.get(k).toString().trim() + "'";
+                                        }
+                                        sql = "select distinct date,id from " + type.get(i + 1) + " (" + store + ") and date<'"+eDate+"' and date>'"+bDate+"'  ";
+                                    } else {
+                                        store = liststore.get(0).toString().trim();
+                                        for (int k = 1; k < liststore.size(); k++) {
+                                            store = store + "' or store= '" + liststore.get(k).toString().trim();
+                                        }
+                                        sql = "select distinct date,id from " + type.get(i + 1) + " (store='" + store + "') and date<='"+eDate+"' and date>='"+bDate+"'  ";
+                                    }
+                                    System.out.println(sql);
+
+                                    try {
+                                        rs = stable.DBSqlQuery(sql);
+                                        while (rs.next()) {
+                                            String date = rs.getString(1);
+                                            dbOperation tem = new dbOperation();
+                                            tem.DBConnect();
+                                            String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + type.get(i).toString().trim() + "')";
+                                            System.out.print(s);
+                                            tem.DBSqlExe(s);
+                                            tem.DBClosed();
+                                        }
+
+                                    } catch (SQLException ex) {
+                                        Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                    proBar.setValue(proBarValues++);
+                                } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
+                                    sql = "select distinct date,id from " + type.get(i + 1) + "  date<='"+eDate+"' and date>='"+bDate+"'  ";
+                                    //System.out.println(sql);
+                                    //System.out.println(syear + smonth + sday);
+                                    try {
+                                        rs = stable.DBSqlQuery(sql);
+                                        while (rs.next()) {
+                                        String date = rs.getString(1);
+                                            dbOperation tem = new dbOperation();
+                                            tem.DBConnect();
+                                            String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + type.get(i).toString().trim() + "')";
+                                            //System.out.println(s);
+
+                                            tem.DBSqlExe(s);
+                                            tem.DBClosed();
+                                        }
+
+                                    } catch (SQLException ex) {
+                                        Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                    proBar.setValue(proBarValues++);
+                                } else {
+                                    store = storeComboBox.getSelectedItem().toString().trim();
+                                    if (type.get(i) == "同价调拨单") {
+                                        sql = "select distinct date,id from " + type.get(i + 1) + " (instore='" + store + "' or outstore='" + store + "') and date<='"+eDate+"' and date>='"+bDate+"'  ";
+                                    } else {
+                                        sql = "select distinct date,id from " + type.get(i + 1) + " (store='" + store + "') and date=<'"+eDate+"' and date>='"+bDate+"'  ";
+                                    }
+                                    System.out.print(sql);
+
+                                    try {
+                                        rs = stable.DBSqlQuery(sql);
+                                        while (rs.next()) {
+                                            String date = rs.getString(1);
+                                            dbOperation tem = new dbOperation();
+                                            tem.DBConnect();
+                                            String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + type.get(i).toString().trim() + "')";
+                                            System.out.print(s);
+                                            tem.DBSqlExe(s);
+                                            tem.DBClosed();
+                                        }
+
+                                    } catch (SQLException ex) {
+                                        Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                    proBar.setValue(proBarValues++);
                                 }
 
+                            }
+                        } else {
+                            int proBarValues = 0;
+                            String type = null;
+                            if (typeComboBox.getSelectedItem().toString().trim() == "销售单") {
+                                type = "sellt where sellORreturn=0 and";
+                            } else if (typeComboBox.getSelectedItem().toString().trim() == "销售退货单") {
+                                type = "sellt where sellORreturn=1 and";
+                            } else if (typeComboBox.getSelectedItem().toString().trim() == "进货退货单") {
+                                type = "inputt where inputORreturn=1 and";
+                            } else if (typeComboBox.getSelectedItem().toString().trim() == "进货单") {
+                                type = "inputt where inputORreturn=0 and";
+                            } else if (typeComboBox.getSelectedItem().toString().trim() == "报损单") {
+                                type = "loset where loseORgain=0 and";
+                            } else if (typeComboBox.getSelectedItem().toString().trim() == "报益单") {
+                                type = "loset where loseORgain=1 and";
+                            } else if (typeComboBox.getSelectedItem().toString().trim() == "同价调拨单") {
+                                type = "equalt where ";
+                            }
+                            if (storeComboBox.getSelectedItem().toString().trim() == "更多组合...") {
+                                if (type == "equalt where ") {
+                                    store = "instore=  '" + liststore.get(0).toString().trim() + "' or outstore= '" + liststore.get(0).toString().trim() + "'";
+                                    for (int k = 1; k < liststore.size(); k++) {
+                                        store += "or instore= '" + liststore.get(k).toString().trim() + "' or outstore= '" + liststore.get(k).toString().trim() + "'";
+                                    }
+                                    sql = "select distinct date,id from eqult where (" + store + ") and date<='"+eDate+"' and date>='"+bDate+"'  ";
+                                } else {
+                                    store = liststore.get(0).toString().trim();
+                                    for (int k = 1; k < liststore.size(); k++) {
+                                        store = store + "' or store= '" + liststore.get(k).toString().trim();
+                                    }
+                                    sql = "select distinct date,id from " + type + " (store='" + store + "') and date<='"+eDate+"' and date>='"+bDate+"'  ";
+                                    System.out.println(sql);
 
+                                    try {
+                                        rs = stable.DBSqlQuery(sql);
+                                        while (rs.next()) {
+                                            String date = rs.getString(1);
+                                            dbOperation tem = new dbOperation();
+                                            tem.DBConnect();
+                                            String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
+                                            System.out.print(s);
+                                            tem.DBSqlExe(s);
+                                            tem.DBClosed();
+                                        }
+
+                                    } catch (SQLException ex) {
+                                        Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                    proBar.setValue(proBarValues++);
+                                }
+
+                            } else if (storeComboBox.getSelectedItem().toString().trim() == "全部仓库") {
+                                sql = "select distinct date,id from " + type + "  date<='"+eDate+"' and date>='"+bDate+"'  ";
+                                System.out.print(sql);
+
+                                try {
+                                    rs = stable.DBSqlQuery(sql);
+                                    while (rs.next()) {
+                                        String date = rs.getString(1);
+                                        dbOperation tem = new dbOperation();
+                                        tem.DBConnect();
+                                        String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
+                                        System.out.print(s);
+                                        tem.DBSqlExe(s);
+                                        tem.DBClosed();
+                                    }
+
+                                } catch (SQLException ex) {
+                                    Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                                proBar.setValue(proBarValues++);
+
+                            } else {
+                                store = storeComboBox.getSelectedItem().toString().trim();
+
+                                if (type == "equalt where ") {
+                                    sql = "select distinct date,id from " + type + " (instore='" + store + "' or outstore='" + store + "') and date<='"+eDate+"' and date>='"+bDate+"'  ";
+                                } else {
+                                    sql = "select distinct date,id from " + type + " (store='" + store + "') and date<='"+eDate+"' and date>='"+bDate+"'  ";
+                                }
+                                System.out.print(sql);
+
+                                try {
+                                    rs = stable.DBSqlQuery(sql);
+                                    while (rs.next()) {
+                                        String date = rs.getString(1);
+                                        dbOperation tem = new dbOperation();
+                                        tem.DBConnect();
+                                        String s = "insert into StreamCache values('" + rs.getString(1) + "','" + rs.getString(2) + "','" + date + "','" + typeComboBox.getSelectedItem().toString().trim() + "')";
+                                        System.out.print(s);
+                                        tem.DBSqlExe(s);
+                                        tem.DBClosed();
+                                    }
+
+                                } catch (SQLException ex) {
+                                    Logger.getLogger(workingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                                proBar.setValue(proBarValues++);
                             }
                         }
                         stable.DBClosed();

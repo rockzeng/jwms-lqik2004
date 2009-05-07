@@ -241,7 +241,7 @@ class equalFrame extends JFrame {
                     equalBt.setMonth(month.getSelectedItem().toString());
                     idmk.getMonth(month.getSelectedItem().toString());
                     idmk.getDay(day.getSelectedItem().toString());
-                    equalBt.setDate(idmk.inputMake());
+                    equalBt.setDate(idmk.inputMake().substring(0, 8));
                     equalBt.setDay(day.getSelectedItem().toString());
                     equalBt.setINStore(inStoreComboBox.getSelectedItem().toString());
                     equalBt.setOUTStore(outStoreComboBox.getSelectedItem().toString());

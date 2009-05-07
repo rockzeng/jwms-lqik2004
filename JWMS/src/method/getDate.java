@@ -1,14 +1,9 @@
 package method;
 
 import java.util.Calendar;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
  *
- * @author Administrator
+ * @author lqik2004
  */
 public class getDate {
 
