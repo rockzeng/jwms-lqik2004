@@ -169,6 +169,7 @@ class loseFrame extends JFrame {
         //加入列表栏
 
         table.setRowSelectionAllowed(false);
+         table.setDefaultRenderer(Object.class, new ColorRenderer());
         addEditEvent(table);
         // set up renderers and editors
         //table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());

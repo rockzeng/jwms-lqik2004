@@ -91,6 +91,8 @@ public class storeRemain extends JFrame {
         table1.getColumnModel().getColumn(0).setPreferredWidth(130);
         table1.getColumnModel().getColumn(1).setPreferredWidth(70);
         table1.getColumnModel().getColumn(2).setPreferredWidth(70);
+         table1.setDefaultRenderer(Object.class, new ColorRenderer());
+         table1.setShowHorizontalLines(false);
         JScrollPane panel1 = new JScrollPane(table1);
         panel1.setPreferredSize(new Dimension(270, 400));
 

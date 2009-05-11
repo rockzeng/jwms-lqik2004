@@ -166,6 +166,7 @@ class searchFrame extends JFrame {
         colName1[3] = "销售利润";
         model1.setColumnCount(4);
         model1.setRowCount(0);
+         table1.setDefaultRenderer(Object.class, new ColorRenderer());
         TableColumnModel tc = table1.getColumnModel();
         tc.getColumn(0).setPreferredWidth(20);
         tc.getColumn(0).setPreferredWidth(25);

@@ -1,6 +1,7 @@
 package jwms;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -179,7 +180,10 @@ class workingFrame extends JFrame {
         table1.getColumnModel().getColumn(2).setPreferredWidth(90);
         JScrollPane panel1 = new JScrollPane(table1);
         panel1.setPreferredSize(new Dimension(300, 400));
-
+        table1.setDefaultRenderer(Object.class, new ColorRenderer());
+        //table1.setSelectionBackground(Color.RED);
+        table1.setShowHorizontalLines(false);
+        table1.setShowVerticalLines(false);
         Object[] colName2 = new Object[3];
         colName2[0] = "日期";
         colName2[1] = "ID";
@@ -191,6 +195,8 @@ class workingFrame extends JFrame {
         tc2.getColumn(0).setPreferredWidth(25);
         tc2.getColumn(0).setPreferredWidth(15);
         model2.setColumnIdentifiers(colName1);//定义列名
+        table2.setDefaultRenderer(Object.class, new ColorRenderer());
+        table2.setShowHorizontalLines(false);
         JScrollPane panel2 = new JScrollPane(table2);
         panel2.setPreferredSize(new Dimension(450, 400));
         Box hbox4 = Box.createHorizontalBox();

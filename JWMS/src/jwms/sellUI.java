@@ -1,6 +1,8 @@
 package jwms;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -25,10 +27,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import method.*;
+import org.w3c.dom.css.RGBColor;
 
 /**
  *
@@ -169,6 +173,7 @@ class sellFrame extends JFrame {
         //加入列表栏
 
         table.setRowSelectionAllowed(false);    //不可选中行
+       // table.setShowHorizontalLines(false);
         addEditEvent(table);    //给table加入了对键盘鼠标的事件响应
         // set up renderers and editors
         //table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
@@ -190,6 +195,7 @@ class sellFrame extends JFrame {
         table.getColumnModel().getColumn(0).setPreferredWidth(30);//设置第一列列宽
         table.getColumnModel().getColumn(2).setPreferredWidth(50);
         //table.getColumnModel().getColumn(3).setPreferredWidth(6);
+        table.setDefaultRenderer(Object.class, new ColorRenderer());    //设置每一行的背景颜色
         //为“编号”列赋初值
         for (int i = 0; i < model.getRowCount(); i++) {
             model.setValueAt(i + 1, i, 0);
@@ -535,6 +541,33 @@ class sellFrame extends JFrame {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+}
+
+class ColorRenderer extends DefaultTableCellRenderer {
+
+    public ColorRenderer() {
+        super();
+    //setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+    }
+    Color customCol=new Color(215,226,247);
+    @Override
+    public Component getTableCellRendererComponent(JTable table,
+            Object value, boolean isSelected, boolean hasFocus, int row,
+            int column) {
+        Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        if (isSelected) {
+            comp.setForeground(table.getSelectionForeground());
+            comp.setBackground(table.getSelectionBackground());
+        } else if (row % 2 == 0) {
+            comp.setForeground(table.getForeground());
+             comp.setBackground(Color.white);
+        } else {
+            comp.setForeground(table.getForeground());
+            comp.setBackground(customCol);
+        }
+        setText(value.toString());
+        return comp;
     }
 }
 

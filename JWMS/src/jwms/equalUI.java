@@ -171,6 +171,7 @@ class equalFrame extends JFrame {
         for (int i = 0; i < model.getRowCount(); i++) {
             model.setValueAt(i + 1, i, 0);
         }
+         table.setDefaultRenderer(Object.class, new ColorRenderer());
         JScrollPane tablePane = new JScrollPane(table);
         Box hboxPane = Box.createHorizontalBox();
         hboxPane.add(Box.createHorizontalStrut(5));
