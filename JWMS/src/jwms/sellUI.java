@@ -24,8 +24,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -85,7 +83,9 @@ class sellFrame extends JFrame {
     private JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
     private JTextField sumValues = new JTextField(3);
     private static int exceptionTag = 0;  //异常标记，比如如果没有正确写入信息到数据库就会改写exceptionTag
-    private int[] isTableRowSumPriceTag=new int[model.getRowCount()];   //使得table中的“总金额”一列可以修改，但在第一次还会自动计算一个标准值
+    //使得table中的“总金额”一列可以修改，但在修改数量或者单价还会自动修改
+    private String[] tableOldAmount = new String[model.getRowCount()];
+    private String[] tableOldPrice = new String[model.getRowCount()];
 
     public static void setExTag(int tag) {
         exceptionTag = tag;
@@ -105,7 +105,7 @@ class sellFrame extends JFrame {
 
             public void actionPerformed(ActionEvent e) {
                 sellORreturn = 0;
-                //System.out.println(sellORreturn);
+            //System.out.println(sellORreturn);
             }
         });
         JRadioButton Return = new JRadioButton("退货", false);
@@ -113,7 +113,7 @@ class sellFrame extends JFrame {
 
             public void actionPerformed(ActionEvent e) {
                 sellORreturn = 1;
-               // System.out.println(sellORreturn);
+            // System.out.println(sellORreturn);
             }
         });
         group.add(sell);
@@ -159,7 +159,7 @@ class sellFrame extends JFrame {
         storeComboBox.setSelectedIndex(Integer.parseInt(propertiesRW.proIDMakeRead("storeSell")));
         storeComboBox.setMaximumSize(storeComboBox.getPreferredSize());
         storeComboBox.setEditable(false);   //仓库不可直接修改
-       
+
         Box hbox2 = Box.createHorizontalBox();
         hbox2.add(Box.createHorizontalStrut(5));
         hbox2.add(labelStore);
@@ -279,7 +279,7 @@ class sellFrame extends JFrame {
                     idmk.getDay(day.getSelectedItem().toString().trim());
                     sellBt.setStore(storeComboBox.getSelectedItem().toString());
                     sellBt.setDate(idmk.inputMake().substring(0, 8));
-                  
+
                     for (int i = 0; i < model.getRowCount(); i++) {     //防止出现中间出现断行丢失数据的问题
                         if (model.getValueAt(i, 1).toString() != "") {  //如果字符串没有，那么此行写入数据库，继续下一行
                             sellBt.setNum(model.getValueAt(i, 0).toString());
@@ -292,7 +292,7 @@ class sellFrame extends JFrame {
                             //根据单选按钮的信息来选择使用哪个方法
                             if (sellORreturn == 0) {
                                 sellBt.transmitSell();
-                            } else if (sellORreturn == 1){
+                            } else if (sellORreturn == 1) {
                                 sellBt.transmitReturn();
                             }
                         }
@@ -342,6 +342,7 @@ class sellFrame extends JFrame {
         }
     }
     //在maint中读取商品信息info，目的：提供给“自动完成”模块使用。
+
     private Object[] infoLoad() {
         List v = new Vector();
         dbOperation infoLoad = new dbOperation();
@@ -466,13 +467,16 @@ class sellFrame extends JFrame {
                     /**
                      * 对tagrow 的总价进行计算
                      */
-                    if (model.getValueAt(tagrow, 2).toString() != "" && model.getValueAt(tagrow, 3).toString() != "" && isTableRowSumPriceTag[tagrow]!=1) {
-                        float value = Float.parseFloat(model.getValueAt(tagrow, 2).toString().trim());
-                        float price = Float.parseFloat(model.getValueAt(tagrow, 3).toString().trim());
-                        float sp = value * price;
-                        model.setValueAt(String.valueOf(sp), tagrow, 4);
-                        isTableRowSumPriceTag[tagrow]=1;
-                        table.repaint();//刷新table;
+                    if (model.getValueAt(tagrow, 2).toString() != "" && model.getValueAt(tagrow, 3).toString() != "") {
+                        if (tableOldAmount[tagrow] != model.getValueAt(tagrow, 2).toString() || tableOldPrice[tagrow] != model.getValueAt(tagrow, 3).toString()) {
+                            tableOldAmount[tagrow] = model.getValueAt(tagrow, 2).toString();
+                            tableOldPrice[tagrow] = model.getValueAt(tagrow, 3).toString();
+                            float value = Float.parseFloat(model.getValueAt(tagrow, 2).toString().trim());
+                            float price = Float.parseFloat(model.getValueAt(tagrow, 3).toString().trim());
+                            float sp = value * price;
+                            model.setValueAt(String.valueOf(sp), tagrow, 4);
+                            table.repaint();//刷新table;
+                        }
                     }
                     tagrow = selectingrow;
                 }
@@ -497,13 +501,16 @@ class sellFrame extends JFrame {
                 /**
                  * 对tagrow 的总价进行计算
                  */
-                if (model.getValueAt(selectingrow, 2).toString() != "" && model.getValueAt(selectingrow, 3).toString() != "" &&  isTableRowSumPriceTag[selectingrow]!=1) {
-                    float value = Float.parseFloat(model.getValueAt(selectingrow, 2).toString().trim());
-                    float price = Float.parseFloat(model.getValueAt(selectingrow, 3).toString().trim());
-                    float sp = value * price;
-                    model.setValueAt(String.valueOf(sp), selectingrow, 4);
-                     isTableRowSumPriceTag[selectingrow]=1;
-                    table.repaint();
+                if (model.getValueAt(selectingrow, 2).toString() != "" && model.getValueAt(selectingrow, 3).toString() != "") {
+                    if (tableOldAmount[selectingrow] != model.getValueAt(selectingrow, 2).toString() || tableOldPrice[selectingrow] != model.getValueAt(selectingrow, 3).toString()) {
+                        float value = Float.parseFloat(model.getValueAt(selectingrow, 2).toString().trim());
+                        float price = Float.parseFloat(model.getValueAt(selectingrow, 3).toString().trim());
+                        float sp = value * price;
+                        model.setValueAt(String.valueOf(sp), selectingrow, 4);
+                        tableOldAmount[selectingrow] = model.getValueAt(selectingrow, 2).toString();
+                        tableOldPrice[selectingrow] = model.getValueAt(selectingrow, 3).toString();
+                        table.repaint();
+                    }
                 }
                 sumvalues = 0;//清空总数量值
                 for (int i = 0; i <= model.getRowCount(); i++) {
@@ -554,8 +561,6 @@ class PlanetTableModel extends AbstractTableModel {
     public String getColumnName(int c) {
         return columnNames[c];
     }
-
-
 
     public int getColumnCount() {
         return columnNames.length;
