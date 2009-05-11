@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -50,20 +51,30 @@ public class main {
 }
 
 class mainFrame extends JFrame {
-    private int dialogTag=0;
+
+    private int dialogTag = 0;
+    private int setupTag = 0;
+    private JButton setup = new JButton();
 
     public mainFrame() {
         final aboutDialog aboutDialog = new aboutDialog();
+        final setupDialog setupDialog = new setupDialog();
         JButton sell = new JButton("销售/退货单");
         JButton input = new JButton("进货/退货单");
         JButton equal = new JButton("同价调拨单");
         JButton lose = new JButton("报损报益单");
         JButton stream = new JButton("经营历程");
         JButton search = new JButton("综合查询");
-        JButton storeRemain=new JButton("库存管理");
+        JButton storeRemain = new JButton("库存管理");
 
         JButton exit = new JButton("退出");
         JButton about = new JButton("关于");
+
+        setup.setIcon(new ImageIcon("image\\setupico.jpg"));
+        //setup.setBorderPainted();
+        setup.setPreferredSize(new Dimension(32, 32));
+        setup.setMaximumSize(setup.getPreferredSize());
+        setup.setMinimumSize(setup.getPreferredSize());
         String font = "JeansWest";
         JLabel label = new JLabel(font);
         label.setFont(new Font("serif", Font.BOLD, 35));
@@ -85,12 +96,15 @@ class mainFrame extends JFrame {
         hbox1.add(lose);
 
         Box hbox2 = Box.createHorizontalBox();
-        hbox2.add(Box.createHorizontalStrut(5));
+        //hbox2.add(Box.createHorizontalStrut(5));
+        hbox2.add(setup);
+        hbox2.add(Box.createHorizontalStrut(55));
         hbox2.add(stream);
         hbox2.add(Box.createHorizontalStrut(5));
         hbox2.add(search);
         hbox2.add(Box.createHorizontalStrut(5));
         hbox2.add(storeRemain);
+        hbox2.add(Box.createHorizontalStrut(50));
 
         Box vb0 = Box.createVerticalBox();
         vb0.add(hbox0);
@@ -116,7 +130,7 @@ class mainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int ifcontinue = JOptionPane.showConfirmDialog(null, "请确认所有的录入窗口已经关闭，如果继续本程序将退出，所有未过账的单据不会保存！", "退出确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ifcontinue == JOptionPane.YES_OPTION) {
-                System.exit(0);
+                    System.exit(0);
                 }
                 throw new UnsupportedOperationException("Not supported yet.");
             }
@@ -207,19 +221,43 @@ class mainFrame extends JFrame {
         about.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                if (dialogTag==0) {
+                if (dialogTag == 0) {
                     Point point = main.frameLocateOnScr();
                     aboutDialog.setTitle("关于");
                     aboutDialog.setSize(200, 90);
                     aboutDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     aboutDialog.setLocation(point.x + 500, point.y + 30);//设置窗口停靠，自动生成在主窗口左侧
                     aboutDialog.setUndecorated(true);//隐藏标题栏
-                    dialogTag=1;
+                    dialogTag = 1;
                 }
-                if(aboutDialog.isVisible()){
+                if (aboutDialog.isVisible()) {
                     aboutDialog.setVisible(false);
-                }else if(!aboutDialog.isVisible()){
+                } else if (!aboutDialog.isVisible()) {
                     aboutDialog.setVisible(true);
+                }
+            }
+        });
+        setup.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+                if (setupTag == 0) {
+                    Point point = main.frameLocateOnScr();
+                    setupDialog.setTitle("设置");
+                    setupDialog.setSize(140, 70);
+                    setupDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    setupDialog.setLocation(point.x, point.y + 120);//设置窗口停靠，自动生成在主窗口下方
+                    setupDialog.setUndecorated(true);//隐藏标题栏
+                    setupTag = 1;
+                }
+                if (setupDialog.isVisible()) {
+                    setupDialog.setVisible(false);
+                    //setup.setEnabled(true);
+                    setup.setIcon(new ImageIcon("image\\setupico.jpg"));
+                } else if (!setupDialog.isVisible()) {
+                    setupDialog.setVisible(true);
+                    //setup.setEnabled(false);
+                    setup.setIcon(new ImageIcon("image\\setupico_down.gif"));
                 }
             }
         });
