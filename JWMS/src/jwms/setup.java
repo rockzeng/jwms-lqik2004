@@ -131,6 +131,7 @@ class initInfoFrame extends JFrame {
         //JComboBox cmb = new JAutoCompleteComboBox(list.toArray());
         //Arrays.sort(items);//对item进行排序
         AutoCompleter.setItems(items);
+         table.setDefaultRenderer(Object.class, new ColorRenderer());    //设置每一行的背景颜色
         //把单元格改造成JAutoCompleteComboBox
         NameCombo = new JAutoCompleteComboBox(items);
         TableColumnModel columnModel = table.getColumnModel();
@@ -465,7 +466,7 @@ class initInfoFrame extends JFrame {
 class initInfoPlanetTableModel extends AbstractTableModel {
 
     public initInfoPlanetTableModel() {
-        for (int i = 0; i < 70; i++) {
+        for (int i = 0; i < Integer.parseInt(propertiesRW.proIDMakeRead("tablerow")); i++) {
             for (int k = 0; k < 6; k++) {
                 cells[i][k] = "";
             }
@@ -504,6 +505,6 @@ class initInfoPlanetTableModel extends AbstractTableModel {
     public static final int OUTPRICE = 4;
     public static final int SUMPRICE = 5;
     //public static final int OTHERS = 6;
-    private Object[][] cells = new Object[70][6];
+    private Object[][] cells = new Object[Integer.parseInt(propertiesRW.proIDMakeRead("tablerow"))][6];
     private String[] columnNames = {"编号", "商品名称", "数量", "入库单价", "零售价", "合计金额"};
 }

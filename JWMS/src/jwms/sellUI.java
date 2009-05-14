@@ -578,12 +578,12 @@ class PlanetTableModel extends AbstractTableModel {
     public static final int PRICE = 3;
     public static final int SUM = 4;
     public static final int OTHERS = 5;
-    private static Object[][] cells = new Object[70][6];
+    private static Object[][] cells = new Object[Integer.parseInt(propertiesRW.proIDMakeRead("tablerow"))][6];
     private String[] columnNames = {"编号", "商品名称", "数量", "单价", "金额", "备注"};
 
     @SuppressWarnings("empty-statement")
     public PlanetTableModel() {
-        for (int i = 0; i < 70; i++) {
+        for (int i = 0; i < Integer.parseInt(propertiesRW.proIDMakeRead("tablerow")); i++) {
             for (int k = 0; k < 6; k++) {
                 cells[i][k] = "";
             }

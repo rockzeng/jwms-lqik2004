@@ -76,10 +76,10 @@ class mainFrame extends JFrame {
         setup.setMaximumSize(setup.getPreferredSize());
         setup.setMinimumSize(setup.getPreferredSize());
         String font = "JeansWest";
-        JLabel label = new JLabel(font);
-        label.setFont(new Font("serif", Font.BOLD, 35));
+        JLabel label = new JLabel(new ImageIcon("image\\mainLogo.jpg"));
+        label.setPreferredSize(new Dimension(203, 49));
         JLabel label2 = new JLabel("测试版");
-        label2.setFont(new Font("宋体", Font.ITALIC, 10));
+       label2.setFont(new Font("宋体", Font.ITALIC, 10));
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(Box.createHorizontalStrut(5));
         hbox0.add(label);
@@ -107,9 +107,11 @@ class mainFrame extends JFrame {
         hbox2.add(Box.createHorizontalStrut(50));
 
         Box vb0 = Box.createVerticalBox();
+        vb0.add(Box.createVerticalStrut(5));
         vb0.add(hbox0);
+        vb0.add(Box.createVerticalStrut(2));
         vb0.add(hbox1);
-        vb0.add(Box.createVerticalStrut(10));
+        vb0.add(Box.createVerticalStrut(2));
         vb0.add(hbox2);
 
         Box vb1 = Box.createVerticalBox();

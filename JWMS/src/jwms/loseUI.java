@@ -169,7 +169,7 @@ class loseFrame extends JFrame {
         //加入列表栏
 
         table.setRowSelectionAllowed(false);
-         table.setDefaultRenderer(Object.class, new ColorRenderer());
+        table.setDefaultRenderer(Object.class, new ColorRenderer());
         addEditEvent(table);
         // set up renderers and editors
         //table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
@@ -535,9 +535,17 @@ class loseFrame extends JFrame {
 }
 
 class losePlanetTableModel extends AbstractTableModel {
+    public static final int NUM=0;
+    public static final int NAME = 1;
+    public static final int VALUES = 2;
+    public static final int PRICE = 3;
+    public static final int SUM = 4;
+    public static final int OTHERS = 5;
+    private Object[][] cells = new Object[Integer.parseInt(propertiesRW.proIDMakeRead("tablerow"))][6];
+    private String[] columnNames = {"编号", "商品名称", "数量", "单价", "金额", "备注"};
 
     public losePlanetTableModel() {
-        for (int i = 0; i < 70; i++) {
+        for (int i = 0; i < Integer.parseInt(propertiesRW.proIDMakeRead("tablerow")); i++) {
             for (int k = 0; k < 6; k++) {
                 cells[i][k] = "";
             }
@@ -549,10 +557,7 @@ class losePlanetTableModel extends AbstractTableModel {
         return columnNames[c];
     }
 
-    @Override
-    public Class getColumnClass(int c) {
-        return cells[0][c].getClass();
-    }
+   
 
     public int getColumnCount() {
         return columnNames.length;
@@ -573,14 +578,7 @@ class losePlanetTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int r, int c) {
-        return c == NAME || c == VALUES || c == PRICE || c == OTHERS || c == SUM;
+        return c == NAME || c == VALUES || c == PRICE || c == OTHERS || c == SUM ;
     }
-    public static final int NAME = 1;
-    public static final int VALUES = 2;
-    public static final int PRICE = 3;
-    public static final int SUM = 4;
-    public static final int OTHERS = 5;
-    private Object[][] cells = new Object[70][6];
-    private String[] columnNames = {"编号", "商品名称", "数量", "单价", "金额", "备注"};
 }
 

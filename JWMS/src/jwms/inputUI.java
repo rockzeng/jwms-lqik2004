@@ -534,7 +534,7 @@ class inputFrame extends JFrame {
 class inputPlanetTableModel extends AbstractTableModel {
 
     public inputPlanetTableModel() {
-        for (int i = 0; i < 70; i++) {
+        for (int i = 0; i < Integer.parseInt(propertiesRW.proIDMakeRead("tablerow")); i++) {
             for (int k = 0; k < 6; k++) {
                 cells[i][k] = "";
             }
@@ -574,7 +574,7 @@ class inputPlanetTableModel extends AbstractTableModel {
     public static final int OUTPRICE = 4;
     public static final int SUMPRICE = 5;
     //public static final int OTHERS = 6;
-    private Object[][] cells = new Object[70][6];
+    private Object[][] cells = new Object[Integer.parseInt(propertiesRW.proIDMakeRead("tablerow"))][6];
     private String[] columnNames = {"编号", "商品名称", "数量", "入库单价", "零售价", "合计金额"};
 }
 
