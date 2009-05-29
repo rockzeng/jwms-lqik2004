@@ -32,7 +32,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import method.*;
-import org.w3c.dom.css.RGBColor;
 
 /**
  *
@@ -265,11 +264,8 @@ class sellFrame extends JFrame {
         });
         //提交按钮设计
         referButton.addActionListener(new ActionListener() {
-
-            /**
-             * 
-             */
             public void actionPerformed(ActionEvent e) {
+                exceptionTag=0;//对异常标签进行初始化
                 //按下提交按钮后会出现一个对话框用来确认是否进行提交
                 //shwoConfirmDialog,返回一个整型值，判定选择的是那个按钮
                 int ifcontinue = JOptionPane.showConfirmDialog(null, "请确认单据过账", "单据确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);

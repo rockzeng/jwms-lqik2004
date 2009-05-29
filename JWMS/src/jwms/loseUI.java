@@ -265,6 +265,7 @@ class loseFrame extends JFrame {
              * 给按钮加入响应，用以“持久化”tag和judge两个文件，更新数据
              */
             public void actionPerformed(ActionEvent e) {
+                exceptionTag=0;//对异常标签进行初始化
                 int ifcontinue = JOptionPane.showConfirmDialog(null, "请确认单据过账", "单据确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ifcontinue == JOptionPane.YES_OPTION) {
                     lose2Main loseBt = new lose2Main();//定义一个新的对象，用以传输数据；
