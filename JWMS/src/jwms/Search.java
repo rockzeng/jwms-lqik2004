@@ -508,6 +508,7 @@ class searchFrame extends JFrame {
         draw.maxNumSize = 0;
         draw.v.add(table1.getValueAt(0, swit)); //根据参数取得货物数量或者利润或者销售总量
         draw.vName.add(table1.getValueAt(0, 0));//取得仓库的名字
+        draw.test=0;
         for (int i = 1; i <
                 table1.getRowCount() && table1.getValueAt(i, 0) != ""; i++) {
             draw.v.add(table1.getValueAt(i, swit)); //根据参数取得货物数量或者利润或者销售总量
@@ -519,6 +520,7 @@ class searchFrame extends JFrame {
         }
         //drawpanel.add(draw);
         draw.prePaint();    //提出数据处理部分，独立成为一个方法
+          validate();
         add(draw);
         validate(); //更新组件，进行绘图
 
@@ -580,6 +582,7 @@ class drawPanel extends JPanel {
     public ArrayList<Rectangle2D> rectes;
     private int colorChgTag = -1; //标记那个矩形的颜色会发生变化,初始量为一个不存在的index
     //public Rectangle2D current;
+    public int test;
 
     public drawPanel() {
         rectes = new ArrayList<Rectangle2D>();
@@ -603,6 +606,8 @@ class drawPanel extends JPanel {
             Rectangle2D rect = new Rectangle2D.Double(leftX, topY, width, height);
             rectes.add(rect);//把绘制的举行加入到列表中
         }
+         
+        test=1;
     }
 
     @Override
@@ -610,6 +615,7 @@ class drawPanel extends JPanel {
         //update(g);
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        System.out.print(test);
         for (int i = 0; i < rectes.size(); i++) {
             if (i == colorChgTag) {
                 g2.setColor(Color.BLACK);

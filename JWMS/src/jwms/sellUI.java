@@ -124,7 +124,7 @@ class sellFrame extends JFrame {
         //设置ID
         JLabel labelID = new JLabel("编号：");//设置文字
         ID.setEditable(false);//不可修改        
-        ID.setText(new idMake().idMake("S"));   //设置编号，销售单以S开头，这里可能有问题
+        ID.setText(new inputIDMake().showID("S", getDate.getYear(), getDate.getMonth(), getDate.getDay()));   //设置编号，销售单以S开头，这里可能有问题
         ID.setMaximumSize(ID.getPreferredSize());   //使在箱式布局下不会默认取得最大值，保持预定义大小
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(sell);
@@ -272,7 +272,6 @@ class sellFrame extends JFrame {
                 if (ifcontinue == JOptionPane.YES_OPTION) {
                     sell2Main sellBt = new sell2Main();//定义一个新的对象，用以传输数据；
                     inputIDMake idmk = new inputIDMake();//在提交的时候把ID记录进timeLine？？？？？？？？？？
-                    sellBt.setID(ID.getText());
                     sellBt.setYear(year.getSelectedItem().toString());
                     idmk.getYear(year.getSelectedItem().toString().trim());
                     sellBt.setMonth(month.getSelectedItem().toString());
@@ -280,7 +279,8 @@ class sellFrame extends JFrame {
                     sellBt.setDay(day.getSelectedItem().toString());
                     idmk.getDay(day.getSelectedItem().toString().trim());
                     sellBt.setStore(storeComboBox.getSelectedItem().toString());
-                    sellBt.setDate(idmk.inputMake().substring(0, 8));
+                    sellBt.setDate(idmk.date);
+                    sellBt.setID(idmk.alterID("S"));
 
                     for (int i = 0; i < model.getRowCount(); i++) {     //防止出现中间出现断行丢失数据的问题
                         if (model.getValueAt(i, 1).toString() != "") {  //如果字符串没有，那么此行写入数据库，继续下一行
@@ -301,11 +301,6 @@ class sellFrame extends JFrame {
                     }
                     //把ID号写入文件中
                     try {
-                        //tagJudgeRW.writeFile("tag", idMake.tag);  老方法，此文件在测试包中的oldPacket
-                        //tagJudgeRW.writeFile("judge", idMake.judge);
-                        propertiesRW.proIDMakeWrite("tag", idMake.tag);
-                        propertiesRW.proIDMakeWrite("judge", idMake.judge);
-                        //把现在使用的仓库写入到properties文件，等下次打开时自动变成上次使用的仓库
                         propertiesRW.proIDMakeWrite("storeSell", storeComboBox.getSelectedIndex());
                     } catch (IOException ex) {
                         Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);

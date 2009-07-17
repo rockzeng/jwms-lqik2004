@@ -1,5 +1,6 @@
 package jwms;
 
+import method.inputIDMake;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -95,7 +96,7 @@ class equalFrame extends JFrame {
         //设置ID
         JLabel labelID = new JLabel("编号：");
         ID.setEditable(false);//不可修改
-        ID.setText(new idMake().idMake("E"));   //设置编号，销售单以E开头
+       ID.setText(new inputIDMake().showID("E", getDate.getYear(), getDate.getMonth(), getDate.getDay()));
         ID.setMaximumSize(ID.getPreferredSize());   //使在箱式布局下不会默认取得最大值，保持预定义大小
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(Box.createHorizontalGlue());
@@ -237,14 +238,16 @@ class equalFrame extends JFrame {
                 if (ifcontinue == JOptionPane.YES_OPTION) {
                     inputIDMake idmk = new inputIDMake();
                     equal2Main equalBt = new equal2Main();//定义一个新的对象，用以传输数据；
-                    equalBt.setID(ID.getText());
+                    
                     idmk.getYear(year.getSelectedItem().toString());
                     equalBt.setYear(year.getSelectedItem().toString());
                     equalBt.setMonth(month.getSelectedItem().toString());
                     idmk.getMonth(month.getSelectedItem().toString());
                     idmk.getDay(day.getSelectedItem().toString());
-                    equalBt.setDate(idmk.inputMake().substring(0, 8));
                     equalBt.setDay(day.getSelectedItem().toString());
+                    equalBt.setDate(idmk.date);
+                    equalBt.setID(idmk.alterID("E"));
+                    
                     equalBt.setINStore(inStoreComboBox.getSelectedItem().toString());
                     equalBt.setOUTStore(outStoreComboBox.getSelectedItem().toString());
                     for (int i = 0; i < model.getRowCount(); i++) {
@@ -260,8 +263,7 @@ class equalFrame extends JFrame {
                     try {
                         //tagJudgeRW.writeFile("tag", idMake.tag);  老方法，此文件在测试包中的oldPacket
                         //tagJudgeRW.writeFile("judge", idMake.judge);
-                        propertiesRW.proIDMakeWrite("tag", idMake.tag);
-                        propertiesRW.proIDMakeWrite("judge", idMake.judge);
+                      
                         //把现在使用的仓库写入到properties文件，等下次打开时自动变成上次使用的仓库
                         propertiesRW.proIDMakeWrite("outStoreEqual", outStoreComboBox.getSelectedIndex());
                         propertiesRW.proIDMakeWrite("inStoreEqual", inStoreComboBox.getSelectedIndex());
