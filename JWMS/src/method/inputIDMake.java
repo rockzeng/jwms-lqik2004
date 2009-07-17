@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package method;
 
 import java.sql.ResultSet;
@@ -22,6 +18,7 @@ public class inputIDMake {
     private  String day;
     public String date;
     public String dateTag;
+
 
     public void getYear(String x) {
         year = x;

@@ -174,19 +174,17 @@ public class storeRemain extends JFrame {
 
             public void actionPerformed(ActionEvent e) {
                 String sheetname = storeComboBox.getSelectedItem().toString();
-
                 printRemainInfo print = new printRemainInfo();
-                //print.create();
-                //  print.setSheetName(storeComboBox.getSelectedItem().toString());
                 try {
                     print.create("output.xls", sheetname);
-                    for (int r = 0; r < table1.getRowCount(); r++) {
-                        for (int c = 0; c < table1.getColumnCount(); c++) {
-                            try {
+                    for (int c = 0; c < table1.getColumnCount(); c++) {
+                        try {
+                            print.writeSheet(c, 0, model1.getColumnName(c));
+                            for (int r = 1; r < table1.getRowCount(); r++) {
                                 print.writeSheet(c, r, model1.getValueAt(r, c).toString());
-                            } catch (WriteException ex) {
-                                Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
                             }
+                        } catch (WriteException ex) {
+                            Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                     try {
@@ -194,12 +192,13 @@ public class storeRemain extends JFrame {
                     } catch (WriteException ex) {
                         Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    JOptionPane.showConfirmDialog(printButton, "end");
+                    JOptionPane.showMessageDialog(printButton, "输出已完成");
                 } catch (IOException ex) {
                     Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
+
     }
 
     public static void setStoreSelected(String x) {
@@ -212,6 +211,7 @@ public class storeRemain extends JFrame {
         } else {
             liststore.add(x);
         }
+
     }
 
     public void search() {
@@ -225,14 +225,17 @@ public class storeRemain extends JFrame {
             public void run() {
                 model1.setRowCount(0);
                 String sql;
+
                 String sqlCount;
+
                 ResultSet rs = null;
                 float price = 0;
                 int amount = 0;
                 int rowTag = 0;
                 if (storeComboBox.getSelectedItem().toString() == "全部仓库") {
                     sql = "select info,amount,store,outprice from maint order by store";
-                    sqlCount = "select count(info) from maint";
+                    sqlCount =
+                            "select count(info) from maint";
                     //System.out.print(sql);
                     dbOperation stable = new dbOperation();
                     stable.DBConnect();
@@ -241,21 +244,25 @@ public class storeRemain extends JFrame {
                         while (rs.next()) {
                             proBar.adoptDeterminate(Integer.parseInt(rs.getString(1).trim()));
                         }
+
                         rs = stable.DBSqlQuery(sql);
                         while (rs.next()) {
                             Object[] data = new Object[3];
                             data[0] = rs.getString(1).trim();
                             data[1] = rs.getString(2).trim();
-                            amount += Integer.parseInt(rs.getString(2));
+                            amount +=
+                                    Integer.parseInt(rs.getString(2));
                             data[2] = rs.getString(3).trim();
-                            price += Float.parseFloat(rs.getString(4));   //总价格（售价）
+                            price +=
+                                    Float.parseFloat(rs.getString(4));   //总价格（售价）
                             /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
                             table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
                             table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
                             model1.addRow(data);
                             proBar.setValue(rowTag++);
                         }
-                        //设置表格
+//设置表格
+
                         stable.DBClosed();
 
                     } catch (SQLException ex) {
@@ -266,24 +273,31 @@ public class storeRemain extends JFrame {
                     dbOperation stable = new dbOperation();
                     stable.DBConnect();
                     int va = 0;
-                    for (int i = 0; i < liststore.size(); i++) {
+                    for (int i = 0; i <
+                            liststore.size(); i++) {
                         store = liststore.get(i).toString().trim();
-                        sqlCount = "select count(info) from maint where store='" + store + "'";
+                        sqlCount =
+                                "select count(info) from maint where store='" + store + "'";
                         try {
                             rs = stable.DBSqlQuery(sqlCount);
                             while (rs.next()) {
                                 va += Integer.parseInt(rs.getString(1).trim());
                             }
+
+
                         } catch (SQLException ex) {
                             Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+
                     proBar.adoptDeterminate(va);
                     dbOperation stable1 = new dbOperation();
                     stable1.DBConnect();
-                    for (int i = 0; i < liststore.size(); i++) {
+                    for (int i = 0; i <
+                            liststore.size(); i++) {
                         store = liststore.get(i).toString().trim();
-                        sql = "select info,amount,store,outprice from maint where store='" + store + "' ";
+                        sql =
+                                "select info,amount,store,outprice from maint where store='" + store + "' ";
                         //System.out.print(sql);
                         try {
                             rs = stable1.DBSqlQuery(sql);
@@ -291,26 +305,33 @@ public class storeRemain extends JFrame {
                                 Object[] data = new Object[3];
                                 data[0] = rs.getString(1).trim();
                                 data[1] = rs.getString(2).trim();
-                                amount += Integer.parseInt(rs.getString(2));
+                                amount +=
+                                        Integer.parseInt(rs.getString(2));
                                 data[2] = rs.getString(3).trim();
-                                price += Float.parseFloat(rs.getString(4));
+                                price +=
+                                        Float.parseFloat(rs.getString(4));
                                 /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
                                 table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
                                 table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
                                 model1.addRow(data);
                                 proBar.setValue(rowTag++);
                             }
-                            //设置表格
+//设置表格
+
                             stable.DBClosed();
                         } catch (SQLException ex) {
                             Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+
                 } else {
                     rowTag = 0;
-                    store = storeComboBox.getSelectedItem().toString().trim();
-                    sql = "select info,amount,store,outprice from maint where store='" + store + "' ";
-                    sqlCount = "select count(info) from maint where store='" + store + "' ";
+                    store =
+                            storeComboBox.getSelectedItem().toString().trim();
+                    sql =
+                            "select info,amount,store,outprice from maint where store='" + store + "' ";
+                    sqlCount =
+                            "select count(info) from maint where store='" + store + "' ";
                     //System.out.print(sql);
                     dbOperation stable = new dbOperation();
                     stable.DBConnect();
@@ -319,26 +340,31 @@ public class storeRemain extends JFrame {
                         if (rs.next()) {
                             proBar.adoptDeterminate(Integer.parseInt(rs.getString(1).trim()));
                         }
+
                         rs = stable.DBSqlQuery(sql);
                         while (rs.next()) {
                             Object[] data = new Object[3];
                             data[0] = rs.getString(1).trim();
                             data[1] = rs.getString(2).trim();
-                            amount += Integer.parseInt(rs.getString(2));
+                            amount +=
+                                    Integer.parseInt(rs.getString(2));
                             data[2] = rs.getString(3).trim();
-                            price += Float.parseFloat(rs.getString(4));
+                            price +=
+                                    Float.parseFloat(rs.getString(4));
                             /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
                             table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
                             table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
                             model1.addRow(data);
                             proBar.setValue(rowTag++);
                         }
-                        //设置表格
+//设置表格
+
                         stable.DBClosed();
                     } catch (SQLException ex) {
                         Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+
                 sumLabelSta.setText(String.valueOf(amount));
                 priceLabelSta.setText(String.valueOf(price));
                 proBar.finishDeterminate();

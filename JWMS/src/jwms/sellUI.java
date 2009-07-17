@@ -89,6 +89,7 @@ class sellFrame extends JFrame {
     //使得table中的“总金额”一列可以修改，但在修改数量或者单价还会自动修改
     private String[] tableOldAmount = new String[model.getRowCount()];
     private String[] tableOldPrice = new String[model.getRowCount()];
+    private String IDString=null;
 
     public static void setExTag(int tag) {
         exceptionTag = tag;
@@ -124,7 +125,9 @@ class sellFrame extends JFrame {
         //设置ID
         JLabel labelID = new JLabel("编号：");//设置文字
         ID.setEditable(false);//不可修改        
-        ID.setText(new inputIDMake().showID("S", getDate.getYear(), getDate.getMonth(), getDate.getDay()));   //设置编号，销售单以S开头，这里可能有问题
+        inputIDMake id=new inputIDMake();
+        IDString=id.showID("S", getDate.getYear(), getDate.getMonth(), getDate.getDay());
+        ID.setText(IDString);   //设置编号，销售单以S开头，这里可能有问题
         ID.setMaximumSize(ID.getPreferredSize());   //使在箱式布局下不会默认取得最大值，保持预定义大小
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(sell);
