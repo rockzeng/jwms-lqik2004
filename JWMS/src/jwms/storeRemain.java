@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -13,17 +14,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.DefaultCellEditor;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import jxl.write.WriteException;
 import method.ProgressBarDialog;
 import method.dbOperation;
+import method.printRemainInfo;
 
 /**
  *
@@ -69,12 +74,17 @@ public class storeRemain extends JFrame {
     private static List liststore = new Vector();
     choicePopFrameRemain rFrame = new choicePopFrameRemain();
     private JButton confirm = new JButton("查询");
+    private JButton printButton = new JButton();
     private JLabel sumLabel = new JLabel("总数量:");
     private JLabel priceLabel = new JLabel("总金额:");
     private JLabel sumLabelSta = new JLabel("      ");
     private JLabel priceLabelSta = new JLabel(" ");
 
     public storeRemain() {
+        printButton.setIcon(new ImageIcon("image\\print.jpg"));//设置“打印”按钮的图标
+        printButton.setPreferredSize(new Dimension(48, 48));
+        printButton.setMaximumSize(printButton.getPreferredSize());//控制图标大小
+        printButton.setToolTipText("输出盘点表到Excel");
         storel.setText("全部仓库");
         try {
             storeLoad();
@@ -91,10 +101,10 @@ public class storeRemain extends JFrame {
         table1.getColumnModel().getColumn(0).setPreferredWidth(130);
         table1.getColumnModel().getColumn(1).setPreferredWidth(70);
         table1.getColumnModel().getColumn(2).setPreferredWidth(70);
-         table1.setDefaultRenderer(Object.class, new ColorRenderer());
-         table1.setShowHorizontalLines(false);
+        table1.setDefaultRenderer(Object.class, new ColorRenderer());
+        table1.setShowHorizontalLines(false);
         JScrollPane panel1 = new JScrollPane(table1);
-        panel1.setPreferredSize(new Dimension(270, 400));
+        panel1.setPreferredSize(new Dimension(270, 350));
 
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(Box.createHorizontalStrut(5));
@@ -119,6 +129,11 @@ public class storeRemain extends JFrame {
         hbox2.add(priceLabelSta);
         hbox2.add(Box.createHorizontalGlue());
 
+        Box hbox3 = Box.createHorizontalBox();
+        hbox3.add(Box.createHorizontalStrut(5));
+        hbox3.add(printButton);
+
+
         Box vbox = Box.createVerticalBox();
         vbox.add(Box.createVerticalStrut(5));
         vbox.add(hbox0);
@@ -128,6 +143,7 @@ public class storeRemain extends JFrame {
         vbox.add(hbox2);
         vbox.add(Box.createVerticalStrut(10));
         vbox.add(panel1);
+        vbox.add(hbox3);
         vbox.add(Box.createVerticalGlue());
         add(vbox);
 
@@ -151,6 +167,37 @@ public class storeRemain extends JFrame {
 
             public void actionPerformed(ActionEvent e) {
                 search();
+            }
+        });
+        /*打印按钮设计*/
+        printButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                String sheetname = storeComboBox.getSelectedItem().toString();
+
+                printRemainInfo print = new printRemainInfo();
+                //print.create();
+                //  print.setSheetName(storeComboBox.getSelectedItem().toString());
+                try {
+                    print.create("output.xls", sheetname);
+                    for (int r = 0; r < table1.getRowCount(); r++) {
+                        for (int c = 0; c < table1.getColumnCount(); c++) {
+                            try {
+                                print.writeSheet(c, r, model1.getValueAt(r, c).toString());
+                            } catch (WriteException ex) {
+                                Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
+                    try {
+                        print.close();
+                    } catch (WriteException ex) {
+                        Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    JOptionPane.showConfirmDialog(printButton, "end");
+                } catch (IOException ex) {
+                    Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
