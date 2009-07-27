@@ -1,0 +1,12 @@
+#
+#Mon Jul 27 14:26:37 CST 2009
+tablerow=80
+outStoreEqual=1
+osname=/
+storeLose=0
+storeSell=2
+storeWorkingStream=0
+judge=16
+inStoreEqual=4
+storeInput=6
+tag=1

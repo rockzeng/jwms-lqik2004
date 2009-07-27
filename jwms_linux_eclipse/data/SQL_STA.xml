@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQL>
+	<SQL_SERVER>
+		<STA>create table equalt(id char(20),year char(4),month
+			char(4),day char(4),info char(15),amount int,color char(10),size
+			char(10),inStore char(10),outStore char(10),others char(10),num
+			int,date char(15));</STA>
+		<STA>create table inputt(id char(20),year char(4),month
+			char(4),day char(4),info char(15),amount int,color char(10),size
+			char(10),store char(10),inPrice float(8),outPrice float(8),sumPrice
+			float(8),num int,inputORreturn int,date char(15));</STA>
+		<STA>create table loset(id char(20),year char(4),month
+			char(4),day char(4),info char(15),amount int,color char(10),size
+			char(10),store char(10),inPrice float(8),loseORgain int,others
+			char(10),num int,date char(15));</STA>
+		<STA>create table maint(info char(15),amount int,store
+			char(10),inPrice float(8),outPrice float(8));</STA>
+		<STA>create table SearchCable(store char(10),amount int,sumprice
+			char(20),income char(20));</STA>
+		<STA>create table sellt(id char(20),year char(4),month
+			char(4),day char(4),info char(15),amount int,color char(10),size
+			char(10),store char(10),outPrice float(8),sellORreturn int,others
+			char(15),num int,date char(15));</STA>
+		<STA>create table storet(store char(10));</STA>
+		<STA>create table StreamCache(datetag char(15),id char(20),date
+			char(15),type char(20));</STA>
+		<STA>create table timeLine(date char(15),tag char(10));</STA>
+	</SQL_SERVER>
+</SQL>
