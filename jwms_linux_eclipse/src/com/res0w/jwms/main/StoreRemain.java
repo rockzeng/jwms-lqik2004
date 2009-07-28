@@ -39,8 +39,6 @@ class RemainText {
     static StoreRemain frame = new StoreRemain();
 
     public static void main(String[] args) {
-        // TODO code application logic here
-
         frame.setSize(200, 400);
         frame.setLocationRelativeTo(null);
         frame.pack();
