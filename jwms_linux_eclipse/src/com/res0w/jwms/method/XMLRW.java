@@ -2,7 +2,9 @@ package com.res0w.jwms.method;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -15,30 +17,39 @@ public class XMLRW {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		doc = db.parse(new File(XMLFile));
+		doc.getDocumentElement().normalize();
+//		System.out.println(doc.getDocumentElement().getNodeName());
 	}
 
 	
-	public ArrayList<String> viewXML(String XMLFile) throws Exception {
-		ArrayList<String> result = null;
+	@SuppressWarnings("unchecked")
+	public Object[] viewXML(String XMLFile,String sqlName) throws Exception {
+		List result=new Vector();
 		this.init(XMLFile);
-		Element sqlType = (Element) doc.getElementsByTagName("SQL_SERVER")
+		int sqlNum=doc.getElementsByTagName(sqlName).getLength();
+		System.out.println(sqlNum);
+		Element sqlType = (Element) doc.getElementsByTagName(sqlName)
 				.item(0);
+//		System.out.println(sqlType.toString());
 		NodeList listOfSql = sqlType.getElementsByTagName("STA");
-		for (int i = 0; i <= listOfSql.getLength(); i++) {
-			Node staNode = listOfSql.item(i);
-			String sta = staNode.getNodeValue().trim();
-			System.out.println(sta);
-			//result.add(sta);
+		for (int i = 0; i <listOfSql.getLength(); i++) {
+			Element staNode = (Element)listOfSql.item(i);
+			NodeList staNL=staNode.getChildNodes();
+			String staa = (String) staNL.item(0).getNodeValue();
+//			System.out.println(staa);
+			result.add(staa);
 		}
-		return (result);
+		return result.toArray();
 	}
 
 	public static void main(String[] args) throws Exception {
 		XMLRW xml = new XMLRW();
-		ArrayList<String> sta;
-		sta = xml.viewXML("data\\SQL_STA.xml");
-		for (int s = 0; s < sta.size(); s++) {
-			System.out.println(sta.get(s).toString().trim());
+		Object[] sta;
+		int cont=0;//sta长度计数
+		sta = xml.viewXML("data/SQL_STA.xml","SQLSERVER");
+		while(cont<sta.length){
+			System.out.println(sta[0].toString());
+			cont++;
 		}
 	}
 }

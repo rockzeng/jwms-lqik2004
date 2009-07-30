@@ -164,6 +164,25 @@ class initProgFrame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				DBOperation db=new DBOperation();
+				db.DBConnect();
+				Object[] sta;
+				int count=0;
+//				String osname=PropertiesRW.proIDMakeRead("osname");
+				XMLRW xml=new XMLRW();
+				try {
+					sta=xml.viewXML("data"+PropertiesRW.proIDMakeRead("osname")+"SQL_STA.xml", 
+							PropertiesRW.proIDMakeRead("sqltype").toUpperCase());
+					while(count<sta.length){
+						db.DBSqlExe(sta[count].toString());
+//						System.out.print(sta[count].toString());
+						count++;
+					}
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+					System.err.println("xml wrong!");
+				}
 				
 				dispose();
 			}
