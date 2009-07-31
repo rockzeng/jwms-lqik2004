@@ -1,6 +1,7 @@
 package com.res0w.jwms.main;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -219,7 +220,8 @@ class initInfoFrame extends JFrame {
 		setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		// …Ë÷√≤÷ø‚¿∏
 		JLabel labelStore = new JLabel("≤÷ø‚£∫");
-		storeComboBox.setSelectedIndex(1);
+//		storeComboBox.setSelectedIndex(1);
+		storeComboBox.setPreferredSize(new Dimension(100,22));
 		storeComboBox.setMaximumSize(storeComboBox.getPreferredSize());
 		storeComboBox.setEditable(false); // ≤÷ø‚≤ªø…÷±Ω”–ﬁ∏ƒ
 		JButton addStore = new JButton("ÃÌº”≤÷ø‚");
