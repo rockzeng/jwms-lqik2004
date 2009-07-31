@@ -1,13 +1,13 @@
 #
-#Tue Jul 28 20:16:30 CST 2009
+#Fri Jul 31 11:05:56 CST 2009
 tablerow=80
-outStoreEqual=1
+outStoreEqual=0
 osname=/
 storeLose=0
-storeSell=2
+storeSell=0
 sqltype=mysql
 storeWorkingStream=0
-judge=16
-inStoreEqual=4
-storeInput=6
-tag=1
+judge=0
+inStoreEqual=0
+storeInput=0
+tag=0

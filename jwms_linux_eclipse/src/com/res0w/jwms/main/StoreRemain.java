@@ -76,7 +76,7 @@ public class StoreRemain extends JFrame {
     private JLabel priceLabelSta = new JLabel(" ");
 
     public StoreRemain() {
-        printButton.setIcon(new ImageIcon("image\\print.jpg"));//设置“打印”按钮的图标
+        printButton.setIcon(new ImageIcon("image"+PropertiesRW.proIDMakeRead("osname")+"print.jpg"));//设置“打印”按钮的图标
         printButton.setPreferredSize(new Dimension(48, 48));
         printButton.setMaximumSize(printButton.getPreferredSize());//控制图标大小
         printButton.setToolTipText("输出盘点表到Excel");

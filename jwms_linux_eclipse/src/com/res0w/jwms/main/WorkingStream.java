@@ -44,6 +44,7 @@ public class WorkingStream {
     }
 }
 
+@SuppressWarnings("serial")
 class workingFrame extends JFrame {
 
     private Object[] Objyear = {
@@ -881,7 +882,7 @@ class imagePanel extends JPanel {
         setMaximumSize(getPreferredSize());
         setMinimumSize(getPreferredSize());
         try {
-            image = ImageIO.read(new File("image\\logo.gif"));
+            image = ImageIO.read(new File("image"+PropertiesRW.proIDMakeRead("osname")+"logo.gif"));
         } catch (IOException ex) {
             Logger.getLogger(imagePanel.class.getName()).log(Level.SEVERE, null, ex);
         }
