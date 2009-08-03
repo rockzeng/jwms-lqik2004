@@ -32,7 +32,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import method.*;
-
+import method.inputIDMake;
 /**
  *
  * @author lqik2004
@@ -125,9 +125,9 @@ class sellFrame extends JFrame {
         //设置ID
         JLabel labelID = new JLabel("编号：");//设置文字
         ID.setEditable(false);//不可修改        
-        inputIDMake id=new inputIDMake();
-        IDString=id.showID("S", getDate.getYear(), getDate.getMonth(), getDate.getDay());
-        ID.setText(IDString);   //设置编号，销售单以S开头，这里可能有问题
+//        inputIDMake id=new inputIDMake();
+//        IDString=new inputIDMake().showID("I", getDate.getYear(), getDate.getMonth(), getDate.getDay())
+        ID.setText(new inputIDMake().showID("S", getDate.getYear(), getDate.getMonth(), getDate.getDay()));   //设置编号，销售单以S开头，这里可能有问题
         ID.setMaximumSize(ID.getPreferredSize());   //使在箱式布局下不会默认取得最大值，保持预定义大小
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(sell);
