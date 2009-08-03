@@ -13,7 +13,7 @@ import javax.swing.JLabel;
  *
  * @author lqik2004
  */
-public class About {
+public class about {
 
     /**
      * @param args the command line arguments
