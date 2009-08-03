@@ -1,6 +1,7 @@
 package jwms;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -107,7 +108,8 @@ class initInfoFrame extends JFrame {
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         //设置仓库栏
         JLabel labelStore = new JLabel("仓库：");
-        storeComboBox.setSelectedIndex(1);
+//        storeComboBox.setSelectedIndex(1);
+        storeComboBox.setPreferredSize(new Dimension(100, 20));
         storeComboBox.setMaximumSize(storeComboBox.getPreferredSize());
         storeComboBox.setEditable(false);   //仓库不可直接修改
         JButton addStore = new JButton("添加仓库");
