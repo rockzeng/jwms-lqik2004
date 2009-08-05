@@ -576,11 +576,8 @@ class initInfoFrame extends JFrame {
 			mainT.setAmount(model.getValueAt(selectedrow, 2).toString().trim());
 			mainT.setInfo(model.getValueAt(selectedrow, 1).toString().trim());
 			mainT.setStore(storeComboBox.getSelectedItem().toString().trim());
-			mainT
-					.setInPrice(model.getValueAt(selectedrow, 3).toString()
-							.trim());
-			mainT.setOutPrice(model.getValueAt(selectedrow, 4).toString()
-					.trim());
+			mainT.setInPrice(model.getValueAt(selectedrow, 3).toString().trim());
+			mainT.setOutPrice(model.getValueAt(selectedrow, 4).toString().trim());
 			mainT.increaseMethod();
 		} catch (SQLException ex) {
 			Logger.getLogger(initInfoFrame.class.getName()).log(Level.SEVERE,
