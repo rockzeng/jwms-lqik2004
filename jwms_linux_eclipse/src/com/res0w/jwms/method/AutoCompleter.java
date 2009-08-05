@@ -87,14 +87,15 @@ public class AutoCompleter
             String str = opts[0].toString();
 
             editor.setCaretPosition(caretPosition);
+           /*
             //如果备选只有一个的时候，实现自动上词
             if(opts.length==1){
                 editor.setText(opts[0].toString().trim());
                 editor.setCaretPosition(opts[0].toString().length());
             }else{
-                //否则维持原样不变
+                //否则维持原样不变*/
             editor.setText(strf.substring(0, caretPosition));
-            }
+            
             if (owner != null) {
                 try {
                     owner.showPopup();
@@ -120,12 +121,13 @@ public class AutoCompleter
                 return;
             }
             editor.setCaretPosition(caretPosition);
+            /*
             if(opts.length==1){
                 editor.setText(opts[0].toString().trim());
                 editor.setCaretPosition(opts[0].toString().length());
-            }else{
+            }else{*/
             editor.setText(strf.substring(0, caretPosition));
-            }
+            
             if (owner != null) {
                 try {
                     owner.showPopup();
