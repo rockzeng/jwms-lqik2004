@@ -81,7 +81,6 @@ class setupDialog extends JFrame {
 
 class initInfoFrame extends JFrame {
 
-
     private float sumprice = 0; //表单中的总价
     private int sumvalues = 0;  //表单中的总数量
     private int tagrow = 0;//定义一个标记行
@@ -133,7 +132,7 @@ class initInfoFrame extends JFrame {
         //JComboBox cmb = new JAutoCompleteComboBox(list.toArray());
         //Arrays.sort(items);//对item进行排序
         AutoCompleter.setItems(items);
-         table.setDefaultRenderer(Object.class, new ColorRenderer());    //设置每一行的背景颜色
+        table.setDefaultRenderer(Object.class, new ColorRenderer());    //设置每一行的背景颜色
         //把单元格改造成JAutoCompleteComboBox
         NameCombo = new JAutoCompleteComboBox(items);
         TableColumnModel columnModel = table.getColumnModel();
@@ -448,6 +447,7 @@ class initInfoFrame extends JFrame {
             ex.printStackTrace();
         }
     }
+
     public void transmitMain(int selectedrow) {
         try {
             addDel mainT = new addDel();
