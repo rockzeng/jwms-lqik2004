@@ -233,7 +233,7 @@ public class storeRemain extends JFrame {
                 int amount = 0;
                 int rowTag = 0;
                 if (storeComboBox.getSelectedItem().toString() == "全部仓库") {
-                    sql = "select info,amount,store,outprice from maint order by store";
+                    sql = "select info,amount,store,inprice from maint order by store";
                     sqlCount =
                             "select count(info) from maint";
                     //System.out.print(sql);
@@ -250,11 +250,12 @@ public class storeRemain extends JFrame {
                             Object[] data = new Object[3];
                             data[0] = rs.getString(1).trim();
                             data[1] = rs.getString(2).trim();
+                           int invoAmount=Integer.parseInt(rs.getString(2));
                             amount +=
-                                    Integer.parseInt(rs.getString(2));
+                                    invoAmount;
                             data[2] = rs.getString(3).trim();
                             price +=
-                                    Float.parseFloat(rs.getString(4));   //总价格（售价）
+                                    Float.parseFloat(rs.getString(4))*invoAmount;
                             /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
                             table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
                             table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
@@ -297,7 +298,7 @@ public class storeRemain extends JFrame {
                             liststore.size(); i++) {
                         store = liststore.get(i).toString().trim();
                         sql =
-                                "select info,amount,store,outprice from maint where store='" + store + "' ";
+                                "select info,amount,store,inprice from maint where store='" + store + "' ";
                         //System.out.print(sql);
                         try {
                             rs = stable1.DBSqlQuery(sql);
@@ -305,11 +306,12 @@ public class storeRemain extends JFrame {
                                 Object[] data = new Object[3];
                                 data[0] = rs.getString(1).trim();
                                 data[1] = rs.getString(2).trim();
-                                amount +=
-                                        Integer.parseInt(rs.getString(2));
-                                data[2] = rs.getString(3).trim();
-                                price +=
-                                        Float.parseFloat(rs.getString(4));
+                               int invoAmount=Integer.parseInt(rs.getString(2));
+                            amount +=
+                                    invoAmount;
+                            data[2] = rs.getString(3).trim();
+                            price +=
+                                    Float.parseFloat(rs.getString(4))*invoAmount;
                                 /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
                                 table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
                                 table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
@@ -329,7 +331,7 @@ public class storeRemain extends JFrame {
                     store =
                             storeComboBox.getSelectedItem().toString().trim();
                     sql =
-                            "select info,amount,store,outprice from maint where store='" + store + "' ";
+                            "select info,amount,store,inprice from maint where store='" + store + "' ";
                     sqlCount =
                             "select count(info) from maint where store='" + store + "' ";
                     //System.out.print(sql);
@@ -346,11 +348,12 @@ public class storeRemain extends JFrame {
                             Object[] data = new Object[3];
                             data[0] = rs.getString(1).trim();
                             data[1] = rs.getString(2).trim();
+                            int invoAmount=Integer.parseInt(rs.getString(2));
                             amount +=
-                                    Integer.parseInt(rs.getString(2));
+                                    invoAmount;
                             data[2] = rs.getString(3).trim();
                             price +=
-                                    Float.parseFloat(rs.getString(4));
+                                    Float.parseFloat(rs.getString(4))*invoAmount;
                             /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
                             table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
                             table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
