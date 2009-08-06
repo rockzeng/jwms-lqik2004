@@ -33,11 +33,11 @@ class aboutDialog extends JFrame{
 
     public aboutDialog() {
         String version=null;
-        version="0.160_2009717_Alpha3";
+        version="0.165_r20090806a";
         JLabel l1=new JLabel("Version：'"+version+"'");
         JLabel l2=new JLabel("Author：刘潮");
-        JLabel l3=new JLabel("Update：2009-7-17");
-        JLabel l4=new JLabel("Licence：GPL3");
+        JLabel l3=new JLabel("Update：2009-8-6");
+        JLabel l4=new JLabel("Licence：GPL2");
         Box h0=Box.createVerticalBox();
         h0.add(Box.createVerticalStrut(5));
         h0.add(l1);

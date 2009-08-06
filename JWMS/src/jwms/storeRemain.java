@@ -91,20 +91,22 @@ public class storeRemain extends JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Object[] colName1 = new Object[3];
+        Object[] colName1 = new Object[4];
         colName1[0] = "商品名称";
         colName1[1] = "商品数量";
-        colName1[2] = "仓库";
-        model1.setColumnCount(3);
+        colName1[2] = "总金额";
+        colName1[3] = "仓库";
+        model1.setColumnCount(4);
         model1.setRowCount(0);
         model1.setColumnIdentifiers(colName1);//定义列名
         table1.getColumnModel().getColumn(0).setPreferredWidth(130);
         table1.getColumnModel().getColumn(1).setPreferredWidth(70);
         table1.getColumnModel().getColumn(2).setPreferredWidth(70);
+        table1.getColumnModel().getColumn(3).setPreferredWidth(70);
         table1.setDefaultRenderer(Object.class, new ColorRenderer());
         table1.setShowHorizontalLines(false);
         JScrollPane panel1 = new JScrollPane(table1);
-        panel1.setPreferredSize(new Dimension(270, 350));
+        panel1.setPreferredSize(new Dimension(340, 350));
 
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(Box.createHorizontalStrut(5));
@@ -247,15 +249,14 @@ public class storeRemain extends JFrame {
 
                         rs = stable.DBSqlQuery(sql);
                         while (rs.next()) {
-                            Object[] data = new Object[3];
+                            Object[] data = new Object[4];
                             data[0] = rs.getString(1).trim();
                             data[1] = rs.getString(2).trim();
-                           int invoAmount=Integer.parseInt(rs.getString(2));
-                            amount +=
-                                    invoAmount;
-                            data[2] = rs.getString(3).trim();
-                            price +=
-                                    Float.parseFloat(rs.getString(4))*invoAmount;
+                            int invoAmount = Integer.parseInt(rs.getString(2));
+                            amount +=invoAmount;
+                            data[3] = rs.getString(3).trim();
+                            data[2] =Float.parseFloat(rs.getString(4)) * invoAmount;
+                            price +=Float.parseFloat(data[2].toString());
                             /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
                             table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
                             table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
@@ -303,15 +304,14 @@ public class storeRemain extends JFrame {
                         try {
                             rs = stable1.DBSqlQuery(sql);
                             while (rs.next()) {
-                                Object[] data = new Object[3];
-                                data[0] = rs.getString(1).trim();
-                                data[1] = rs.getString(2).trim();
-                               int invoAmount=Integer.parseInt(rs.getString(2));
-                            amount +=
-                                    invoAmount;
-                            data[2] = rs.getString(3).trim();
-                            price +=
-                                    Float.parseFloat(rs.getString(4))*invoAmount;
+                               Object[] data = new Object[4];
+                            data[0] = rs.getString(1).trim();
+                            data[1] = rs.getString(2).trim();
+                            int invoAmount = Integer.parseInt(rs.getString(2));
+                            amount +=invoAmount;
+                            data[3] = rs.getString(3).trim();
+                            data[2] =Float.parseFloat(rs.getString(4)) * invoAmount;
+                            price +=Float.parseFloat(data[2].toString());
                                 /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
                                 table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
                                 table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
@@ -345,15 +345,14 @@ public class storeRemain extends JFrame {
 
                         rs = stable.DBSqlQuery(sql);
                         while (rs.next()) {
-                            Object[] data = new Object[3];
+                           Object[] data = new Object[4];
                             data[0] = rs.getString(1).trim();
                             data[1] = rs.getString(2).trim();
-                            int invoAmount=Integer.parseInt(rs.getString(2));
-                            amount +=
-                                    invoAmount;
-                            data[2] = rs.getString(3).trim();
-                            price +=
-                                    Float.parseFloat(rs.getString(4))*invoAmount;
+                            int invoAmount = Integer.parseInt(rs.getString(2));
+                            amount +=invoAmount;
+                            data[3] = rs.getString(3).trim();
+                            data[2] =Float.parseFloat(rs.getString(4)) * invoAmount;
+                            price +=Float.parseFloat(data[2].toString());
                             /*  table1.setValueAt(rs.getString(1).trim(), rowTag, 0);
                             table1.setValueAt(rs.getString(2).trim(), rowTag, 1);
                             table1.setValueAt(rs.getString(3).trim(), rowTag, 2);*/
