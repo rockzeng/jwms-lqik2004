@@ -8,6 +8,7 @@ package jwms;
 import javax.swing.Box;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import method.propertiesRW;
 
 /**
  *
@@ -33,9 +34,9 @@ class aboutDialog extends JFrame{
 
     public aboutDialog() {
         String version=null;
-        version="0.165_r20090806a";
+        version=propertiesRW.proIDMakeRead("currentversion");
         JLabel l1=new JLabel("Version：'"+version+"'");
-        JLabel l2=new JLabel("Author：刘潮");
+        JLabel l2=new JLabel("Author：res0w");
         JLabel l3=new JLabel("Update：2009-8-6");
         JLabel l4=new JLabel("Licence：GPL2");
         Box h0=Box.createVerticalBox();
