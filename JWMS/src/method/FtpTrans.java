@@ -1,5 +1,6 @@
 package method;
 
+import com.enterprisedt.net.ftp.FTPConnectMode;
 import com.enterprisedt.net.ftp.FTPException;
 import com.enterprisedt.net.ftp.FileTransferClient;
 import java.io.IOException;
@@ -10,8 +11,9 @@ import java.util.logging.Logger;
  *
  * @author res0w
  */
-class testmain{
-    public static void main(String[] args){
+class testmain {
+
+    public static void main(String[] args) {
         try {
             FtpTrans ftp = new FtpTrans();
             ftp.ftpConnect();
@@ -22,12 +24,13 @@ class testmain{
         }
     }
 }
+
 public class FtpTrans {
 
     FileTransferClient ftp;
-    String host="ftp.res0w.com";
-    String uname="jwms@res0w.com";
-    String pwd="881010";
+    String host = "ftp.res0w.com";
+    String uname = "jwms@res0w.com";
+    String pwd = "881010";
 
     public FtpTrans() {
         ftp = new FileTransferClient();
@@ -39,7 +42,13 @@ public class FtpTrans {
             ftp.setRemoteHost(host);
             ftp.setUserName(uname);
             ftp.setPassword(pwd);
+            ftp.setRemotePort(21);
+            ftp.setTimeout(12000);
+            ftp.getAdvancedFTPSettings().setConnectMode(FTPConnectMode.PASV);
             ftp.connect();
+            System.out.println(host);
+            System.out.println(uname);
+            System.out.println(pwd);
         } catch (Exception e) {
             System.out.println("ftp连接错误");
         }
@@ -53,10 +62,10 @@ public class FtpTrans {
         }
     }
 
-    public void ftpDownload(String host,String usr,String pwd,String localFilePath,String remoteFilename){
-        this.host=host;
-        this.pwd=pwd;
-        this.uname=usr;
+    public void ftpDownload(String host, String usr, String pwd, String localFilePath, String remoteFilename) {
+        this.host = host;
+        this.pwd = pwd;
+        this.uname = usr;
         ftpConnect();
         try {
             ftp.downloadFile(localFilePath, remoteFilename);
@@ -71,13 +80,12 @@ public class FtpTrans {
             Logger.getLogger(FtpTrans.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public void ftpNameList(){
+
+    public void ftpNameList() {
         try {
             String[] file = ftp.directoryNameList();
-            int i=0;
-            while(!file[i].equals(null)){
+            for (int i = 0; i < file.length; i++) {
                 System.out.println(file[i]);
-                i++;
             }
         } catch (FTPException ex) {
             Logger.getLogger(FtpTrans.class.getName()).log(Level.SEVERE, null, ex);
