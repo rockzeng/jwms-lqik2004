@@ -14,14 +14,8 @@ import java.util.logging.Logger;
 class testmain {
 
     public static void main(String[] args) {
-        try {
             FtpTrans ftp = new FtpTrans();
-            ftp.ftpConnect();
-            ftp.ftpNameList();
-            ftp.ftpDiscont();
-        } catch (FTPException ex) {
-            Logger.getLogger(testmain.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            ftp.ftpDownload("ftp.res0w.com",  "jwms@res0w.com", "881010", "temp");
     }
 }
 
@@ -36,7 +30,7 @@ public class FtpTrans {
         ftp = new FileTransferClient();
     }
 
-    public void ftpConnect() {
+    private void ftpConnect() {
 
         try {
             ftp.setRemoteHost(host);
@@ -54,7 +48,7 @@ public class FtpTrans {
         }
     }
 
-    public void ftpDiscont() throws FTPException {
+    private void ftpDiscont() throws FTPException {
         try {
             ftp.disconnect();
         } catch (IOException ex) {
@@ -62,11 +56,13 @@ public class FtpTrans {
         }
     }
 
-    public void ftpDownload(String host, String usr, String pwd, String localFilePath, String remoteFilename) {
+    public void ftpDownload(String host, String usr, String pwd, String localFilePath) {
+        String remoteFilename;
         this.host = host;
         this.pwd = pwd;
         this.uname = usr;
         ftpConnect();
+        remoteFilename=ftpNameSelect();
         try {
             ftp.downloadFile(localFilePath, remoteFilename);
         } catch (FTPException ex) {
@@ -81,16 +77,27 @@ public class FtpTrans {
         }
     }
 
-    public void ftpNameList() {
+    private String ftpNameSelect() {
+        String fileName = null;
         try {
             String[] file = ftp.directoryNameList();
+            int preName = -1;
+            int mark = -1;
             for (int i = 0; i < file.length; i++) {
-                System.out.println(file[i]);
+                if (!file[i].startsWith(".") && Integer.parseInt(file[i].substring(0, 2)) >= preName) {
+                    preName = Integer.parseInt(file[i].substring(0, 2));
+                    mark = i;
+                }
             }
+            if (mark != -1) {
+                fileName = file[mark];
+            }
+//            System.out.println(fileName);
         } catch (FTPException ex) {
             Logger.getLogger(FtpTrans.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(FtpTrans.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return fileName;
     }
 }
