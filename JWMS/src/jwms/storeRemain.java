@@ -194,7 +194,8 @@ public class storeRemain extends JFrame {
                     } catch (WriteException ex) {
                         Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    JOptionPane.showMessageDialog(printButton, "输出已完成");
+                    JOptionPane.showMessageDialog(printButton, "输出已完成，单击确定打开文件");
+                    Runtime.getRuntime().exec("cmd /c start output.xls");
                 } catch (IOException ex) {
                     Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
                 }
