@@ -225,11 +225,11 @@ class mainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (dialogTag == 0) {
                     Point point = main.frameLocateOnScr();
-                    aboutDialog.setTitle("关于");
+//                    aboutDialog.setTitle("关于");
                     aboutDialog.setSize(200, 90);
-                    aboutDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//                    aboutDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     aboutDialog.setLocation(point.x + 500, point.y + 30);//设置窗口停靠，自动生成在主窗口左侧
-                    aboutDialog.setUndecorated(true);//隐藏标题栏
+//                    aboutDialog.setUndecorated(true);//隐藏标题栏
                     dialogTag = 1;
                 }
                 if (aboutDialog.isVisible()) {
@@ -245,11 +245,11 @@ class mainFrame extends JFrame {
 
                 if (setupTag == 0) {
                     Point point = main.frameLocateOnScr();
-                    setupDialog.setTitle("设置");
+//                    setupDialog.setTitle("设置");
                     setupDialog.setSize(140, 70);
-                    setupDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//                    setupDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     setupDialog.setLocation(point.x, point.y + 120);//设置窗口停靠，自动生成在主窗口下方
-                    setupDialog.setUndecorated(true);//隐藏标题栏
+//                    setupDialog.setUndecorated(true);//隐藏标题栏
                     setupTag = 1;
                 }
                 if (setupDialog.isVisible()) {
