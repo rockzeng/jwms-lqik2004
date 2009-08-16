@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JWindow;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -41,15 +42,15 @@ public class setup {
     public static void main(String[] args) {
         // TODO code application logic here
         setupDialog frame = new setupDialog();
-        frame.setTitle("程序设置");
+//        frame.setTitle("程序设置");
         frame.setLocationRelativeTo(null);
         frame.setSize(250, 100);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
     }
 }
 
-class setupDialog extends JFrame {
+class setupDialog extends JWindow {
 
     private JButton initInfo = new JButton("初始化仓储信息");
     private JButton initProgram = new JButton("初始化程序设置");

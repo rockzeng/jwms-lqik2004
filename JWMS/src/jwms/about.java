@@ -8,6 +8,7 @@ package jwms;
 import javax.swing.Box;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JWindow;
 import method.propertiesRW;
 
 /**
@@ -22,15 +23,15 @@ public class about {
     public static void main(String[] args) {
         // TODO code application logic here
         aboutDialog frame=new aboutDialog();
-        frame.setTitle("关于");
+//        frame.setTitle("关于");
         frame.setLocationRelativeTo(null);
         frame.setSize(100, 250);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
     }
 
 }
-class aboutDialog extends JFrame{
+class aboutDialog extends JWindow{
 
     public aboutDialog() {
         String version=null;
