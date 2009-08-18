@@ -47,7 +47,7 @@ public class setup {
         setupDialog frame = new setupDialog();
 //        frame.setTitle("程序设置");
         frame.setLocationRelativeTo(null);
-        frame.setSize(250, 100);
+        frame.setSize(300, 100);
 //        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
     }
@@ -57,6 +57,8 @@ class setupDialog extends JWindow {
 
     private JButton initInfo = new JButton("初始化仓储信息");
     private JButton initProgram = new JButton("初始化程序设置");
+    private JButton clear0info =new JButton("清空零库存");
+
     static initInfoFrame frame = null;
 
     public setupDialog() {
@@ -65,6 +67,8 @@ class setupDialog extends JWindow {
         vbox.add(initInfo);
         vbox.add(Box.createVerticalStrut(5));
         vbox.add(initProgram);
+        vbox.add(Box.createVerticalStrut(5));
+        vbox.add(clear0info);
         vbox.add(Box.createVerticalGlue());
         add(vbox);
         initInfo.addActionListener(new ActionListener() {
@@ -82,8 +86,15 @@ class setupDialog extends JWindow {
 
             }
         });
-    }
+        clear0info.addActionListener(new ActionListener() {
 
+            public void actionPerformed(ActionEvent e) {
+               Clear0Info c=new Clear0Info();
+               JOptionPane.showMessageDialog(null, "零库存已清除完毕");
+            }
+        });
+    }
+    
     public static Point frameLocateOnScr() {
         return frame.getLocationOnScreen();
     }
