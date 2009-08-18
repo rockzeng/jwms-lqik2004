@@ -27,6 +27,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JWindow;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -561,7 +562,6 @@ class ColorRenderer extends DefaultTableCellRenderer {
             comp.setForeground(table.getForeground());
             comp.setBackground(customCol);
         }
-        setText(value.toString());
         return comp;
     }
 }
