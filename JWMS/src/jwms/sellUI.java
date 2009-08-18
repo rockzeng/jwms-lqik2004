@@ -283,8 +283,10 @@ class sellFrame extends JFrame {
                     idmk.getMonth(month.getSelectedItem().toString().trim());
                     sellBt.setDay(day.getSelectedItem().toString());
                     idmk.getDay(day.getSelectedItem().toString().trim());
+
                     sellBt.setStore(storeComboBox.getSelectedItem().toString());
-                    sellBt.setDate(idmk.date);
+                    sellBt.setDate(idmk.showDate());
+//                    System.out.println(idmk.showDate());
                     sellBt.setID(idmk.alterID("S"));
 
                     for (int i = 0; i < model.getRowCount(); i++) {     //防止出现中间出现断行丢失数据的问题

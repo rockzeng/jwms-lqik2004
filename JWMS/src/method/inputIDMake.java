@@ -19,6 +19,9 @@ public class inputIDMake {
     public String date;
     public String dateTag;
 
+    public inputIDMake() {
+    }
+
 
     public void getYear(String x) {
         year = x;
@@ -37,6 +40,11 @@ public class inputIDMake {
         date = year + month + day;
     }
     //最有用的一个公用类
+
+    public String showDate(){
+        collectDate();
+        return date;
+    }
 
     public String showID(String x,String initYear,String initMonth,String initDay) {
         year=initYear;
@@ -109,7 +117,7 @@ public class inputIDMake {
                 sx.DBSqlExe(sql);
                 sx.DBClosed();
             }
-            //dateTag = date + tag;
+            dateTag = date + alterTag;
             s.DBClosed();
         } catch (SQLException ex) {
             Logger.getLogger(inputIDMake.class.getName()).log(Level.SEVERE, null, ex);

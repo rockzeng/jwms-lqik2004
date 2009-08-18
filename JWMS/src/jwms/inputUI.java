@@ -272,7 +272,7 @@ class inputFrame extends JFrame {
                     inputBt.setMonth(month.getSelectedItem().toString());
                     idmk.getDay(day.getSelectedItem().toString());
                     inputBt.setDay(day.getSelectedItem().toString());
-                    inputBt.setDate(idmk.date);
+                    inputBt.setDate(idmk.showDate());
                     inputBt.setID(idmk.alterID("I"));
                     inputBt.setStore(storeComboBox.getSelectedItem().toString());
                     //未完成：如果是新加入的仓库，把新仓库加入到“仓库”数据库中；并且设置这个仓库为首选仓库修改properties文件
