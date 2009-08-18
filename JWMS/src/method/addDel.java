@@ -118,7 +118,7 @@ public class addDel {
         String sql = "select amount from maint where info='" + info + "' and store='" + store + "'";
         rs = decreaseDb.DBSqlQuery(sql);
         if (rs.next()) {
-            if (Integer.parseInt(rs.getString(1)) - Integer.parseInt(amount) < 0) {
+            if (Integer.parseInt(rs.getString(1))<Integer.parseInt(amount)) {
                 result = false;
             }
         } else {

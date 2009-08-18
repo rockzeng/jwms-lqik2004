@@ -278,7 +278,7 @@ class loseFrame extends JFrame {
                     idmk.getMonth(month.getSelectedItem().toString());
                     loseBt.setDay(day.getSelectedItem().toString());
                     idmk.getDay(day.getSelectedItem().toString());
-                    loseBt.setDate(idmk.date);
+                    loseBt.setDate(idmk.showDate());
                     loseBt.setID(idmk.alterID("L"));
                     loseBt.setStore(storeComboBox.getSelectedItem().toString());
                     //未完成：如果是新加入的仓库，把新仓库加入到“仓库”数据库中；并且设置这个仓库为首选仓库修改properties文件
