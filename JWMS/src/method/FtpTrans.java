@@ -37,7 +37,7 @@ public class FtpTrans {
             ftp.setUserName(uname);
             ftp.setPassword(pwd);
             ftp.setRemotePort(21);
-            ftp.setTimeout(12000);
+            ftp.setTimeout(1200);
             ftp.getAdvancedFTPSettings().setConnectMode(FTPConnectMode.PASV);
             ftp.connect();
             System.out.println(host);

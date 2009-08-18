@@ -2,6 +2,7 @@ package jwms;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -9,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -17,6 +19,7 @@ import javax.swing.Box;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -40,7 +43,7 @@ public class setup {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        // TODO code application logic here 
         setupDialog frame = new setupDialog();
 //        frame.setTitle("程序设置");
         frame.setLocationRelativeTo(null);
@@ -54,6 +57,7 @@ class setupDialog extends JWindow {
 
     private JButton initInfo = new JButton("初始化仓储信息");
     private JButton initProgram = new JButton("初始化程序设置");
+    static initInfoFrame frame = null;
 
     public setupDialog() {
         Box vbox = Box.createVerticalBox();
@@ -66,7 +70,7 @@ class setupDialog extends JWindow {
         initInfo.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                initInfoFrame frame = null;
+
                 try {
                     frame = new initInfoFrame();
                 } catch (Exception ex) {
@@ -75,6 +79,140 @@ class setupDialog extends JWindow {
                 frame.setLocationRelativeTo(null);//一句让窗口居中
                 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 frame.setVisible(true);
+
+            }
+        });
+    }
+
+    public static Point frameLocateOnScr() {
+        return frame.getLocationOnScreen();
+    }
+}
+
+class importSetupDialog extends JFrame {
+    /*
+    @param filename 输入文件名；
+     * @param sheetNum  输入工作簿的序号，从0开始；
+     * @param beRow 工作表开始的行号，从0开始（例如：第一行，即为0）；
+     * @param endRow 工作表结束的行号；
+     * @param infoNum  “商品全名”列号从零开始，（例如：A，为0）；
+     * @param amountNum “库存数量”；
+     * @param priceNum  “成本均价”；
+     * @param allPrsNum “库存总价”；
+     */
+
+    private JLabel sheetNumLabel = new JLabel("输入工作簿序号");
+    private JLabel beRowLabel = new JLabel("开始行数：");
+    private JLabel enRowLabel = new JLabel("结束行数：");
+    private JLabel infoNumLabel = new JLabel("商品全名列号：");
+    private JLabel amountNumLabel = new JLabel("库存数量列号：");
+    private JLabel priceNumLabel = new JLabel("成本均价列号：");
+    private JLabel allPrsNumLabel = new JLabel("库存总价列号：");
+    private JTextField sheetNum = new JTextField("0", 2);
+    private JTextField beRow = new JTextField(3);
+    private JTextField enRow = new JTextField(3);
+    private JTextField infoNum = new JTextField("3", 2);
+    private JTextField amountNum = new JTextField("4", 2);
+    private JTextField priceNum = new JTextField("5", 2);
+    private JTextField allPrsNum = new JTextField("6", 2);
+    private JButton filename = new JButton("选择Excel文件");
+    private JButton confirm = new JButton("确定");
+    private String file = null;
+    public static Object[][] array = null;
+    public static int arrayRowCount;
+
+    public importSetupDialog() {
+        sheetNum.setEditable(true);
+        sheetNum.setEnabled(true);
+        beRow.setEditable(true);
+        beRow.setEnabled(true);
+        enRow.setEditable(true);
+        infoNum.setEditable(true);
+        amountNum.setEditable(true);
+        priceNum.setEditable(true);
+        allPrsNum.setEditable(true);
+
+        Box vbox = Box.createVerticalBox();
+        Box hbox0 = Box.createHorizontalBox();
+        hbox0.add(sheetNumLabel);
+        hbox0.add(sheetNum);
+        Box hbox1 = Box.createHorizontalBox();
+        hbox1.add(beRowLabel);
+        hbox1.add(beRow);
+        Box hbox2 = Box.createHorizontalBox();
+        hbox2.add(enRowLabel);
+        hbox2.add(enRow);
+        Box hbox3 = Box.createHorizontalBox();
+        hbox3.add(infoNumLabel);
+        hbox3.add(infoNum);
+        Box hbox4 = Box.createHorizontalBox();
+        hbox4.add(amountNumLabel);
+        hbox4.add(amountNum);
+        Box hbox5 = Box.createHorizontalBox();
+        hbox5.add(priceNumLabel);
+        hbox5.add(priceNum);
+        Box hbox6 = Box.createHorizontalBox();
+        hbox6.add(allPrsNumLabel);
+        hbox6.add(allPrsNum);
+        Box hbox7 = Box.createHorizontalBox();
+        hbox7.add(filename);
+        hbox7.add(Box.createHorizontalGlue());
+        Box hbox8 = Box.createHorizontalBox();
+        hbox8.add(confirm);
+        vbox.add(hbox0);
+        vbox.add(hbox1);
+        vbox.add(hbox2);
+        vbox.add(hbox3);
+        vbox.add(hbox4);
+        vbox.add(hbox5);
+        vbox.add(hbox6);
+        vbox.add(hbox7);
+        vbox.add(Box.createVerticalStrut(5));
+        vbox.add(hbox8);
+        add(vbox);
+        filename.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();//默认从我的文档打开文件
+                int result = chooser.showOpenDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    file = chooser.getSelectedFile().getAbsolutePath();
+                }
+
+
+//                JFileChooser chooser = new JFileChooser();
+//                File file = chooser.getSelectedFile();
+//                ReadExcel rd = new ReadExcel();
+
+//                rd.ReadExcelforInitStore(file, sumvalues, ERROR, tagrow, WIDTH, WIDTH, WIDTH, tagrow);
+
+            }
+        });
+        confirm.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if (file.equals(null)) {
+                    JOptionPane.showMessageDialog(null, "请选择一个Excel文件");
+                } else {
+                    ReadExcel rd = new ReadExcel();
+                    int berow = Integer.parseInt(beRow.getText());
+                    int enrow = Integer.parseInt(enRow.getText());
+                    int infonum = Integer.parseInt(infoNum.getText());
+                    int amoutnum = Integer.parseInt(amountNum.getText());
+                    int pricenum = Integer.parseInt(priceNum.getText());
+                    int allprsnum = Integer.parseInt(allPrsNum.getText());
+
+                    array = rd.ReadExcelforInitStore(file, Integer.parseInt(sheetNum.getText()),
+                            berow - 1, enrow - 1,
+                            infonum - 1, amoutnum - 1,
+                            pricenum - 1, allprsnum - 1);
+
+                    System.out.println(array[0][1]);
+                    arrayRowCount = enrow - berow + 1;
+                    initInfoFrame.refreshTable();
+                    dispose();
+                }
+
             }
         });
     }
@@ -90,17 +228,25 @@ class initInfoFrame extends JFrame {
     private static final int DEFAULT_HEIGHT = 647;
     private JComboBox NameCombo;
     private JComboBox storeComboBox = new JComboBox();
-    private TableModel model = new initInfoPlanetTableModel();
+    public static  ArrayList list = new ArrayList();
+    private static TableModel  model = new initInfoPlanetTableModel();
     private JTable table = new JTable(model);
     private JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
     private JTextField sumValues = new JTextField(3);
     private static int exceptionTag = 0;  //异常标记
+    boolean importSetupdiaSwitch = true;
+    importSetupDialog im = new importSetupDialog();
+
 
     public static void setExTag(int tag) {
         exceptionTag = tag;
     }
 
     public initInfoFrame() throws Exception {
+       /* for(int i=0;i<Integer.parseInt(propertiesRW.proIDMakeRead("tablerow"));i++){
+            columnBean p=new columnBean();
+            list.add(p);
+        }*/
         //初始化数据库，读入信息
         storeLoad();//读入仓库信息
         items = infoLoad();
@@ -113,12 +259,15 @@ class initInfoFrame extends JFrame {
         storeComboBox.setMaximumSize(storeComboBox.getPreferredSize());
         storeComboBox.setEditable(false);   //仓库不可直接修改
         JButton addStore = new JButton("添加仓库");
+        JButton importFromExcel = new JButton("从Excel导入");
         Box hbox2 = Box.createHorizontalBox();
         hbox2.add(Box.createHorizontalStrut(5));
         hbox2.add(labelStore);
         hbox2.add(storeComboBox);
         hbox2.add(Box.createHorizontalStrut(20));
         hbox2.add(addStore);
+        hbox2.add(Box.createHorizontalStrut(20));
+        hbox2.add(importFromExcel);
         hbox2.add(Box.createHorizontalGlue());
         //加入列表栏
 
@@ -207,6 +356,30 @@ class initInfoFrame extends JFrame {
                 dispose();
             }
         });
+        /*
+         * 从excel导入
+         * 
+         */
+
+        importFromExcel.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                /*完成单击按钮打开和关闭效果*/
+                if (importSetupdiaSwitch) {
+                    Point point = setupDialog.frameLocateOnScr();
+                    im.setSize(150, 220);
+                    im.setLocation(point.x + 400, point.y + 30);
+                    im.setTitle("设置导入Excel文件属性");
+                    im.setUndecorated(true);
+                    im.setVisible(true);
+                    importSetupdiaSwitch = false;
+                } else {
+                    im.dispose();
+                    importSetupdiaSwitch = true;
+                }
+
+            }
+        });
         //提交按钮设计
         referButton.addActionListener(new ActionListener() {
 
@@ -259,6 +432,27 @@ class initInfoFrame extends JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(inputFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public static void refreshTable(){
+        for(int i=0;i<importSetupDialog.arrayRowCount;i++){
+          /*  columnBean c=new columnBean();
+            c.setNum(String.valueOf(i+1));
+            c.setInfo(importSetupDialog.array[i][0].toString());
+            c.setAmount(importSetupDialog.array[i][1].toString());
+            c.setInPrice(importSetupDialog.array[i][2].toString());
+            c.setSumPrice(importSetupDialog.array[i][3].toString());
+            */
+                model.setValueAt(String.valueOf(i+1), i, 0);
+                model.setValueAt(importSetupDialog.array[i][0].toString(), i, 1);
+                model.setValueAt(importSetupDialog.array[i][1].toString(), i, 2);
+                model.setValueAt(importSetupDialog.array[i][2].toString(), i, 3);
+                model.setValueAt(importSetupDialog.array[i][3].toString(), i, 5);
+
+            }
+
+        
+
     }
 
     private Object[] infoLoad() {
@@ -468,46 +662,239 @@ class initInfoFrame extends JFrame {
 
 class initInfoPlanetTableModel extends AbstractTableModel {
 
+public initInfoPlanetTableModel() {
+for (int i = 0; i < Integer.parseInt(propertiesRW.proIDMakeRead("tablerow")); i++) {
+for (int k = 0; k < 6; k++) {
+cells[i][k] = "";
+}
+}
+}
+
+
+@Override
+public String getColumnName(int c) {
+return columnNames[c];
+}
+
+public int getColumnCount() {
+return columnNames.length;
+}
+
+public int getRowCount() {
+return cells.length;
+}
+
+public Object getValueAt(int r, int c) {
+return cells[r][c];
+}
+
+@Override
+public void setValueAt(Object obj, int r, int c) {
+cells[r][c] = obj;
+}
+
+@Override
+public boolean isCellEditable(int r, int c) {
+return c == NAME || c == VALUES || c == INPRICE || c == OUTPRICE || c == SUMPRICE;
+}
+public static final int NAME = 1;
+public static final int VALUES = 2;
+public static final int INPRICE = 3;
+public static final int OUTPRICE = 4;
+public static final int SUMPRICE = 5;
+//public static final int OTHERS = 6;
+private Object[][] cells = new Object[Integer.parseInt(propertiesRW.proIDMakeRead("tablerow"))][6];
+private String[] columnNames = {"编号", "商品名称", "数量", "入库单价", "零售价", "合计金额"};
+}/*
+class initInfoPlanetTableModel extends AbstractTableModel {
+
+    private ArrayList list = new ArrayList();
+    private String[] column = {"编号", "商品名称", "数量", "入库单价", "零售价", "合计金额"};
+
     public initInfoPlanetTableModel() {
-        for (int i = 0; i < Integer.parseInt(propertiesRW.proIDMakeRead("tablerow")); i++) {
-            for (int k = 0; k < 6; k++) {
-                cells[i][k] = "";
-            }
-        }
+
     }
 
-    @Override
-    public String getColumnName(int c) {
-        return columnNames[c];
+    public initInfoPlanetTableModel(ArrayList list) {
+        this();
+        setList(list);
     }
 
     public int getColumnCount() {
-        return columnNames.length;
+        return column.length;
     }
 
     public int getRowCount() {
-        return cells.length;
+        return list.size();
     }
 
-    public Object getValueAt(int r, int c) {
-        return cells[r][c];
-    }
-
-    @Override
-    public void setValueAt(Object obj, int r, int c) {
-        cells[r][c] = obj;
+    public Object getValueAt(int arg0, int arg1) {
+        columnBean p = (columnBean) list.get(arg0);
+        return getPropertyValueByCol(p, arg1);
     }
 
     @Override
-    public boolean isCellEditable(int r, int c) {
-        return c == NAME || c == VALUES || c == INPRICE || c == OUTPRICE || c == SUMPRICE;
+    public void setValueAt(Object arg0, int arg1, int arg2) {
+        columnBean p = (columnBean) list.get(arg1);
+        switch (arg2) {
+            case 0:
+                p.setNum(arg0.toString());
+                return;
+            case 1:
+                p.setInfo(arg0.toString());
+                return;
+            case 2:
+                p.setAmount(arg0.toString());
+                return;
+            case 3:
+                p.setInPrice(arg0.toString());
+                return;
+            case 4:
+                p.setOutPrice(arg0.toString());
+                return;
+            case 5:
+                p.setSumPrice(arg0.toString());
+                return;
+        }
+        super.setValueAt(arg0, arg1, arg2);
+        fireTableDataChanged();
     }
-    public static final int NAME = 1;
-    public static final int VALUES = 2;
-    public static final int INPRICE = 3;
-    public static final int OUTPRICE = 4;
-    public static final int SUMPRICE = 5;
-    //public static final int OTHERS = 6;
-    private Object[][] cells = new Object[Integer.parseInt(propertiesRW.proIDMakeRead("tablerow"))][6];
-    private String[] columnNames = {"编号", "商品名称", "数量", "入库单价", "零售价", "合计金额"};
+
+    public void addList(int index, columnBean p) {
+        if (index < 0 || index > list.size() - 1) {
+            list.add(p);
+            fireTableRowsInserted(list.size(), list.size());
+        } else {
+            list.add(index, p);
+            fireTableRowsInserted(index, index);
+        }
+    }
+
+    public boolean deleteList(int index) {
+        if (index >= 0 && index < list.size()) {
+            list.remove(index);
+            fireTableRowsDeleted(index, index);
+            return true;
+
+        } else {
+            return false;
+        }
+    }
+
+    public boolean updateList(int index, columnBean p) {
+        if (index >= 0 && index < list.size()) {
+            list.set(index, p);
+            fireTableRowsUpdated(index, index);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public columnBean getList(int index) {
+        if (index >= 0 && index < list.size()) {
+            return (columnBean) list.get(index);
+
+        } else {
+            return null;
+        }
+    }
+
+    public ArrayList getList() {
+        return list;
+    }
+
+    public void setList(ArrayList list) {
+        this.list = list;
+        fireTableDataChanged();
+    }
+
+    public String getColumnName(int i) {
+        return column[i];
+    }
+
+    public void setColumn(String[] column) {
+        this.column = column;
+    }
+
+    public Object getPropertyValueByCol(columnBean p, int col) {
+        switch (col) {
+            case 0:
+                return p.getNum();
+            case 1:
+                return p.getInfo();
+            case 2:
+                return p.getAmount();
+            case 3:
+                return p.getInprice();
+            case 4:
+                return p.getOutprice();
+            case 5:
+                return p.getSumPrice();
+        }
+        return null;
+    }
+
+    public boolean isCellEditable(int row, int c) {
+        return c == 1 || c == 2 || c == 3 || c == 4 || c == 5;
+    }
 }
+
+class columnBean {
+
+    private String num=null;
+    private String info=null;
+    private String amount=null;
+    private String inPrice=null;
+    private String outPrice=null;
+    private String sumPrice=null;
+
+    public String getNum() {
+        return num;
+    }
+
+    public void setNum(String num) {
+        this.num = num;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public String getAmount() {
+        return amount;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
+
+    public String getInprice() {
+        return inPrice;
+    }
+
+    public void setInPrice(String inprice) {
+        this.inPrice = inprice;
+    }
+
+    public String getOutprice() {
+        return outPrice;
+    }
+
+    public void setOutPrice(String outprice) {
+        this.outPrice = outprice;
+    }
+
+    public String getSumPrice() {
+        return sumPrice;
+    }
+
+    public void setSumPrice(String sumPrice) {
+        this.sumPrice = sumPrice;
+    }
+}
+*/
