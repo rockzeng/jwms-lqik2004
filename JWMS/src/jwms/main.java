@@ -246,7 +246,7 @@ class mainFrame extends JFrame {
                 if (setupTag == 0) {
                     Point point = main.frameLocateOnScr();
 //                    setupDialog.setTitle("设置");
-                    setupDialog.setSize(140, 70);
+                    setupDialog.setSize(140, 120);
 //                    setupDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     setupDialog.setLocation(point.x, point.y + 120);//设置窗口停靠，自动生成在主窗口下方
 //                    setupDialog.setUndecorated(true);//隐藏标题栏
