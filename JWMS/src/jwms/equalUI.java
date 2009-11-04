@@ -39,14 +39,7 @@ public class equalUI {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
-        // TODO code application logic here
         equalFrame frame = new equalFrame();
-        /**Toolkit tool = Toolkit.getDefaultToolkit();
-        Dimension screenSize = tool.getScreenSize();
-        int locateHeight = (screenSize.height - frame.getHeight()) / 2;
-        int locateWidth = (screenSize.width - frame.getWidth()) / 2;
-        frame.setLocation(locateWidth, locateHeight);
-         */
         frame.setLocationRelativeTo(null);//一句让窗口居中
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
@@ -59,7 +52,7 @@ class equalFrame extends JFrame {
         "2009", "2010", "2011", "2012"
     };
     private Object[] Objmonth = {
-        "01", "02", "03", "04", "05", "06", "07","08", "09", "10", "11", "12"
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"
     };
     private Object[] Objday = {
         "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
@@ -82,11 +75,16 @@ class equalFrame extends JFrame {
     private JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
     private JTextField sumValues = new JTextField(3);
     private static int exceptionTag = 0;  //异常标记
+    private String[] tableOldInfo = new String[model.getRowCount()];
 
     public static void setExTag(int tag) {
         exceptionTag = tag;
     }
 
+    /**
+     * 把初始化商品信息放到了当已经选择仓库之后进行，以得到此仓库的数据
+     * @throws Exception
+     */
     public equalFrame() throws Exception {
         //初始化数据库，读入信息
         storeLoad();//读入仓库信息
@@ -96,7 +94,7 @@ class equalFrame extends JFrame {
         //设置ID
         JLabel labelID = new JLabel("编号：");
         ID.setEditable(false);//不可修改
-       ID.setText(new inputIDMake().showID("E", getDate.getYear(), getDate.getMonth(), getDate.getDay()));
+        ID.setText(new inputIDMake().showID("E", getDate.getYear(), getDate.getMonth(), getDate.getDay()));
         ID.setMaximumSize(ID.getPreferredSize());   //使在箱式布局下不会默认取得最大值，保持预定义大小
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(Box.createHorizontalGlue());
@@ -149,22 +147,12 @@ class equalFrame extends JFrame {
 
         table.setRowSelectionAllowed(false);
         addEditEvent(table);
-        // set up renderers and editors
-        //table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
-        //table.setDefaultEditor(Color.class, new ColorTableCellEditor());
-        //排序内容
-        //java.util.ArrayList list = new java.util.ArrayList(Arrays.asList(items));
-        //Collections.sort(list);
-        //JComboBox cmb = new JAutoCompleteComboBox(list.toArray());
-        //Arrays.sort(items);//对item进行排序
         AutoCompleter.setItems(items);
         //把单元格改造成JAutoCompleteComboBox
         NameCombo = new JAutoCompleteComboBox(items);
         TableColumnModel columnModel = table.getColumnModel();
         TableColumn NameColumn = columnModel.getColumn(1);
         NameColumn.setCellEditor(new DefaultCellEditor(NameCombo));
-
-        //table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);//自动调整方式，未开启
         table.getColumnModel().getColumn(0).setPreferredWidth(30);//设置第一列列宽
         table.getColumnModel().getColumn(1).setPreferredWidth(120);
         table.getColumnModel().getColumn(2).setPreferredWidth(50);
@@ -172,7 +160,7 @@ class equalFrame extends JFrame {
         for (int i = 0; i < model.getRowCount(); i++) {
             model.setValueAt(i + 1, i, 0);
         }
-         table.setDefaultRenderer(Object.class, new ColorRenderer());
+        table.setDefaultRenderer(Object.class, new ColorRenderer());
         JScrollPane tablePane = new JScrollPane(table);
         Box hboxPane = Box.createHorizontalBox();
         hboxPane.add(Box.createHorizontalStrut(5));
@@ -219,6 +207,7 @@ class equalFrame extends JFrame {
         vbox.add(Box.createVerticalStrut(10));
         add(vbox, BorderLayout.CENTER);
 
+
         //退出按钮设计
         exit.addActionListener(new ActionListener() {
 
@@ -233,12 +222,13 @@ class equalFrame extends JFrame {
              * 给按钮加入响应，用以“持久化”tag和judge两个文件，更新数据
              */
             public void actionPerformed(ActionEvent e) {
-                exceptionTag=0;//对异常标签进行初始化
-                int ifcontinue = JOptionPane.showConfirmDialog(null, "请确认单据过账", "单据确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                exceptionTag = 0;//对异常标签进行初始化
+                int ifcontinue = JOptionPane.showConfirmDialog(null, "请确认单据过账",
+                        "单据确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ifcontinue == JOptionPane.YES_OPTION) {
                     inputIDMake idmk = new inputIDMake();
                     equal2Main equalBt = new equal2Main();//定义一个新的对象，用以传输数据；
-                    
+
                     idmk.getYear(year.getSelectedItem().toString());
                     equalBt.setYear(year.getSelectedItem().toString());
                     equalBt.setMonth(month.getSelectedItem().toString());
@@ -247,7 +237,7 @@ class equalFrame extends JFrame {
                     equalBt.setDay(day.getSelectedItem().toString());
                     equalBt.setDate(idmk.showDate());
                     equalBt.setID(idmk.alterID("E"));
-                    
+
                     equalBt.setINStore(inStoreComboBox.getSelectedItem().toString());
                     equalBt.setOUTStore(outStoreComboBox.getSelectedItem().toString());
                     for (int i = 0; i < model.getRowCount(); i++) {
@@ -261,14 +251,10 @@ class equalFrame extends JFrame {
                         }
                     }
                     try {
-                        //tagJudgeRW.writeFile("tag", idMake.tag);  老方法，此文件在测试包中的oldPacket
-                        //tagJudgeRW.writeFile("judge", idMake.judge);
-                      
-                        //把现在使用的仓库写入到properties文件，等下次打开时自动变成上次使用的仓库
                         propertiesRW.proIDMakeWrite("outStoreEqual", outStoreComboBox.getSelectedIndex());
                         propertiesRW.proIDMakeWrite("inStoreEqual", inStoreComboBox.getSelectedIndex());
                     } catch (IOException ex) {
-                        Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(equalFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     if (exceptionTag == 0) {
                         dispose();
@@ -348,53 +334,39 @@ class equalFrame extends JFrame {
             if (selectingrow < 0 || selectingcol < 0) {
                 return;
             }
-
             try {
                 tb.getCellEditor(selectingrow, selectingcol).stopCellEditing();
             } catch (Exception ex) {
             }
-            /*
-            switch (key) {
-            /*
-            case KeyEvent.VK_ENTER: {
-            break;
-            }
-            case KeyEvent.VK_ESCAPE: {
-            //stopEditing(tb);
-            return;
-            }
-            default: {
-            return;
-            }
-            }
-             */
             try {
-                /**
-                if (selectingrow >= rows) {
-                selectingrow = 0;
-                selectingcol++;
-                }
-                if (selectingcol >= cols) {
-                selectingcol = 0;
-                }
-                if (selectingcol >= cols) {
-                selectingcol = 0;
-                selectingrow++;
-                }
-                if (selectingrow >= rows) {
-                selectingrow = 0;
-                }
-                 */
                 if (!tb.isCellEditable(selectingrow, selectingcol)) {
                     return;
                 }
-
-                //                                 tb.setRowSelectionInterval(selectingrow,selectingrow);
-                //                                 tb.setColumnSelectionInterval(selectingcol,selectingcol);
-                tb.editCellAt(selectingrow, selectingcol);
-                (((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
-                ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();
-                tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1) * tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
+                if (selectingcol == 1) {
+                    tb.editCellAt(selectingrow, selectingcol);
+                    (((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
+                    ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();
+                    tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1) * tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
+                }
+                ResultSet rs=null;
+                 if (tableOldInfo[selectingrow] != model.getValueAt(selectingrow, 1)) {
+                    String amount = null;
+                    String out = null;
+                    dbOperation findMain = new dbOperation();
+                    findMain.DBConnect();
+                    String sql = "select distinct amount from maint where " +
+                            "info='" + model.getValueAt(selectingrow, 1).toString() + "' " +
+                            "and store='"+outStoreComboBox.getSelectedItem().toString().trim()+"'";
+                    rs = findMain.DBSqlQuery(sql);
+                    while (rs.next()) {
+                        amount = rs.getString(1);
+                        break;
+                    }
+                    findMain.DBClosed();
+                    model.setValueAt(amount, selectingrow, 2);
+                    tableOldInfo[selectingrow] = model.getValueAt(selectingrow, 1).toString();
+                    table.repaint();
+                }
             } catch (Exception ex) {
             }
         } catch (Exception ex) {
@@ -417,8 +389,6 @@ class equalPlanetTableModel extends AbstractTableModel {
     public String getColumnName(int c) {
         return columnNames[c];
     }
-
-   
 
     public int getColumnCount() {
         return columnNames.length;

@@ -1,6 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * 起始主类，作为一个starter类使用
+ * 
  */
 package jwms;
 
@@ -52,8 +52,8 @@ public class main {
 
 class mainFrame extends JFrame {
 
-    private int dialogTag = 0;
-    private int setupTag = 0;
+    private int isDialogInit = 0;
+    private int isSetupInit = 0;
     private JButton setup = new JButton();
 
     public mainFrame() {
@@ -130,11 +130,13 @@ class mainFrame extends JFrame {
         exit.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                int ifcontinue = JOptionPane.showConfirmDialog(null, "请确认所有的录入窗口已经关闭，如果继续本程序将退出，所有未过账的单据不会保存！", "退出确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int ifcontinue = JOptionPane.showConfirmDialog(null, 
+                        "请确认所有的录入窗口已经关闭，如果继续本程序将退出，所有未过账的单据不会保存！",
+                        "退出确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ifcontinue == JOptionPane.YES_OPTION) {
                     System.exit(0);
                 }
-                throw new UnsupportedOperationException("Not supported yet.");
+//                throw new UnsupportedOperationException("Not supported yet.");
             }
         });
         sell.addActionListener(new ActionListener() {
@@ -146,7 +148,7 @@ class mainFrame extends JFrame {
                 } catch (Exception ex) {
                     Logger.getLogger(mainFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                frame.setLocationRelativeTo(null);//一句让窗口居中
+                frame.setLocationRelativeTo(null);//窗口居中
                 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 frame.setVisible(true);
             }
@@ -156,13 +158,7 @@ class mainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     inputFrame frame = new inputFrame();
-                    /**Toolkit tool = Toolkit.getDefaultToolkit();
-                    Dimension screenSize = tool.getScreenSize();
-                    int locateHeight = (screenSize.height - frame.getHeight()) / 2;
-                    int locateWidth = (screenSize.width - frame.getWidth()) / 2;
-                    frame.setLocation(locateWidth, locateHeight);
-                     */
-                    frame.setLocationRelativeTo(null); //一句让窗口居中
+                    frame.setLocationRelativeTo(null); //窗口居中
                     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     frame.setVisible(true);
                 } catch (Exception ex) {
@@ -175,12 +171,6 @@ class mainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     equalFrame frame = new equalFrame();
-                    /**Toolkit tool = Toolkit.getDefaultToolkit();
-                    Dimension screenSize = tool.getScreenSize();
-                    int locateHeight = (screenSize.height - frame.getHeight()) / 2;
-                    int locateWidth = (screenSize.width - frame.getWidth()) / 2;
-                    frame.setLocation(locateWidth, locateHeight);
-                     */
                     frame.setLocationRelativeTo(null); //一句让窗口居中
                     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     frame.setVisible(true);
@@ -223,14 +213,11 @@ class mainFrame extends JFrame {
         about.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                if (dialogTag == 0) {
+                if (isDialogInit == 0) {
                     Point point = main.frameLocateOnScr();
-//                    aboutDialog.setTitle("关于");
                     aboutDialog.setSize(200, 90);
-//                    aboutDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     aboutDialog.setLocation(point.x + 500, point.y + 30);//设置窗口停靠，自动生成在主窗口左侧
-//                    aboutDialog.setUndecorated(true);//隐藏标题栏
-                    dialogTag = 1;
+                    isDialogInit = 1;
                 }
                 if (aboutDialog.isVisible()) {
                     aboutDialog.setVisible(false);
@@ -243,22 +230,17 @@ class mainFrame extends JFrame {
 
             public void actionPerformed(ActionEvent e) {
 
-                if (setupTag == 0) {
-                    Point point = main.frameLocateOnScr();
-//                    setupDialog.setTitle("设置");
+                if (isSetupInit == 0) {
+                    Point point = main.frameLocateOnScr();//取得窗口位置
                     setupDialog.setSize(140, 120);
-//                    setupDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     setupDialog.setLocation(point.x, point.y + 120);//设置窗口停靠，自动生成在主窗口下方
-//                    setupDialog.setUndecorated(true);//隐藏标题栏
-                    setupTag = 1;
+                    isSetupInit = 1;
                 }
                 if (setupDialog.isVisible()) {
                     setupDialog.setVisible(false);
-                    //setup.setEnabled(true);
                     setup.setIcon(new ImageIcon("image\\setupico.jpg"));
                 } else if (!setupDialog.isVisible()) {
                     setupDialog.setVisible(true);
-                    //setup.setEnabled(false);
                     setup.setIcon(new ImageIcon("image\\setupico_down.gif"));
                 }
             }

@@ -61,7 +61,7 @@ class inputFrame extends JFrame {
         "2009", "2010", "2011", "2012"
     };
     private Object[] Objmonth = {
-        "01", "02", "03", "04", "05", "06", "07","08", "09", "10", "11", "12"
+        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"
     };
     private Object[] Objday = {
         "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
@@ -82,9 +82,11 @@ class inputFrame extends JFrame {
     private JTable table = new JTable(model);
     private JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
     private JTextField sumValues = new JTextField(3);
+    private String[] tableOldInfo = new String[model.getRowCount()];
+    private String[] tableOldAmount = new String[model.getRowCount()];
+    private String[] tableOldPrice = new String[model.getRowCount()];
     private short inputORreturn = 0;
     private static int exceptionTag = 0;  //异常标记
-  
 
     public static void setExTag(int tag) {
         exceptionTag = tag;
@@ -117,7 +119,7 @@ class inputFrame extends JFrame {
         //设置ID
         JLabel labelID = new JLabel("编号：");
         ID.setEditable(false);//不可修改
-       ID.setText(new inputIDMake().showID("I", getDate.getYear(), getDate.getMonth(), getDate.getDay()));
+        ID.setText(new inputIDMake().showID("I", getDate.getYear(), getDate.getMonth(), getDate.getDay()));
         ID.setMaximumSize(ID.getPreferredSize());   //使在箱式布局下不会默认取得最大值，保持预定义大小
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(input);
@@ -166,7 +168,7 @@ class inputFrame extends JFrame {
         //加入列表栏
 
         table.setRowSelectionAllowed(false);
-         table.setDefaultRenderer(Object.class, new ColorRenderer());
+        table.setDefaultRenderer(Object.class, new ColorRenderer());
         addEditEvent(table);
         // set up renderers and editors
         //table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
@@ -256,16 +258,17 @@ class inputFrame extends JFrame {
         });
         //提交按钮设计
         referButton.addActionListener(new ActionListener() {
+
             /**
              * 给按钮加入响应，用以“持久化”tag和judge两个文件，更新数据
              */
             public void actionPerformed(ActionEvent e) {
-                exceptionTag=0;//对异常标签进行初始化
+                exceptionTag = 0;//对异常标签进行初始化
                 int ifcontinue = JOptionPane.showConfirmDialog(null, "请确认单据过账", "单据确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ifcontinue == JOptionPane.YES_OPTION) {
                     inputIDMake idmk = new inputIDMake();
                     input2Main inputBt = new input2Main();//定义一个新的对象，用以传输数据；
-                   
+
                     idmk.getYear(year.getSelectedItem().toString());
                     inputBt.setYear(year.getSelectedItem().toString());
                     idmk.getMonth(month.getSelectedItem().toString());
@@ -314,7 +317,7 @@ class inputFrame extends JFrame {
                         //把现在使用的仓库写入到properties文件，等下次打开时自动变成上次使用的仓库
                         propertiesRW.proIDMakeWrite("storeInput", storeComboBox.getSelectedIndex());
                     } catch (IOException ex) {
-                        Logger.getLogger(sellFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(inputFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     if (exceptionTag == 0) {
                         dispose();
@@ -385,7 +388,6 @@ class inputFrame extends JFrame {
         try {
             int rows = tb.getRowCount();
             int cols = tb.getColumnCount();
-
             int selectingrow = tb.getSelectedRow();
             int selectingcol = tb.getSelectedColumn();
 
@@ -397,129 +399,82 @@ class inputFrame extends JFrame {
                 tb.getCellEditor(selectingrow, selectingcol).stopCellEditing();
             } catch (Exception ex) {
             }
-            /*
-            switch (key) {
-            /*
-            case KeyEvent.VK_ENTER: {
-            break;
-            }
-            case KeyEvent.VK_ESCAPE: {
-            //stopEditing(tb);
-            return;
-            }
-            default: {
-            return;
-            }
-            }
-             */
             try {
-                /**
                 if (selectingrow >= rows) {
-                selectingrow = 0;
-                selectingcol++;
+                    selectingrow = 0;
+                    selectingcol++;
                 }
                 if (selectingcol >= cols) {
-                selectingcol = 0;
+                    selectingcol = 0;
                 }
                 if (selectingcol >= cols) {
-                selectingcol = 0;
-                selectingrow++;
+                    selectingcol = 0;
+                    selectingrow++;
                 }
                 if (selectingrow >= rows) {
-                selectingrow = 0;
+                    selectingrow = 0;
                 }
-                 */
+
                 if (!tb.isCellEditable(selectingrow, selectingcol)) {
                     return;
                 }
-
-                //                                 tb.setRowSelectionInterval(selectingrow,selectingrow);
-                //                                 tb.setColumnSelectionInterval(selectingcol,selectingcol);
-                tb.editCellAt(selectingrow, selectingcol);
-                (((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();
-                ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();
-                tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1) * tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
-                ResultSet rs = null;
-                if (selectingrow != tagrow) { //为了处理对不同列进行的修改，特别加入判断语句，并且记录上一次保存的行数
-                    /**
-                     * 对Tagrow的库存价进行查找
-                     */
-                    if (model.getValueAt(tagrow, 3).toString() == "" && model.getValueAt(tagrow, 4).toString() == "") {
-                        String in = null;
-                        String out = null;
-                        dbOperation findMain = new dbOperation();
-                        findMain.DBConnect();
-                        String sql = "select distinct inPrice,outPrice from maint where info='" + model.getValueAt(tagrow, 1).toString() + "'";
-                        rs = findMain.DBSqlQuery(sql);
-                        while (rs.next()) {
-                            in = rs.getString(1);
-                            out = rs.getString(2);
-                            break;
-                        }
-                        findMain.DBClosed();
-                        model.setValueAt(in, tagrow, 3);
-                        model.setValueAt(out, tagrow, 4);
-                        table.repaint();
-                    }
-                    /**
-                     * 对tagrow 的总价进行计算
-                     */
-                    if (model.getValueAt(tagrow, 2).toString() != "" && model.getValueAt(tagrow, 3).toString() != "") {
-                        float value = Float.parseFloat(model.getValueAt(tagrow, 2).toString().trim());
-                        float price = Float.parseFloat(model.getValueAt(tagrow, 3).toString().trim());
-                        float sp = value * price;
-                        model.setValueAt(String.valueOf(sp), tagrow, 5);
-                        table.repaint();//刷新table;
-                    }
-                    tagrow = selectingrow;
+                if (selectingcol == 1) {
+                    tb.editCellAt(selectingrow, selectingcol);//使得选中的单元格处于编辑状态
+                    (((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();//当键盘或者鼠标选中单元格的时候，自动获得焦点，进入编辑模式
+                    ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();//对与jtextfield，默认进行全选
+                    tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1) *
+                            tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
                 }
-                /**
-                 * 对Tagrow的库存价进行查找
-                 */
-                if (model.getValueAt(selectingrow, 1).toString() != "" && model.getValueAt(selectingrow, 3).toString() == "" && model.getValueAt(selectingrow, 4).toString() == "") {
-                    String in = null;
+                ResultSet rs = null;
+                //信息改变事件
+                if (tableOldInfo[selectingrow] != model.getValueAt(selectingrow, 1)) {
+                    String amount = null;
                     String out = null;
+                    String in = null;
                     dbOperation findMain = new dbOperation();
                     findMain.DBConnect();
-                    String sql = "select distinct inPrice,outPrice from maint where info='" + model.getValueAt(selectingrow, 1).toString() + "'";
+                    String sql = "select distinct amount,inPrice,outPrice from maint where " +
+                            "info='" + model.getValueAt(selectingrow, 1).toString() + "'";
                     rs = findMain.DBSqlQuery(sql);
                     while (rs.next()) {
-                        in = rs.getString(1);
-                        out = rs.getString(2);
+                        amount = rs.getString(1);
+                        in = rs.getString(2);
+                        out = rs.getString(3);
                         break;
                     }
                     findMain.DBClosed();
+                    model.setValueAt(amount, selectingrow, 2);
                     model.setValueAt(in, selectingrow, 3);
                     model.setValueAt(out, selectingrow, 4);
-                    table.repaint();
-                }
-                /**
-                 * 对tagrow 的总价进行计算
-                 */
-                if (model.getValueAt(selectingrow, 2).toString() != "" && model.getValueAt(selectingrow, 3).toString() != "") {
                     float value = Float.parseFloat(model.getValueAt(selectingrow, 2).toString().trim());
                     float price = Float.parseFloat(model.getValueAt(selectingrow, 3).toString().trim());
                     float sp = value * price;
                     model.setValueAt(String.valueOf(sp), selectingrow, 5);
+                    tableOldAmount[selectingrow] = amount;
+                    tableOldPrice[selectingrow] = in;
+                    tableOldInfo[selectingrow] = model.getValueAt(selectingrow, 1).toString();
                     table.repaint();
                 }
-                sumvalues = 0;//清空总数量值
-                for (int i = 0; i <= model.getRowCount(); i++) {
-                    String value = model.getValueAt(i, 2).toString().trim();
-                    if (value == "") {
-                        break;
-                    }
-                    sumvalues = sumvalues + Integer.parseInt(value);
-                    sumValues.setText(String.valueOf(sumvalues));
+                //数量或者价格改变
+                if (tableOldAmount[selectingrow] != model.getValueAt(selectingrow, 2) ||
+                        tableOldPrice[selectingrow] != model.getValueAt(selectingrow, 3)) {
+                    float value = Float.parseFloat(model.getValueAt(selectingrow, 2).toString().trim());
+                    float price = Float.parseFloat(model.getValueAt(selectingrow, 3).toString().trim());
+                    float sp = value * price;
+                    model.setValueAt(String.valueOf(sp), selectingrow, 5);
+                    tableOldAmount[selectingrow] = model.getValueAt(selectingrow, 2).toString().trim();
+                    tableOldPrice[selectingrow] = model.getValueAt(selectingrow, 3).toString().trim();
+                    table.repaint();
                 }
                 sumprice = 0;//清空总价
+                sumvalues = 0;//清空总数量
                 for (int i = 0; i <= model.getRowCount(); i++) {
-                    String value = model.getValueAt(i, 5).toString().trim();
-                    if (value == "") {
-                        break;
-                    }
-                    sumprice = sumprice + Float.parseFloat(value);
+                    String sprice = model.getValueAt(i, 5).toString().trim();
+                    String samount = model.getValueAt(i, 2).toString().trim();
+                    sumprice = sumprice + Float.parseFloat(sprice);
+                    sumvalues = sumvalues + Integer.parseInt(samount);
                     sumPrice.setText(String.valueOf(sumprice));
+                    sumValues.setText(String.valueOf(sumvalues));
                 }
             } catch (Exception ex) {
             }
@@ -543,7 +498,6 @@ class inputPlanetTableModel extends AbstractTableModel {
     public String getColumnName(int c) {
         return columnNames[c];
     }
-
 
     public int getColumnCount() {
         return columnNames.length;

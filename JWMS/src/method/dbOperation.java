@@ -15,18 +15,31 @@ public class dbOperation {
     private Connection conn;
     private Statement stmt;
     private ResultSet rs = null;
+    private String sqlType;
 
-    public static void DBcleared(String x){
-        
+    public dbOperation() {
+        sqlType = propertiesRW.proIDMakeRead("sqltype").toUpperCase();
+    }
+
+    public static void DBcleared(String x) {
     }
 
     public void DBConnect() {
-
+        String url;
+        String user;
+        String password;
         try {
-            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            String url = "jdbc:odbc:jwms";
-            String user = "sa";
-            String password = "";
+            if ("MYSQL".equals(sqlType)) {
+                url = "jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=gb2312";
+                user = "root";
+                password = "881010";
+                Class.forName("com.mysql.jdbc.Driver");
+            } else {
+                Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+                url = "jdbc:odbc:jwms";
+                user = "sa";
+                password = "";
+            }
             conn = DriverManager.getConnection(url, user, password);
             stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_UPDATABLE);

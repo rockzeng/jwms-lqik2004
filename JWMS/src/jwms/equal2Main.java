@@ -47,7 +47,6 @@ public class equal2Main {
         System.out.println(outStore);
         System.out.println(amount);
         System.out.println(others);
-
     }
 
     /**
