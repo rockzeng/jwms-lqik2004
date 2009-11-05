@@ -296,7 +296,6 @@ class sellFrame extends JFrame {
                             sellBt.setInfo(model.getValueAt(i, 1).toString());
                             sellBt.setAmount(model.getValueAt(i, 2).toString());
                             sellBt.setOutPrice(model.getValueAt(i, 3).toString());
-                            sellBt.setOthers(model.getValueAt(i, 5).toString());
                             sellBt.setSellORreturn(sellORreturn);
                             //sellBt.test();
                             //根据单选按钮的信息来选择使用哪个方法
