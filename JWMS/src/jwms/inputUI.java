@@ -443,13 +443,15 @@ class inputFrame extends JFrame {
                         break;
                     }
                     findMain.DBClosed();
-                    model.setValueAt(amount, selectingrow, 2);
-                    model.setValueAt(in, selectingrow, 3);
-                    model.setValueAt(out, selectingrow, 4);
-                    float value = Float.parseFloat(model.getValueAt(selectingrow, 2).toString().trim());
-                    float price = Float.parseFloat(model.getValueAt(selectingrow, 3).toString().trim());
-                    float sp = value * price;
-                    model.setValueAt(String.valueOf(sp), selectingrow, 5);
+                    if (amount != null && in != null && out != null) {
+                        model.setValueAt(amount, selectingrow, 2);
+                        model.setValueAt(in, selectingrow, 3);
+                        model.setValueAt(out, selectingrow, 4);
+                        float value = Float.parseFloat(model.getValueAt(selectingrow, 2).toString().trim());
+                        float price = Float.parseFloat(model.getValueAt(selectingrow, 3).toString().trim());
+                        float sp = value * price;
+                        model.setValueAt(String.valueOf(sp), selectingrow, 5);
+                    }
                     tableOldAmount[selectingrow] = amount;
                     tableOldPrice[selectingrow] = in;
                     tableOldInfo[selectingrow] = model.getValueAt(selectingrow, 1).toString();
