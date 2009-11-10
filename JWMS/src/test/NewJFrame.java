@@ -11,6 +11,10 @@
 
 package test;
 
+import javax.swing.JFrame;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.demo.PieChartDemo1;
+
 /**
  *
  * @author Administrator
@@ -20,6 +24,7 @@ public class NewJFrame extends javax.swing.JFrame {
     /** Creates new form NewJFrame */
     public NewJFrame() {
         initComponents();
+        myInit();
     }
 
     /** This method is called from within the constructor to
@@ -47,6 +52,14 @@ public class NewJFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void myInit(){
+
+        PieChartPanel piepanel=new PieChartPanel();
+       piePanel= piepanel.PieChartPanel();
+       this.setContentPane(piePanel);
+       piePanel.setVisible(true);
+
+    }
     /**
     * @param args the command line arguments
     */
@@ -58,6 +71,7 @@ public class NewJFrame extends javax.swing.JFrame {
         });
     }
 
+    private ChartPanel piePanel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 
