@@ -69,7 +69,7 @@ class sellFrame extends JFrame {
     private Object[] Objday = {
         "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
     };
-    private short sellORreturn;
+    private short sellORreturn=1;
     private int tagrow = 0;
     int sumvalues = 0;
     float sumprice = 0;
@@ -110,7 +110,7 @@ class sellFrame extends JFrame {
         sell.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                sellORreturn = 0;
+                sellORreturn = 1;
                 //System.out.println(sellORreturn);
             }
         });
@@ -118,7 +118,7 @@ class sellFrame extends JFrame {
         Return.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                sellORreturn = 1;
+                sellORreturn = -1;
                 // System.out.println(sellORreturn);
             }
         });
@@ -299,9 +299,9 @@ class sellFrame extends JFrame {
                             sellBt.setSellORreturn(sellORreturn);
                             //sellBt.test();
                             //根据单选按钮的信息来选择使用哪个方法
-                            if (sellORreturn == 0) {
+                            if (sellORreturn == 1) {
                                 sellBt.transmitSell();
-                            } else if (sellORreturn == 1) {
+                            } else if (sellORreturn == -1) {
                                 sellBt.transmitReturn();
                             }
                         }
