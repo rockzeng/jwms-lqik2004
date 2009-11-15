@@ -10,7 +10,10 @@ import javax.swing.JPanel;
 
 /**
  *
- * @author Administrator
+ * @author res0w
+ * @since 2009-11-10
+ * @version 0.1
+ * 
  */
 public class StatisticsInfo extends JFrame {
 

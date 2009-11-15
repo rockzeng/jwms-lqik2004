@@ -82,7 +82,7 @@ class loseFrame extends JFrame {
     private JTable table = new JTable(model);
     private JTextField sumPrice = new JTextField(6);// 总计金额最多6位，包括小数点和小数点后一位
     private JTextField sumValues = new JTextField(3);
-    private short loseORgain;
+    private short loseORgain=-1;
     private static int exceptionTag = 0;  //异常标记
     //使得table中的“总金额”一列可以修改，但在修改数量或者单价还会自动修改
     private String[] tableOldAmount = new String[model.getRowCount()];
@@ -105,7 +105,7 @@ class loseFrame extends JFrame {
         sell.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                loseORgain = 0;
+                loseORgain = -1;
                 System.out.println(loseORgain);
             }
         });
@@ -292,7 +292,7 @@ class loseFrame extends JFrame {
                             loseBt.setOthers(model.getValueAt(i, 5).toString());
                             loseBt.test();
                             loseBt.setLoseORgain(loseORgain);
-                            if (loseORgain == 0) {
+                            if (loseORgain == -1) {
                                 loseBt.transmit2Lose();
                             } else {
                                 loseBt.transmit2Gain();

@@ -59,7 +59,7 @@ public class SInfoPanel extends javax.swing.JPanel {
         jLabel7 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "全部仓库" }));
 
         jLabel10.setText("仓库：");
 
