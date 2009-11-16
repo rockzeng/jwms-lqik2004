@@ -23,12 +23,8 @@ public class LinePanel {
      */
     public LinePanel() {
     }
-
-    /**
-     * Creates a sample dataset.
-     *
-     * @return The dataset.
-     */
+    public DefaultCategoryDataset alterdataset = new DefaultCategoryDataset();
+    public JFreeChart chart = this.createChart(createDataset());
     private CategoryDataset createDataset() {
 
         // row keys...
@@ -45,6 +41,7 @@ public class LinePanel {
         final String type6 = "Type 6";
         final String type7 = "Type 7";
         final String type8 = "Type 8";
+
 
         // create the dataset...
         final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -90,10 +87,10 @@ public class LinePanel {
     private JFreeChart createChart(final CategoryDataset dataset) {
 
         // create the chart...
-        final JFreeChart chart = ChartFactory.createLineChart(
-            "Line Chart Demo 1",       // chart title
-            "Type",                    // domain axis label
-            "Value",                   // range axis label
+        final JFreeChart chart1 = ChartFactory.createLineChart(
+            "Store SumPrice Line Chart",       // chart title
+            "TIME",                    // domain axis label
+            "Values",                   // range axis label
             dataset,                   // data
             PlotOrientation.VERTICAL,  // orientation
             true,                      // include legend
@@ -108,12 +105,11 @@ public class LinePanel {
       //  legend.setShapeScaleY(1.5);
         //legend.setDisplaySeriesLines(true);
 
-        chart.setBackgroundPaint(Color.white);
+        chart1.setBackgroundPaint(Color.white);
 
-        final CategoryPlot plot = (CategoryPlot) chart.getPlot();
+        final CategoryPlot plot = (CategoryPlot) chart1.getPlot();
         plot.setBackgroundPaint(Color.lightGray);
         plot.setRangeGridlinePaint(Color.white);
-
         // customise the range axis...
         final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -143,11 +139,14 @@ public class LinePanel {
         );
         // OPTIONAL CUSTOMISATION COMPLETED.
 
-        return chart;
+        return chart1;
     }
      public JPanel getPanel() {
-         JFreeChart chart = createChart(createDataset());
         return new ChartPanel(chart);
     }
+     public void setDatabase(){
+         CategoryPlot plot = (CategoryPlot) chart.getPlot();
+         plot.setDataset(alterdataset);
+     }
 
 }

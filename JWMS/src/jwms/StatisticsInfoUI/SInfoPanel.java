@@ -11,7 +11,14 @@
 package jwms.StatisticsInfoUI;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
+import method.dbOperation;
 
 /**
  *
@@ -23,8 +30,9 @@ public class SInfoPanel extends javax.swing.JPanel {
 
     /** Creates new form SInfoPanel */
     public SInfoPanel() {
-        myInit();
+        drawPanelInit();
         initComponents();
+        myInit();
     }
 
     /** This method is called from within the constructor to
@@ -36,34 +44,34 @@ public class SInfoPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jComboBox2 = new javax.swing.JComboBox();
+        storeText = new javax.swing.JComboBox();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        table = new javax.swing.JTable();
         jSeparator1 = new javax.swing.JSeparator();
-        jTextField4 = new javax.swing.JTextField();
+        eYearText = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        bDayText = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField8 = new javax.swing.JTextField();
+        eDayText = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox();
+        eMonthText = new javax.swing.JTextField();
+        stepSelect = new javax.swing.JComboBox();
         jLabel6 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        submit = new javax.swing.JButton();
+        bYearText = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        bMonthText = new javax.swing.JTextField();
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "全部仓库" }));
+        storeText.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "全部仓库" }));
 
         jLabel10.setText("仓库：");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -82,50 +90,55 @@ public class SInfoPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setRowHeight(32);
-        jScrollPane1.setViewportView(jTable1);
+        table.setRowHeight(32);
+        jScrollPane1.setViewportView(table);
 
-        jTextField4.addActionListener(new java.awt.event.ActionListener() {
+        eYearText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField4ActionPerformed(evt);
+                eYearTextActionPerformed(evt);
             }
         });
 
         jLabel5.setText("到");
 
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        bDayText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                bDayTextActionPerformed(evt);
             }
         });
 
         jLabel4.setText("月");
 
-        jTextField8.addActionListener(new java.awt.event.ActionListener() {
+        eDayText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField8ActionPerformed(evt);
+                eDayTextActionPerformed(evt);
             }
         });
 
         jLabel1.setText("时间粒度：");
 
-        jTextField5.addActionListener(new java.awt.event.ActionListener() {
+        eMonthText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField5ActionPerformed(evt);
+                eMonthTextActionPerformed(evt);
             }
         });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "日", "月", "年" }));
+        stepSelect.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "日", "月", "年" }));
 
         jLabel6.setText("年");
 
         jLabel2.setText("从");
 
-        jButton1.setText("查询");
-
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        submit.setText("查询");
+        submit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                submitActionPerformed(evt);
+            }
+        });
+
+        bYearText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bYearTextActionPerformed(evt);
             }
         });
 
@@ -137,9 +150,9 @@ public class SInfoPanel extends javax.swing.JPanel {
 
         jLabel7.setText("月");
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        bMonthText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                bMonthTextActionPerformed(evt);
             }
         });
 
@@ -153,41 +166,41 @@ public class SInfoPanel extends javax.swing.JPanel {
                         .addGap(27, 27, 27)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(stepSelect, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(bYearText, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(bMonthText, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(bDayText, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel5)
                         .addGap(12, 12, 12)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(eYearText, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(eMonthText, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(eDayText, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel8)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(storeText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(28, 28, 28)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(submit, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE))
@@ -202,24 +215,24 @@ public class SInfoPanel extends javax.swing.JPanel {
                 .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(stepSelect, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bYearText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bMonthText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bDayText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(eYearText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(eMonthText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(jLabel7)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(eDayText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(storeText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
-                    .addComponent(jButton1))
+                    .addComponent(submit))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
@@ -228,37 +241,41 @@ public class SInfoPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+    private void eYearTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eYearTextActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_jTextField4ActionPerformed
+}//GEN-LAST:event_eYearTextActionPerformed
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void bDayTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDayTextActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_jTextField3ActionPerformed
+}//GEN-LAST:event_bDayTextActionPerformed
 
-    private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
+    private void eDayTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eDayTextActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_jTextField8ActionPerformed
+}//GEN-LAST:event_eDayTextActionPerformed
 
-    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
+    private void eMonthTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eMonthTextActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_jTextField5ActionPerformed
+}//GEN-LAST:event_eMonthTextActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void bYearTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bYearTextActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_jTextField1ActionPerformed
+}//GEN-LAST:event_bYearTextActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void bMonthTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bMonthTextActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_jTextField2ActionPerformed
+}//GEN-LAST:event_bMonthTextActionPerformed
 
-    private void myInit() {
+    private void submitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_submitActionPerformed
+
+    private void drawPanelInit() {
         //cretea Panel1;
-        PiePanel1 pp = new PiePanel1();
-        piePanel1 = pp.getPanel();
+
+        piePanel1 = pieAmount.getPanel();
         piePanel1.setPreferredSize(new Dimension(250, 175));
-        piePanel2 = pp.getPanel();
-        piePanel3 = pp.getPanel();
+        piePanel2 = pieSumPrice.getPanel();
+        piePanel3 = pieProfits.getPanel();
         piePanel1.setBounds(650, 80, 250, 175);
         piePanel2.setBounds(650, 255, 250, 175);
         piePanel3.setBounds(650, 430, 250, 175);
@@ -269,21 +286,138 @@ public class SInfoPanel extends javax.swing.JPanel {
         piePanel2.setVisible(true);
         piePanel3.setVisible(true);
         //create LinePanel
-        LinePanel lp=new LinePanel();
-        linePinel=lp.getPanel();
+
+        linePinel = lp.getPanel();
         linePinel.setPreferredSize(new Dimension(625, 350));
         linePinel.setBounds(20, 255, 625, 350);
         this.add(linePinel);
         linePinel.setVisible(true);
     }
+
+    private void myInit() {
+        stepSelect.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                stepSelectFuction();
+            }
+        });
+        submit.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                submitFuction();
+            }
+        });
+    }
+
+    private void stepSelectFuction() {
+        bMonthText.setEditable(true);
+        bDayText.setEditable(true);
+        eMonthText.setEditable(true);
+        eDayText.setEditable(true);
+        if (stepSelect.getSelectedItem() == "年") {
+            bMonthText.setEditable(false);
+            bDayText.setEditable(false);
+            bMonthText.setText("01");
+            bDayText.setText("01");
+            eMonthText.setEditable(false);
+            eDayText.setEditable(false);
+            eMonthText.setText("12");
+            eDayText.setText("31");
+        } else if (stepSelect.getSelectedItem() == "月") {
+            bDayText.setEditable(false);
+            eDayText.setEditable(false);
+            bDayText.setText("00");
+            eDayText.setText("31");
+        }
+    }
+
+    private void submitFuction() {
+        try {
+            int byear = Integer.parseInt(bYearText.getText());
+            int bmonth = Integer.parseInt(bMonthText.getText());
+            int bday = Integer.parseInt(bDayText.getText());
+            int eyear = Integer.parseInt(eYearText.getText());
+            int emonth = Integer.parseInt(eMonthText.getText());
+            int eday = Integer.parseInt(eDayText.getText());
+            int bdate = Integer.parseInt(bYearText.getText() + bMonthText.getText() + bDayText.getText());
+            int edate = Integer.parseInt(eYearText.getText() + eMonthText.getText() + eDayText.getText());
+            String sql4LineChart = null;
+            String sql4Table = null;
+            String originSql = null;
+            String storeAddSql = null;
+            String step4LineAddSql = null;
+            String stepAddSql = " group by store";
+            originSql = "select date,store,sum(amount),sum(outprice),sum(profits) from searchtemp ";
+            if (storeText.getSelectedItem() == "全部仓库") {
+                storeAddSql = "";
+            } else if (storeText.getSelectedItem() == "更多仓库") {
+            } else {
+                storeAddSql = "where store=" + storeText.getSelectedItem() + " ";
+            }
+            if (stepSelect.getSelectedItem() == "日") {
+                step4LineAddSql = " group by store,year,month,day order by date ASC";
+            } else if (stepSelect.getSelectedItem() == "月") {
+                step4LineAddSql = " group by store,year,month order by date ASC";
+            } else if (stepSelect.getSelectedItem() == "年") {
+                step4LineAddSql = " group by store,year order by date ASC";
+            }
+            sql4LineChart = originSql + storeAddSql + step4LineAddSql;
+            sql4Table = originSql + storeAddSql + stepAddSql;
+            System.out.println(sql4LineChart);
+            ResultSet rs = null;
+            dbOperation db = new dbOperation();
+            db.DBConnect();
+            db.SearchCacheProcude(bdate, edate);
+            rs = db.DBSqlQuery(sql4LineChart);
+            while (rs.next()) {
+                String date = rs.getString(1);
+                String storename = rs.getString(2);
+                lp.alterdataset.addValue(Double.parseDouble(rs.getString(3)), storename, date);
+               /* System.out.println(rs.getString(4));
+                System.out.println(storename);
+                System.out.println(date);*/
+            }
+            lp.setDatabase();
+            rs = db.DBSqlQuery(sql4Table);
+            int i = 0;
+            while (rs.next()) {
+                table.setValueAt(rs.getString(2), i, 0);
+                table.setValueAt(rs.getString(3), i, 1);
+                table.setValueAt(rs.getString(4), i, 2);
+                table.setValueAt(rs.getString(5), i, 3);
+                String storename = table.getValueAt(i, 0).toString();
+                int storeamount = Integer.parseInt(table.getValueAt(i, 1).toString());
+                pieAmount.alterDatabase.setValue(storename, storeamount);
+                pieSumPrice.alterDatabase.setValue(storename,
+                        Double.parseDouble(table.getValueAt(i, 2).toString()));
+                pieProfits.alterDatabase.setValue(storename,
+                        Double.parseDouble(table.getValueAt(i, 3).toString()));
+                i++;
+            }
+
+            db.DBClosed();
+            pieAmount.setDatabase();
+            pieSumPrice.setDatabase();
+            pieProfits.setDatabase();
+        } catch (SQLException ex) {
+            Logger.getLogger(SInfoPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     private JPanel linePinel;
     private JPanel piePanel1;
     private JPanel piePanel2;
     private JPanel piePanel3;
+    LinePanel lp = new LinePanel();
+    PiePanel1 pieAmount = new PiePanel1();
+    PiePanel1 pieSumPrice = new PiePanel1();
+    PiePanel1 pieProfits = new PiePanel1();
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
+    private javax.swing.JTextField bDayText;
+    private javax.swing.JTextField bMonthText;
+    private javax.swing.JTextField bYearText;
+    private javax.swing.JTextField eDayText;
+    private javax.swing.JTextField eMonthText;
+    private javax.swing.JTextField eYearText;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -296,12 +430,9 @@ public class SInfoPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField8;
+    private javax.swing.JComboBox stepSelect;
+    private javax.swing.JComboBox storeText;
+    private javax.swing.JButton submit;
+    private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
 }

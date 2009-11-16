@@ -24,7 +24,7 @@ public class pressText {
         for(int i=0;i<2000;i++){
             String info="92-"+i;
             int amount=i+1;
-            String store="nc";
+            String store="kdn";
             int inPrice=i*3;
             int outPrice=i*6;
         increaseDb.DBConnect();

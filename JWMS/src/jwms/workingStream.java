@@ -483,7 +483,7 @@ class workingFrame extends JFrame {
                             //call procedure(bdate,edate);
                             dbOperation proDure = new dbOperation();
                             proDure.DBConnect();
-                            proDure.exeIntProcude(Integer.parseInt(bDate), Integer.parseInt(eDate));
+                            proDure.TimeCacheProcude(Integer.parseInt(bDate), Integer.parseInt(eDate));
                             proDure.DBClosed();
                             String OrignSql = "select date,id,type from wstimecache where 1=1 ";
                             String storeAddSql;

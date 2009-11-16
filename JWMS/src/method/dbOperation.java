@@ -74,9 +74,19 @@ public class dbOperation {
     public ResultSet DBReturnRS() {
         return rs;
     }
-    public void exeIntProcude(int first,int second){
+    public void TimeCacheProcude(int first,int second){
         try {
             CallableStatement c = conn.prepareCall("{call timecache(?,?)}");
+            c.setInt(1, first);
+            c.setInt(2, second);
+            c.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(dbOperation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+     public void SearchCacheProcude(int first,int second){
+        try {
+            CallableStatement c = conn.prepareCall("{call search(?,?)}");
             c.setInt(1, first);
             c.setInt(2, second);
             c.execute();
