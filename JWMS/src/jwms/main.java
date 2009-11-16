@@ -19,6 +19,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import jwms.StatisticsInfoUI.StatisticsInfo;
 
 /**
  *
@@ -79,7 +80,7 @@ class mainFrame extends JFrame {
         JLabel label = new JLabel(new ImageIcon("image\\mainLogo.jpg"));
         label.setPreferredSize(new Dimension(203, 49));
         JLabel label2 = new JLabel("测试版");
-       label2.setFont(new Font("宋体", Font.ITALIC, 10));
+        label2.setFont(new Font("宋体", Font.ITALIC, 10));
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(Box.createHorizontalStrut(5));
         hbox0.add(label);
@@ -130,7 +131,7 @@ class mainFrame extends JFrame {
         exit.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                int ifcontinue = JOptionPane.showConfirmDialog(null, 
+                int ifcontinue = JOptionPane.showConfirmDialog(null,
                         "请确认所有的录入窗口已经关闭，如果继续本程序将退出，所有未过账的单据不会保存！",
                         "退出确认", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ifcontinue == JOptionPane.YES_OPTION) {
@@ -201,7 +202,11 @@ class mainFrame extends JFrame {
         search.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                new Search();
+                JFrame frame = new StatisticsInfo();
+                frame.pack();
+                frame.setTitle("综合查询");
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
             }
         });
         storeRemain.addActionListener(new ActionListener() {
