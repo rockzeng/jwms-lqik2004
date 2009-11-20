@@ -182,8 +182,8 @@ public class storeRemain extends JFrame {
                     for (int c = 0; c < table1.getColumnCount(); c++) {
                         try {
                             print.writeSheet(c, 0, model1.getColumnName(c));
-                            for (int r = 1; r < table1.getRowCount(); r++) {
-                                print.writeSheet(c, r, model1.getValueAt(r, c).toString());
+                            for (int r = 0; r < table1.getRowCount(); r++) {
+                                print.writeSheet(c, r+1, model1.getValueAt(r, c).toString());
                             }
                         } catch (WriteException ex) {
                             Logger.getLogger(storeRemain.class.getName()).log(Level.SEVERE, null, ex);
