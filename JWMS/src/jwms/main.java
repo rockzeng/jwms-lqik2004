@@ -71,13 +71,13 @@ class mainFrame extends JFrame {
         JButton exit = new JButton("退出");
         JButton about = new JButton("关于");
 
-        setup.setIcon(new ImageIcon("image\\setupico.jpg"));
+        setup.setIcon(new ImageIcon(getClass().getResource("/image/setupico.jpg")));
         //setup.setBorderPainted();
         setup.setPreferredSize(new Dimension(32, 32));
         setup.setMaximumSize(setup.getPreferredSize());
         setup.setMinimumSize(setup.getPreferredSize());
         String font = "JeansWest";
-        JLabel label = new JLabel(new ImageIcon("image\\mainLogo.jpg"));
+        JLabel label = new JLabel(new ImageIcon(getClass().getResource("/image/mainLogo.jpg")));
         label.setPreferredSize(new Dimension(203, 49));
         JLabel label2 = new JLabel("测试版");
         label2.setFont(new Font("宋体", Font.ITALIC, 10));
@@ -97,7 +97,6 @@ class mainFrame extends JFrame {
         hbox1.add(lose);
 
         Box hbox2 = Box.createHorizontalBox();
-        //hbox2.add(Box.createHorizontalStrut(5));
         hbox2.add(setup);
         hbox2.add(Box.createHorizontalStrut(55));
         hbox2.add(stream);
@@ -137,7 +136,6 @@ class mainFrame extends JFrame {
                 if (ifcontinue == JOptionPane.YES_OPTION) {
                     System.exit(0);
                 }
-//                throw new UnsupportedOperationException("Not supported yet.");
             }
         });
         sell.addActionListener(new ActionListener() {
@@ -243,10 +241,10 @@ class mainFrame extends JFrame {
                 }
                 if (setupDialog.isVisible()) {
                     setupDialog.setVisible(false);
-                    setup.setIcon(new ImageIcon("image\\setupico.jpg"));
+                    setup.setIcon(new ImageIcon(getClass().getResource("/image/setupico.jpg")));
                 } else if (!setupDialog.isVisible()) {
                     setupDialog.setVisible(true);
-                    setup.setIcon(new ImageIcon("image\\setupico_down.gif"));
+                    setup.setIcon(new ImageIcon(getClass().getResource("/image/setupico_down.gif")));
                 }
             }
         });

@@ -621,7 +621,7 @@ class imagePanel extends JPanel {
         setMaximumSize(getPreferredSize());
         setMinimumSize(getPreferredSize());
         try {
-            image = ImageIO.read(new File("image\\logo.gif"));
+            image = ImageIO.read(new File(getClass().getResource("/image/logo.gif").getPath()));
         } catch (IOException ex) {
             Logger.getLogger(imagePanel.class.getName()).log(Level.SEVERE, null, ex);
         }
