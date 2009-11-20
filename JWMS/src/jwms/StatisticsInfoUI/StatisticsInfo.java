@@ -23,7 +23,7 @@ public class StatisticsInfo extends JFrame {
     public StatisticsInfo() {
         panel = new SInfoPanel();
         this.getContentPane().add(panel);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setPreferredSize(new Dimension(panel.getPreferredSize().width, panel.getPreferredSize().height));
         this.pack();
     }
