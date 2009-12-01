@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package test;
 
 import java.util.Calendar;
@@ -136,6 +136,10 @@ public class DateUtil implements DateUI{
         return JDay.getSelectedItem().toString().trim();
     }
 
+     public String getSelectionDate() {
+        return getSelectionYear()+getSelectionMonth()+getSelectionDay();
+    }
+
     /**
      * 静态方法，可直接调用。用来返回当前年份。并固定格式为四位
      * @return 返回当前年份
@@ -236,4 +240,6 @@ public class DateUtil implements DateUI{
     static public int dayIndex() {
         return getDateDay - 1;
     }
+
+
 }

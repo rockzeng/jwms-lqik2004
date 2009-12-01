@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package test;
 
 import javax.swing.JPanel;
@@ -24,17 +25,9 @@ import javax.swing.JPanel;
  * @author res0w
  * @since 2009-12-1
  */
-public interface DateUI {
+public interface IdUI {
+    
+    public JPanel IdUI(String tag);
+    public String setGetID(String tag,String year,String month,String day);
 
-    public JPanel DateSelectionUI();
-
-    public JPanel DateSelectionUI(boolean isLabel);
-
-    public String getSelectionDate();
-
-    public String getSelectionYear();
-
-    public String getSelectionMonth();
-
-    public String getSelectionDay();
 }
