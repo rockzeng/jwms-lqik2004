@@ -1,6 +1,20 @@
 /*
- * 
- */
+# JWMS2 is based on JWMS.JWMS is short for JeanWest store-sell Management System
+# Copyright (C) 2009,res0w
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package test;
 
 import java.awt.Color;
@@ -25,16 +39,17 @@ import method.AutoCompleter;
 import method.JAutoCompleteComboBox;
 import method.dbOperation;
 
+
 /**
  * @since 2009-12-01
  * @author res0w
  * 生成包含table的panel，在UI上模块化增加代码复用率
  */
-public class TableUtil {
+public class TableUtil implements TableUI{
 
     private JTextField sumPrice = new JTextField(6);
     private JTextField sumValues = new JTextField(3);
-    public TableModel model = new PlanetTableModel();
+    private TableModel model = new PlanetTableModel();
     private JTable table = new JTable(model);
     private String[] tableOldInfo = new String[model.getRowCount()];
     private String[] tableOldAmount = new String[model.getRowCount()];
@@ -85,7 +100,9 @@ public class TableUtil {
         vbox1.add(Box.createHorizontalStrut(5));
         vbox1.add(hbox);
     }
-
+    public TableModel getModel() {
+        return model;
+    }
     public JPanel getPanel() {
         JPanel tablePanel=new JPanel();
         tablePanel.add(vbox1);
@@ -217,7 +234,6 @@ public class TableUtil {
         }
     }
 }
-
 class PlanetTableModel extends AbstractTableModel {
 
     public static final int NAME = 1;
