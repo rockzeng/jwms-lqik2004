@@ -58,9 +58,11 @@ public class TableUtil implements TableUI{
     private String selectStore = null;
     private float sumprice;
     private int sumvalues;
+    private DataSetUtil dsu=new DataSetUtil();
     Box vbox1 = Box.createVerticalBox();
 
-    public TableUtil(Object[] items, String store) {
+    public TableUtil(String store) {
+        Object[] items = dsu.infoLoad();//读入info信息
         selectStore = store;
         table.setRowSelectionAllowed(false);    //不可选中行
         addEditEvent(table);    //给table加入了对键盘鼠标的事件响应

@@ -26,7 +26,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -36,31 +35,25 @@ import method.*;
  *
  * @author res0w
  * @since 2009-12-1
+ * @version 0.4
  *
  */
 public class TestUI extends JFrame {
-    Object[] items = null;
     private static final int DEFAULT_WIDTH = 400;
     private static final int DEFAULT_HEIGHT = 647;
-    private JComboBox storeComboBox = new JComboBox();
     private static int exceptionTag = 0;  //异常标记，比如如果没有正确写入信息到数据库就会改写exceptionTag
     ///////////////////////////////////////////////
     private TableUI table;
-    private DataSetUtil dsu = new DataSetUtil();
     private DateUI du = new DateUtil();
     private GroupButtonUI gb = new GroupButtonUI("销售", "退货");
-    private IdUI idu=new IDMakeUtil();
+    private IdUI idu = new IDMakeUtil();
+    private StoreUI sui = new StoreUtil();
 
     public static void setExTag(int tag) {
         exceptionTag = tag;
     }
 
     public TestUI() throws Exception {
-        //初始化数据库，读入信息
-        for (int i = 0; i < dsu.storeLoad().size(); i++) {
-            storeComboBox.addItem(dsu.storeLoad().get(i));
-        }
-        items = dsu.infoLoad();//读入info信息
         setTitle("销售退货单");//设置标题栏名称
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);//设置大小
         Box hbox0 = Box.createHorizontalBox();
@@ -75,18 +68,13 @@ public class TestUI extends JFrame {
         hbox1.add(Box.createHorizontalGlue());
         //设置仓库栏
         JLabel labelStore = new JLabel("仓库：");
-        //从properties中读取仓库设置
-        storeComboBox.setSelectedIndex(Integer.parseInt(propertiesRW.proIDMakeRead("storeSell")));
-        storeComboBox.setMaximumSize(storeComboBox.getPreferredSize());
-        storeComboBox.setEditable(false);   //仓库不可直接修改
-
         Box hbox2 = Box.createHorizontalBox();
         hbox2.add(Box.createHorizontalStrut(5));
         hbox2.add(labelStore);
-        hbox2.add(storeComboBox);
+        hbox2.add(sui.StorePanel("storeSell"));
         hbox2.add(Box.createHorizontalGlue());
         //加入列表栏
-        table = new TableUtil(items, storeComboBox.getSelectedItem().toString().trim());
+        table = new TableUtil(sui.getComponent().getSelectedItem().toString().trim());
         Box hbox3 = Box.createHorizontalBox();
         hbox3.add(table.getPanel());
         //设置提交按钮
@@ -119,10 +107,10 @@ public class TestUI extends JFrame {
                 dispose();
             }
         });
-        storeComboBox.addActionListener(new ActionListener() {
+        sui.getComponent().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                table.setSelectStore(storeComboBox.getSelectedItem().toString().trim());
+                table.setSelectStore(sui.getComponent().getSelectedItem().toString().trim());
                 //当此时数据表中有数据时最好给予提示
             }
         });
@@ -145,7 +133,7 @@ public class TestUI extends JFrame {
             sellBt.setYear(du.getSelectionYear());
             sellBt.setMonth(du.getSelectionMonth());
             sellBt.setDay(du.getSelectionDay());
-            sellBt.setStore(storeComboBox.getSelectedItem().toString());
+            sellBt.setStore(sui.getComponent().getSelectedItem().toString());
             sellBt.setDate(du.getSelectionDate());
             sellBt.setID(idu.setGetID("S", du.getSelectionYear(),
                     du.getSelectionMonth(), du.getSelectionDay()));
@@ -166,7 +154,7 @@ public class TestUI extends JFrame {
                 }
             }
             try {
-                propertiesRW.proIDMakeWrite("storeSell", storeComboBox.getSelectedIndex());
+                propertiesRW.proIDMakeWrite("storeSell", sui.getComponent().getSelectedIndex());
             } catch (IOException ex) {
                 Logger.getLogger(TestUI.class.getName()).log(Level.SEVERE, null, ex);
             }
