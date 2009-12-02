@@ -17,6 +17,8 @@
  */
 package test;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -30,7 +32,7 @@ import method.propertiesRW;
 public class StoreUtil implements StoreUI {
 
     private JComboBox storeComboBox = new JComboBox();
-    private JPanel panel=new JPanel();
+    private JPanel panel = new JPanel();
     private DataSetUtil dsu = new DataSetUtil();
 
     public StoreUtil() {
@@ -44,10 +46,10 @@ public class StoreUtil implements StoreUI {
         hbox.add(storeComboBox);
         panel.add(hbox);
         panel.setMaximumSize(panel.getPreferredSize());
+
     }
 
     public JPanel StorePanel(String readTag) {
-
         //从properties中读取仓库设置
         storeComboBox.setSelectedIndex(Integer.parseInt(propertiesRW.proIDMakeRead(readTag)));
         return panel;
@@ -55,5 +57,22 @@ public class StoreUtil implements StoreUI {
 
     public JComboBox getComponent() {
         return storeComboBox;
+    }
+
+    public Object getSelectItem() {
+        return storeComboBox.getSelectedItem();
+    }
+
+    public int getSelectIndex() {
+        return storeComboBox.getSelectedIndex();
+    }
+
+    public void tableModelCHGAction(final TableUI table) {
+        storeComboBox.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                table.setSelectStore(storeComboBox.getSelectedItem().toString().trim());
+            }
+        });
     }
 }

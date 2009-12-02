@@ -30,6 +30,8 @@ public interface DateUI {
 
     public JPanel DateSelectionUI(boolean isLabel);
 
+    public void idCHGAction(String IdTag,IdUI idui);
+
     public String getSelectionDate();
 
     public String getSelectionYear();

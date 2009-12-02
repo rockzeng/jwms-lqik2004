@@ -41,14 +41,14 @@ public class IDMakeUtil implements IdUI {
     private String day;
     public String date;
     public String dateTag;
+    private JPanel panel = new JPanel();
+    private JTextField ID = new JTextField(12);
 
     public JPanel IdUI(String tag) {
-        JPanel panel = new JPanel();
-        JTextField ID = new JTextField(12);
-        JLabel labelID = new JLabel("编号：");//设置文字
+        JLabel labelID = new JLabel("编号：");
         ID.setEditable(false);//不可修改
-        ID.setText(new IDMakeUtil().showID(tag, getDate.getYear(), getDate.getMonth(), getDate.getDay()));   //设置编号，销售单以S开头，这里可能有问题
-        ID.setMaximumSize(ID.getPreferredSize());   //使在箱式布局下不会默认取得最大值，保持预定义大小
+        ID.setText(showID(tag, getDate.getYear(), getDate.getMonth(), getDate.getDay()));
+        ID.setMaximumSize(ID.getPreferredSize());
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(labelID);
         hbox0.add(ID);
@@ -57,15 +57,31 @@ public class IDMakeUtil implements IdUI {
         return panel;
     }
 
+    /**
+     * 此方法可以同时返回String格式的完整ID编号，同时也会写入数据库，但不会修改UI显示，谨慎使用。
+     * @param tag 写入单据tag，如销售单据为'S'
+     * @param year 年份
+     * @param month 月份
+     * @param day 日
+     * @return 返回完整ID
+     * @deprecated 请谨慎使用，下个版本可能删除
+     */
     public String setGetID(String tag, String year, String month, String day) {
-        this.tag=tag;
-        this.year=year;
-        this.month=month;
-        this.day=day;
+        this.tag = tag;
+        this.year = year;
+        this.month = month;
+        this.day = day;
         return alterID(tag);
     }
-
-    public IDMakeUtil() {
+    /**
+     * 修改IDUI显示
+     * @param tag 写入单据tag，如销售单据为'S'
+     * @param year 年份
+     * @param month 月份
+     * @param day 日
+     */
+    public void setUIId(String tag, String year, String month, String day) {
+        ID.setText(showID(tag, year, month, day));
     }
 
     public void setYear(String x) {
@@ -86,8 +102,7 @@ public class IDMakeUtil implements IdUI {
     }
     //最有用的一个公用类
 
-
-    public String showID(String x, String initYear, String initMonth, String initDay) {
+    private String showID(String x, String initYear, String initMonth, String initDay) {
         year = initYear;
         month = initMonth;
         day = initDay;
