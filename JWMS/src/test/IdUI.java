@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package test;
 
 import javax.swing.JPanel;
@@ -26,8 +25,31 @@ import javax.swing.JPanel;
  * @since 2009-12-1
  */
 public interface IdUI {
-    
-    public JPanel IdUI(String tag);
-    public String setGetID(String tag,String year,String month,String day);
 
+    /**
+     *
+     * @param tag 写入单据tag，如销售单据为'S'
+     * @return 返回包含ID的panel
+     */
+    public JPanel IdUI(String tag);
+
+    /**
+     * 此方法可以同时返回String格式的完整ID编号，同时也会写入数据库，但不会修改UI显示，谨慎使用。
+     * @param tag 写入单据tag，如销售单据为'S'
+     * @param year 年份
+     * @param month 月份
+     * @param day 日
+     * @return 返回完整ID
+     * @deprecated 请谨慎使用，下个版本可能删除
+     */
+    public String setGetID(String tag, String year, String month, String day);
+
+    /**
+     * 修改IDUI显示
+     * @param tag 写入单据tag，如销售单据为'S'
+     * @param year 年份
+     * @param month 月份
+     * @param day 日
+     */
+    public void setUIId(String tag, String year, String month, String day);
 }

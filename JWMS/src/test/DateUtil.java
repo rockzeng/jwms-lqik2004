@@ -17,7 +17,10 @@
  */
 package test;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Calendar;
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -30,7 +33,7 @@ import javax.swing.JPanel;
  * @since 2009-12-1
  * @version 0.1
  */
-public class DateUtil implements DateUI{
+public class DateUtil implements DateUI {
 
     static private Calendar cal = Calendar.getInstance();
     static int getDateYear = cal.get(Calendar.YEAR);
@@ -136,8 +139,33 @@ public class DateUtil implements DateUI{
         return JDay.getSelectedItem().toString().trim();
     }
 
-     public String getSelectionDate() {
-        return getSelectionYear()+getSelectionMonth()+getSelectionDay();
+    public String getSelectionDate() {
+        return getSelectionYear() + getSelectionMonth() + getSelectionDay();
+    }
+
+    public void idCHGAction(final String IdTag, final IdUI idui) {
+        JYear.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+               idui.setUIId(IdTag, JYear.getSelectedItem().toString(),
+                JMonth.getSelectedItem().toString(), JDay.getSelectedItem().toString());
+            }
+        });
+         JMonth.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+               idui.setUIId(IdTag, JYear.getSelectedItem().toString(),
+                JMonth.getSelectedItem().toString(), JDay.getSelectedItem().toString());
+            }
+        });
+         JDay.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+               idui.setUIId(IdTag, JYear.getSelectedItem().toString(),
+                JMonth.getSelectedItem().toString(), JDay.getSelectedItem().toString());
+            }
+        });
+        
     }
 
     /**
@@ -240,6 +268,4 @@ public class DateUtil implements DateUI{
     static public int dayIndex() {
         return getDateDay - 1;
     }
-
-
 }

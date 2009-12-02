@@ -35,7 +35,7 @@ import method.*;
  *
  * @author res0w
  * @since 2009-12-1
- * @version 0.4
+ * @version 0.5
  *
  */
 public class TestUI extends JFrame {
@@ -43,10 +43,15 @@ public class TestUI extends JFrame {
     private static final int DEFAULT_HEIGHT = 647;
     private static int exceptionTag = 0;  //异常标记，比如如果没有正确写入信息到数据库就会改写exceptionTag
     ///////////////////////////////////////////////
+    //表格UI相关接口
     private TableUI table;
+    //时间UI相关接口
     private DateUI du = new DateUtil();
+    //选择组UI相关接口
     private GroupButtonUI gb = new GroupButtonUI("销售", "退货");
+    //ID标签UI相关接口
     private IdUI idu = new IDMakeUtil();
+    //仓库UI相关接口
     private StoreUI sui = new StoreUtil();
 
     public static void setExTag(int tag) {
@@ -56,16 +61,20 @@ public class TestUI extends JFrame {
     public TestUI() throws Exception {
         setTitle("销售退货单");//设置标题栏名称
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);//设置大小
+
+        //设置按钮组和ID
         Box hbox0 = Box.createHorizontalBox();
         hbox0.add(gb.getPanel());
         hbox0.add(Box.createHorizontalGlue());
         hbox0.add(idu.IdUI("S"));
         hbox0.add(Box.createHorizontalStrut(5));
+
         //设置日期栏
         Box hbox1 = Box.createHorizontalBox();
         hbox1.add(Box.createHorizontalStrut(4));
         hbox1.add(du.DateSelectionUI());
         hbox1.add(Box.createHorizontalGlue());
+
         //设置仓库栏
         JLabel labelStore = new JLabel("仓库：");
         Box hbox2 = Box.createHorizontalBox();
@@ -73,10 +82,12 @@ public class TestUI extends JFrame {
         hbox2.add(labelStore);
         hbox2.add(sui.StorePanel("storeSell"));
         hbox2.add(Box.createHorizontalGlue());
+
         //加入列表栏
-        table = new TableUtil(sui.getComponent().getSelectedItem().toString().trim());
+        table = new TableUtil(sui.getSelectItem().toString().trim());
         Box hbox3 = Box.createHorizontalBox();
         hbox3.add(table.getPanel());
+
         //设置提交按钮
         JButton referButton = new JButton("提交");
         JButton exit = new JButton("关闭");
@@ -93,27 +104,27 @@ public class TestUI extends JFrame {
         vbox.add(hbox0);
         vbox.add(Box.createVerticalStrut(4));
         vbox.add(hbox1);
-        vbox.add(Box.createVerticalStrut(10));
+        vbox.add(Box.createVerticalStrut(5));
         vbox.add(hbox2);
-        vbox.add(Box.createVerticalStrut(10));
+        vbox.add(Box.createVerticalStrut(5));
         vbox.add(hbox3);
         vbox.add(Box.createVerticalStrut(5));
         vbox.add(hbox4);
         vbox.add(Box.createVerticalStrut(5));
         add(vbox, BorderLayout.CENTER);
+
+        //退出按钮功能
         exit.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 dispose();
             }
         });
-        sui.getComponent().addActionListener(new ActionListener() {
+        //开启选择仓库改变tableModel功能
+        sui.tableModelCHGAction(table);
+        //开启选择时间改变ID编号功能
+        du.idCHGAction("S", idu);
 
-            public void actionPerformed(ActionEvent e) {
-                table.setSelectStore(sui.getComponent().getSelectedItem().toString().trim());
-                //当此时数据表中有数据时最好给予提示
-            }
-        });
         //提交按钮设计
         referButton.addActionListener(new ActionListener() {
 
@@ -133,7 +144,7 @@ public class TestUI extends JFrame {
             sellBt.setYear(du.getSelectionYear());
             sellBt.setMonth(du.getSelectionMonth());
             sellBt.setDay(du.getSelectionDay());
-            sellBt.setStore(sui.getComponent().getSelectedItem().toString());
+            sellBt.setStore(sui.getSelectItem().toString());
             sellBt.setDate(du.getSelectionDate());
             sellBt.setID(idu.setGetID("S", du.getSelectionYear(),
                     du.getSelectionMonth(), du.getSelectionDay()));
@@ -154,7 +165,7 @@ public class TestUI extends JFrame {
                 }
             }
             try {
-                propertiesRW.proIDMakeWrite("storeSell", sui.getComponent().getSelectedIndex());
+                propertiesRW.proIDMakeWrite("storeSell", sui.getSelectIndex());
             } catch (IOException ex) {
                 Logger.getLogger(TestUI.class.getName()).log(Level.SEVERE, null, ex);
             }

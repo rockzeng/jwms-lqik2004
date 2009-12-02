@@ -15,10 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package test;
 
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 /**
@@ -27,7 +25,26 @@ import javax.swing.JPanel;
  * @since 2009-12-2
  */
 public interface StoreUI {
-    public JPanel StorePanel(String readTag);
-    public JComboBox getComponent();
 
+    /**
+     * 返回panel类型的store面板
+     * @param readTag readTag是导入仓库初始化选择序列信息的关键字，保存在properties文件
+     *                 中。可以从下列选择一个：inStoreEqual 同价调拨进货仓库
+     *                  outStoreEqual 同价调拨出货仓库
+     *                  ...待续
+     * @return 返回panel类型的store面板
+     */
+    public JPanel StorePanel(String readTag);
+
+    public Object getSelectItem();
+
+    public int getSelectIndex();
+
+    /**
+     * 当仓库的选择发生变化的时候带动talble的模型数据也发生变化
+     * 由于此方法需配合TableUI使用，所以需要在tableui创建之后使用，且必须使用
+     * @param table 传入TableUI类型的TABLE，用来控制table
+     * @important 由于此方法需配合TableUI使用，所以需要在tableui创建之后使用，且必须使用
+     */
+    public void tableModelCHGAction(final TableUI table);
 }
