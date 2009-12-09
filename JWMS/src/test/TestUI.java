@@ -39,20 +39,21 @@ import method.*;
  *
  */
 public class TestUI extends JFrame {
+
     private static final int DEFAULT_WIDTH = 400;
     private static final int DEFAULT_HEIGHT = 647;
     private static int exceptionTag = 0;  //异常标记，比如如果没有正确写入信息到数据库就会改写exceptionTag
     ///////////////////////////////////////////////
     //表格UI相关接口
-    private TableUI table;
+    private TableUIer table;
     //时间UI相关接口
-    private DateUI du = new DateUtil();
+    private DateUIer du = new DateUtil();
     //选择组UI相关接口
     private GroupButtonUI gb = new GroupButtonUI("销售", "退货");
     //ID标签UI相关接口
-    private IdUI idu = new IDMakeUtil();
+    private IdUIer idu = new IDMakeUtil();
     //仓库UI相关接口
-    private StoreUI sui = new StoreUtil();
+    private StoreUIer sui = new StoreUtilSet();
 
     public static void setExTag(int tag) {
         exceptionTag = tag;
@@ -90,6 +91,7 @@ public class TestUI extends JFrame {
 
         //设置提交按钮
         JButton referButton = new JButton("提交");
+        
         JButton exit = new JButton("关闭");
         Box hbox4 = Box.createHorizontalBox();
         hbox4.add(Box.createHorizontalGlue());
@@ -113,6 +115,12 @@ public class TestUI extends JFrame {
         vbox.add(Box.createVerticalStrut(5));
         add(vbox, BorderLayout.CENTER);
 
+        //开启选择仓库改变tableModel功能
+        sui.tableModelCHGAction(table);
+
+        //开启选择时间改变ID编号功能
+        du.idCHGAction("S", idu);
+
         //退出按钮功能
         exit.addActionListener(new ActionListener() {
 
@@ -120,10 +128,6 @@ public class TestUI extends JFrame {
                 dispose();
             }
         });
-        //开启选择仓库改变tableModel功能
-        sui.tableModelCHGAction(table);
-        //开启选择时间改变ID编号功能
-        du.idCHGAction("S", idu);
 
         //提交按钮设计
         referButton.addActionListener(new ActionListener() {
@@ -144,30 +148,18 @@ public class TestUI extends JFrame {
             sellBt.setYear(du.getSelectionYear());
             sellBt.setMonth(du.getSelectionMonth());
             sellBt.setDay(du.getSelectionDay());
-            sellBt.setStore(sui.getSelectItem().toString());
             sellBt.setDate(du.getSelectionDate());
-            sellBt.setID(idu.setGetID("S", du.getSelectionYear(),
-                    du.getSelectionMonth(), du.getSelectionDay()));
-            //把ID号写入文件中
-            for (int i = 0; i < table.getModel().getRowCount(); i++) {     //防止出现中间出现断行丢失数据的问题
-                if (table.getModel().getValueAt(i, 1).toString() != "") {  //如果字符串没有，那么此行写入数据库，继续下一行
-                    sellBt.setNum(table.getModel().getValueAt(i, 0).toString());
-                    sellBt.setInfo(table.getModel().getValueAt(i, 1).toString());
-                    sellBt.setAmount(table.getModel().getValueAt(i, 2).toString());
-                    sellBt.setOutPrice(table.getModel().getValueAt(i, 3).toString());
-                    sellBt.setSellORreturn((short) gb.getSelectIndex());
-                    //根据单选按钮的信息来选择使用哪个方法
-                    if (gb.getSelectIndex() == 1) {
-                        sellBt.transmitSell();
-                    } else if (gb.getSelectIndex() == 2) {
-                        sellBt.transmitReturn();
-                    }
-                }
-            }
+            sellBt.setStore(sui.getSelectItem().toString());
+            sellBt.setID(idu.getIdString());
+            sellBt.setTableModel(table.getModel());
+            sellBt.setSellORreturn((short) gb.getSelectIndex());
+            sellBt.autoRefer();
+            //把当前选择仓库写入文件，以便下次调用。
             try {
                 propertiesRW.proIDMakeWrite("storeSell", sui.getSelectIndex());
             } catch (IOException ex) {
                 Logger.getLogger(TestUI.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, "文件写入错误！");
             }
             //如果没有发生异常，那么关闭窗口。异常信息的来源是sell2Main.java，如果写入数据库抛出异常，tag==1;
             if (exceptionTag == 0) {

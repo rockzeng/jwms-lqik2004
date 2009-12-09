@@ -45,7 +45,7 @@ import method.dbOperation;
  * @author res0w
  * 生成包含table的panel，在UI上模块化增加代码复用率
  */
-public class TableUtil implements TableUI{
+public class TableUtil implements TableUIer{
 
     private JTextField sumPrice = new JTextField(6);
     private JTextField sumValues = new JTextField(3);
@@ -103,7 +103,7 @@ public class TableUtil implements TableUI{
         vbox1.add(hbox);
     }
     public TableModel getModel() {
-        return model;
+        return this.model;
     }
     public JPanel getPanel() {
         JPanel tablePanel=new JPanel();
@@ -113,6 +113,16 @@ public class TableUtil implements TableUI{
     public void setSelectStore(String store){
         selectStore=store;
         //最好增加验证，当此时数据表中有数据的时候
+    }
+
+    public Object[][] getTableDataSet() {
+       Object[][] dataSet=new Object[model.getRowCount()][model.getColumnCount()];
+        for(int i=0;i<model.getRowCount();i++){
+            for(int n=0;n<model.getColumnCount();n++){
+                dataSet[i][n]=model.getValueAt(i, n);
+            }
+        }
+        return dataSet;
     }
 
     private void addEditEvent(JTable tb) {
@@ -235,6 +245,7 @@ public class TableUtil implements TableUI{
             ex.printStackTrace();
         }
     }
+
 }
 class PlanetTableModel extends AbstractTableModel {
 

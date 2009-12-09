@@ -33,7 +33,7 @@ import javax.swing.JRadioButton;
  */
 public class GroupButtonUI {
 
-    private int selectIndex;
+    private int selectIndex=1;
     private ArrayList<String> typeList = new ArrayList<String>();
     private Box hbox=Box.createHorizontalBox();
 /**

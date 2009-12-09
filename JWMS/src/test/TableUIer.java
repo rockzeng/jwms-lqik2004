@@ -25,11 +25,13 @@ import javax.swing.table.TableModel;
  * @author res0w
  * @since 2009-12-1
  */
-public interface TableUI {
+public interface TableUIer {
 
     public JPanel getPanel();
 
     public void setSelectStore(String store);
 
     public TableModel getModel();
+
+    public Object[][] getTableDataSet();
 }

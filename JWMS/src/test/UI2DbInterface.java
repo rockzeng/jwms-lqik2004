@@ -17,26 +17,12 @@
  */
 package test;
 
-import javax.swing.JPanel;
-
 /**
- *
+ * 提供了支援前台UI“提交”操作的工具集。包括销售逻辑，进货逻辑，退货逻辑，调拨逻辑，
+ * 查询逻辑等等
  * @author res0w
- * @since 2009-12-1
+ * @since 2009-12-03
  */
-public interface DateUI {
-
-    public JPanel DateSelectionUI();
-
-    public JPanel DateSelectionUI(boolean isLabel);
-
-    public void idCHGAction(String IdTag,IdUI idui);
-
-    public String getSelectionDate();
-
-    public String getSelectionYear();
-
-    public String getSelectionMonth();
-
-    public String getSelectionDay();
+public interface UI2DbInterface {
+    public boolean sell();
 }
