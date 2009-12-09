@@ -24,7 +24,7 @@ import javax.swing.JPanel;
  * @author res0w
  * @since 2009-12-1
  */
-public interface IdUI {
+public interface IdUIer {
 
     /**
      *
@@ -52,4 +52,9 @@ public interface IdUI {
      * @param day 日
      */
     public void setUIId(String tag, String year, String month, String day);
+    /**
+     * 获得当前ID数据
+     * @return 返回String类型的id数据
+     */
+    public String getIdString();
 }

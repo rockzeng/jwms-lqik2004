@@ -19,9 +19,14 @@ package test;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import method.dbOperation;
 import method.propertiesRW;
 
 /**
@@ -29,13 +34,13 @@ import method.propertiesRW;
  * @author res0w
  * @since 2009-12-02
  */
-public class StoreUtil implements StoreUI {
+public class StoreUtilSet implements StoreUIer, StoreUtiler {
 
     private JComboBox storeComboBox = new JComboBox();
     private JPanel panel = new JPanel();
     private DataSetUtil dsu = new DataSetUtil();
 
-    public StoreUtil() {
+    public StoreUtilSet() {
         //初始化数据库，读入信息
         for (int i = 0; i < dsu.storeLoad().size(); i++) {
             storeComboBox.addItem(dsu.storeLoad().get(i));
@@ -67,12 +72,35 @@ public class StoreUtil implements StoreUI {
         return storeComboBox.getSelectedIndex();
     }
 
-    public void tableModelCHGAction(final TableUI table) {
+    public void tableModelCHGAction(final TableUIer table) {
         storeComboBox.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 table.setSelectStore(storeComboBox.getSelectedItem().toString().trim());
             }
         });
+    }
+
+    /**
+     * 查询仓库是否存在，返回boolean值
+     * @param store 仓库名称
+     * @return true OR false
+     */
+    public boolean isStoreExist(String store) {
+        boolean result = false;
+        try {
+            String x = store;
+            dbOperation isInfoExistDb = new dbOperation();
+            isInfoExistDb.DBConnect();
+            String sql = "select * from storet where store='" + x + "'";
+            ResultSet rs = isInfoExistDb.DBSqlQuery(sql);
+            if (rs.next()) {
+                result = true;
+            }
+            isInfoExistDb.DBClosed();
+        } catch (SQLException ex) {
+            Logger.getLogger(StoreUtilSet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
     }
 }

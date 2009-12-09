@@ -24,7 +24,7 @@ import javax.swing.JPanel;
  * @author res0w
  * @since 2009-12-2
  */
-public interface StoreUI {
+public interface StoreUIer {
 
     /**
      * 返回panel类型的store面板
@@ -46,5 +46,5 @@ public interface StoreUI {
      * @param table 传入TableUI类型的TABLE，用来控制table
      * @important 由于此方法需配合TableUI使用，所以需要在tableui创建之后使用，且必须使用
      */
-    public void tableModelCHGAction(final TableUI table);
+    public void tableModelCHGAction(final TableUIer table);
 }

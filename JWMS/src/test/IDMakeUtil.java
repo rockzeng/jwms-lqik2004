@@ -32,7 +32,7 @@ import javax.swing.JTextField;
  * @author res0w
  * @since 2009-12-1
  */
-public class IDMakeUtil implements IdUI {
+public class IDMakeUtil implements IdUIer {
 
     public String tag;
     public String judge;
@@ -55,6 +55,9 @@ public class IDMakeUtil implements IdUI {
         panel.add(hbox0);
         panel.setMaximumSize(panel.getPreferredSize());
         return panel;
+    }
+    public String getIdString(){
+        return this.ID.getText();
     }
 
     /**

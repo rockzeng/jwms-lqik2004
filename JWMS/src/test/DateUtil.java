@@ -33,7 +33,7 @@ import javax.swing.JPanel;
  * @since 2009-12-1
  * @version 0.1
  */
-public class DateUtil implements DateUI {
+public class DateUtil implements DateUIer {
 
     static private Calendar cal = Calendar.getInstance();
     static int getDateYear = cal.get(Calendar.YEAR);
@@ -143,7 +143,7 @@ public class DateUtil implements DateUI {
         return getSelectionYear() + getSelectionMonth() + getSelectionDay();
     }
 
-    public void idCHGAction(final String IdTag, final IdUI idui) {
+    public void idCHGAction(final String IdTag, final IdUIer idui) {
         JYear.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
