@@ -1,0 +1,12 @@
+#
+#Fri Jul 17 15:38:53 CST 2009
+tablerow=80
+outStoreEqual=1
+storeLose=0
+storeSell=2
+storeWorkingStream=0
+judge=16
+inStoreEqual=4
+currentversion=0.165_r2009080602a
+storeInput=6
+tag=1
