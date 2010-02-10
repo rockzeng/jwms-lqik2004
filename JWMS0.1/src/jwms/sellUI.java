@@ -448,12 +448,14 @@ class sellFrame extends JFrame {
                         break;
                     }
                     findMain.DBClosed();
+		    if (amount != null  && out != null) {
                     model.setValueAt(amount, selectingrow, 2);
                     model.setValueAt(out, selectingrow, 3);
                     float value = Float.parseFloat(model.getValueAt(selectingrow, 2).toString().trim());
                     float price = Float.parseFloat(model.getValueAt(selectingrow, 3).toString().trim());
                     float sp = value * price;
                     model.setValueAt(String.valueOf(sp), selectingrow, 4);
+			}
                     tableOldAmount[selectingrow] = amount;
                     tableOldPrice[selectingrow] = out;
                     tableOldInfo[selectingrow] = model.getValueAt(selectingrow, 1).toString();
