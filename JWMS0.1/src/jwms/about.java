@@ -34,11 +34,11 @@ class aboutDialog extends JWindow{
 
     public aboutDialog() {
         String version=null;
-        version=propertiesRW.proIDMakeRead("currentversion");
-        JLabel l1=new JLabel("Version:0.180 r2009111613");
+        //version=propertiesRW.proIDMakeRead("currentversion");
+        JLabel l1=new JLabel("Version:0.201 r20100218");
         JLabel l2=new JLabel("Author：res0w");
-        JLabel l3=new JLabel("Update：2009-11-16");
-        JLabel l4=new JLabel("Licence：GPL2");
+        JLabel l3=new JLabel("Update：2010-02-18");
+        JLabel l4=new JLabel("Licence：LGPL");
         Box h0=Box.createVerticalBox();
         h0.add(Box.createVerticalStrut(5));
         h0.add(l1);

@@ -177,9 +177,6 @@ class equalFrame extends JFrame {
         hbox3.add(Box.createHorizontalGlue());
         hbox3.add(labelSumValues);
         hbox3.add(sumValues);
-        hbox3.add(Box.createHorizontalStrut(30));
-        hbox3.add(labelSumPrice);
-        hbox3.add(sumPrice);
         hbox3.add(Box.createHorizontalStrut(5));
         //设置提交按钮
         JButton referButton = new JButton("提交");
@@ -202,7 +199,8 @@ class equalFrame extends JFrame {
         vbox.add(Box.createVerticalStrut(8));
         vbox.add(hboxPane);
         vbox.add(Box.createVerticalStrut(4));
-
+        vbox.add(hbox3);
+        vbox.add(Box.createVerticalStrut(6));
         vbox.add(hbox4);
         vbox.add(Box.createVerticalStrut(10));
         add(vbox, BorderLayout.CENTER);
@@ -339,8 +337,25 @@ class equalFrame extends JFrame {
             } catch (Exception ex) {
             }
             try {
-                if (!tb.isCellEditable(selectingrow, selectingcol)) {
-                    return;
+
+                if (selectingrow >= rows) {
+                    selectingrow = 0;
+                    selectingcol++;
+                }
+                if (selectingcol >= cols) {
+                    selectingcol = 0;
+                }
+                if (selectingcol >= cols) {
+                    selectingcol = 0;
+                    selectingrow++;
+                }
+                if (selectingrow >= rows) {
+                    selectingrow = 0;
+                }
+                //当用户选择了序列号（即0列）时自动跳向下一列，提高用户体验
+                if (selectingcol == 0) {
+                    selectingcol++;
+                    tb.changeSelection(selectingrow, selectingcol, false, false);
                 }
                 if (selectingcol == 1) {
                     tb.editCellAt(selectingrow, selectingcol);
@@ -348,15 +363,15 @@ class equalFrame extends JFrame {
                     ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();
                     tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1) * tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
                 }
-                ResultSet rs=null;
-                 if (tableOldInfo[selectingrow] != model.getValueAt(selectingrow, 1)) {
+                ResultSet rs = null;
+                if (tableOldInfo[selectingrow] != model.getValueAt(selectingrow, 1)) {
                     String amount = null;
                     String out = null;
                     dbOperation findMain = new dbOperation();
                     findMain.DBConnect();
-                    String sql = "select distinct amount from maint where " +
-                            "info='" + model.getValueAt(selectingrow, 1).toString() + "' " +
-                            "and store='"+outStoreComboBox.getSelectedItem().toString().trim()+"'";
+                    String sql = "select distinct amount from maint where "
+                            + "info='" + model.getValueAt(selectingrow, 1).toString() + "' "
+                            + "and store='" + outStoreComboBox.getSelectedItem().toString().trim() + "'";
                     rs = findMain.DBSqlQuery(sql);
                     while (rs.next()) {
                         amount = rs.getString(1);
@@ -366,6 +381,17 @@ class equalFrame extends JFrame {
                     model.setValueAt(amount, selectingrow, 2);
                     tableOldInfo[selectingrow] = model.getValueAt(selectingrow, 1).toString();
                     table.repaint();
+                }
+                //默认表格行为
+                tb.editCellAt(selectingrow, selectingcol);//使得选中的单元格处于编辑状态
+                (((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();//当键盘或者鼠标选中单元格的时候，自动获得焦点，进入编辑模式
+                ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();//对与jtextfield，默认进行全选
+                sumprice = 0;//清空总价
+                sumvalues = 0;//清空总数量
+                for (int i = 0; i <= model.getRowCount(); i++) {
+                    String samount = model.getValueAt(i, 2).toString().trim();
+                    sumvalues = sumvalues + Integer.parseInt(samount);
+                    sumValues.setText(String.valueOf(sumvalues));
                 }
             } catch (Exception ex) {
             }
