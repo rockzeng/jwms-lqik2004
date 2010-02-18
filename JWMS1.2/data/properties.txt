@@ -1,0 +1,13 @@
+#
+#Thu Feb 18 18:48:54 CST 2010
+tablerow=1000
+outStoreEqual=0
+storeLose=0
+storeSell=0
+sqltype=mysql
+storeWorkingStream=0
+judge=16
+inStoreEqual=0
+storeInput=0
+tag=1
+currentversion=0.171_r20091102a
