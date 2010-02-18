@@ -69,7 +69,7 @@ class sellFrame extends JFrame {
     private Object[] Objday = {
         "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
     };
-    private short sellORreturn=1;
+    private short sellORreturn = 1;
     private int tagrow = 0;
     int sumvalues = 0;
     float sumprice = 0;
@@ -400,12 +400,12 @@ class sellFrame extends JFrame {
             if (selectingrow < 0 || selectingcol < 0) {
                 return;
             }
-
             try {
                 tb.getCellEditor(selectingrow, selectingcol).stopCellEditing();
             } catch (Exception ex) {
             }
             try {
+
                 if (selectingrow >= rows) {
                     selectingrow = 0;
                     selectingcol++;
@@ -420,17 +420,18 @@ class sellFrame extends JFrame {
                 if (selectingrow >= rows) {
                     selectingrow = 0;
                 }
-
-                if (!tb.isCellEditable(selectingrow, selectingcol)) {
-                    return;
+                //当用户选择了序列号（即0列）时自动跳向下一列，提高用户体验
+                if (selectingcol == 0) {
+                    selectingcol++;
+                    tb.changeSelection(selectingrow, selectingcol, false, false);
                 }
                 if (selectingcol == 1) {
                     tb.editCellAt(selectingrow, selectingcol);//使得选中的单元格处于编辑状态
                     (((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();//当键盘或者鼠标选中单元格的时候，自动获得焦点，进入编辑模式
                     ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();//对与jtextfield，默认进行全选
                 }
-                tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1) *
-                        tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
+                tb.scrollRectToVisible(new java.awt.Rectangle((selectingcol - 1)
+                        * tb.getColumnModel().getColumn(0).getWidth(), (selectingrow - 1) * tb.getRowHeight(), 200, 200));
                 ResultSet rs = null;
                 //信息改变事件
                 if (tableOldInfo[selectingrow] != model.getValueAt(selectingrow, 1)) {
@@ -438,32 +439,44 @@ class sellFrame extends JFrame {
                     String out = null;
                     dbOperation findMain = new dbOperation();
                     findMain.DBConnect();
-                    String sql = "select distinct amount,outPrice from maint where " +
-                            "info='" + model.getValueAt(selectingrow, 1).toString() + "' " +
-                            "and store='"+storeComboBox.getSelectedItem().toString().trim()+"'";
+                    String sql = "select distinct amount,outPrice from maint where "
+                            + "info='" + model.getValueAt(selectingrow, 1).toString() + "' "
+                            + "and store='" + storeComboBox.getSelectedItem().toString() + "'";
                     rs = findMain.DBSqlQuery(sql);
-                    while (rs.next()) {
-                        amount = rs.getString(1);
-                        out = rs.getString(2);
-                        break;
+
+                    if (rs.next()) {
+                        if (rs.getString(1).isEmpty()) {
+                            amount = "0";
+                        } else {
+                            amount = rs.getString(1);
+                        }
+                        if (rs.getString(2).isEmpty()) {
+                            out = "0";
+                        } else {
+                            out = rs.getString(2);
+                        }
+                    } else {
+                        amount = "0";
+                        out = "0";
                     }
                     findMain.DBClosed();
-		    if (amount != null  && out != null) {
-                    model.setValueAt(amount, selectingrow, 2);
-                    model.setValueAt(out, selectingrow, 3);
-                    float value = Float.parseFloat(model.getValueAt(selectingrow, 2).toString().trim());
-                    float price = Float.parseFloat(model.getValueAt(selectingrow, 3).toString().trim());
-                    float sp = value * price;
-                    model.setValueAt(String.valueOf(sp), selectingrow, 4);
-			}
-                    tableOldAmount[selectingrow] = amount;
-                    tableOldPrice[selectingrow] = out;
-                    tableOldInfo[selectingrow] = model.getValueAt(selectingrow, 1).toString();
-                    table.repaint();
+                    //修复ISSUE25：防止因数据库中无商品信息造成不能输入商品数量和单价
+                    if (amount != null && out != null) {
+                        model.setValueAt(amount, selectingrow, 2);
+                        model.setValueAt(out, selectingrow, 3);
+                        float value = Float.parseFloat(model.getValueAt(selectingrow, 2).toString().trim());
+                        float price = Float.parseFloat(model.getValueAt(selectingrow, 3).toString().trim());
+                        float sp = value * price;
+                        model.setValueAt(String.valueOf(sp), selectingrow, 4);
+                        tableOldAmount[selectingrow] = amount;
+                        tableOldPrice[selectingrow] = out;
+                        tableOldInfo[selectingrow] = model.getValueAt(selectingrow, 1).toString();
+                        table.repaint();
+                    }
                 }
                 //数量或者价格改变
-                if (tableOldAmount[selectingrow] != model.getValueAt(selectingrow, 2) ||
-                        tableOldPrice[selectingrow] != model.getValueAt(selectingrow, 3)) {
+                if (tableOldAmount[selectingrow] != model.getValueAt(selectingrow, 2)
+                        || tableOldPrice[selectingrow] != model.getValueAt(selectingrow, 3)) {
                     float value = Float.parseFloat(model.getValueAt(selectingrow, 2).toString().trim());
                     float price = Float.parseFloat(model.getValueAt(selectingrow, 3).toString().trim());
                     float sp = value * price;
@@ -472,6 +485,11 @@ class sellFrame extends JFrame {
                     tableOldPrice[selectingrow] = model.getValueAt(selectingrow, 3).toString().trim();
                     table.repaint();
                 }
+
+                //默认表格行为
+                tb.editCellAt(selectingrow, selectingcol);//使得选中的单元格处于编辑状态
+                (((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).requestFocus();//当键盘或者鼠标选中单元格的时候，自动获得焦点，进入编辑模式
+                ((JTextField) ((DefaultCellEditor) tb.getCellEditor(selectingrow, selectingcol)).getComponent()).selectAll();//对与jtextfield，默认进行全选
                 sumprice = 0;//清空总价
                 sumvalues = 0;//清空总数量
                 for (int i = 0; i <= model.getRowCount(); i++) {
